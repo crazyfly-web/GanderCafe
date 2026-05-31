@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gander Cafe — 庫存管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5EFE0;
+    --parchment: #EDE3CC;
+    --espresso: #1A0F0A;
+    --dark-roast: #2C1810;
+    --medium-roast: #5C3317;
+    --light-roast: #8B5E3C;
+    --green-bean: #4A5E3A;
+    --green-bean-light: #6B7F5A;
+    --accent-gold: #C49A3C;
+    --accent-gold-light: #E8C66D;
+    --text-muted: #8A7A6A;
+    --border: rgba(90,60,30,0.18);
+    --shadow: rgba(26,15,10,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--cream);
+    font-family: 'Noto Serif TC', serif;
+    color: var(--espresso);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 20%, rgba(196,154,60,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(92,51,23,0.06) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235C3317' fill-opacity='0.025'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  header {
+    padding: 48px 60px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,154,60,0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .logo-area h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.05;
+    color: var(--dark-roast);
+  }
+  .logo-area h1 em {
+    font-style: italic;
+    color: var(--accent-gold);
+  }
+  .logo-area .brand-sub {
+    margin-top: 3px;
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    font-family: 'DM Mono', monospace;
+    font-weight: 400;
+  }
+  .logo-area p {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+  }
+
+  .header-date {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 60px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.3);
+  }
+  .tab-btn {
+    padding: 16px 32px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab-btn.active {
+    color: var(--medium-roast);
+    border-bottom-color: var(--accent-gold);
+  }
+  .tab-btn:hover:not(.active) { color: var(--espresso); }
+  .tab-btn .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    display: inline-block;
+  }
+  .tab-btn:nth-child(1) .dot { background: var(--medium-roast); }
+  .tab-btn:nth-child(2) .dot { background: var(--green-bean); }
+
+  .main { padding: 40px 60px; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ─── Section Title ─── */
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--dark-roast);
+  }
+  .section-title h2 span {
+    font-size: 0.75rem;
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-left: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── Add Button ─── */
+  .btn-add {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 20px;
+    background: var(--espresso);
+    color: var(--cream);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-add:hover { background: var(--dark-roast); transform: translateY(-1px); }
+  .btn-add svg { width: 14px; height: 14px; }
+
+  /* ─── Cards Grid ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+
+  .bean-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.25s, transform 0.2s;
+    animation: cardIn 0.4s ease both;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .bean-card:hover {
+    box-shadow: 0 8px 32px var(--shadow);
+    transform: translateY(-2px);
+  }
+  .bean-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .bean-card.green::before { background: var(--green-bean); }
+  .bean-card.roasted::before { background: linear-gradient(90deg, var(--medium-roast), var(--accent-gold)); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--dark-roast);
+    line-height: 1.3;
+  }
+  .card-origin {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.08em;
+  }
+  .card-actions {
+    display: flex;
+    gap: 6px;
+  }
+  .btn-icon {
+    width: 28px; height: 28px;
+    border: 1px solid var(--border);
+    background: none;
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .btn-icon:hover { border-color: var(--accent-gold); color: var(--medium-roast); background: rgba(196,154,60,0.06); }
+
+  .card-stock {
+    margin-top: 12px;
+  }
+  .stock-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .stock-value {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    line-height: 1;
+    margin: 4px 0 2px;
+  }
+  .bean-card.green .stock-value { color: var(--green-bean); }
+  .bean-card.roasted .stock-value { color: var(--medium-roast); }
+  .stock-unit {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .stock-bar-wrap {
+    margin-top: 14px;
+    background: var(--parchment);
+    border-radius: 2px;
+    height: 5px;
+    overflow: hidden;
+  }
+  .stock-bar {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  }
+  .bean-card.green .stock-bar { background: linear-gradient(90deg, var(--green-bean-light), var(--green-bean)); }
+  .bean-card.roasted .stock-bar { background: linear-gradient(90deg, var(--accent-gold-light), var(--medium-roast)); }
+
+  .card-meta {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .meta-item { font-size: 0.75rem; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .meta-item strong { color: var(--espresso); font-weight: 400; }
+
+  /* Roast Level badge */
+  .roast-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+  .roast-light        { background: #f0e6d0; color: #8B5E3C; }
+  .roast-medium-light { background: #eadcc4; color: #7A4E2C; }
+  .roast-medium       { background: #e8d5c0; color: #6B3F20; }
+  .roast-dark         { background: #d4c0b0; color: #3A1A0A; }
+
+  /* ─── Available badge for roasted ─── */
+  .avail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 10px;
+  }
+  .avail-badge.yes { background: #e8f0e0; color: var(--green-bean); }
+  .avail-badge.no  { background: #f0e8e0; color: #9A5A3A; }
+  .avail-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .avail-badge.yes .avail-dot { background: var(--green-bean); }
+  .avail-badge.no  .avail-dot { background: #9A5A3A; }
+
+  /* ─── Modal ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,15,10,0.45);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 36px 40px;
+    width: 460px;
+    max-width: 95vw;
+    box-shadow: 0 24px 64px rgba(26,15,10,0.25);
+    animation: modalIn 0.3s cubic-bezier(.34,1.4,.64,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 24px;
+    color: var(--dark-roast);
+  }
+  .form-row { margin-bottom: 18px; }
+  .form-row label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 7px;
+  }
+  .form-row input, .form-row select, .form-row textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: white;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem;
+    color: var(--espresso);
+    transition: border-color 0.2s;
+  }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+  }
+  .form-row textarea { resize: vertical; min-height: 70px; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .btn-cancel {
+    padding: 9px 20px;
+    border: 1px solid var(--border);
+    background: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--espresso); color: var(--espresso); }
+  .btn-save {
+    padding: 9px 24px;
+    background: var(--medium-roast);
+    color: var(--cream);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .btn-save:hover { background: var(--dark-roast); }
+
+  /* ─── Roast Log ─── */
+  .roast-log-section { margin-top: 40px; }
+  .log-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  th {
+    background: var(--parchment);
+    padding: 12px 18px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-weight: 400;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 13px 18px;
+    border-bottom: 1px solid rgba(90,60,30,0.08);
+    color: var(--espresso);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.6); }
+  .log-date { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text-muted); }
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+
+  /* ─── Summary bar ─── */
+  .summary-bar {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .summary-stat {
+    flex: 1;
+    min-width: 140px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 22px;
+  }
+  .summary-stat .s-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .summary-stat .s-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--dark-roast);
+  }
+  .summary-stat .s-unit {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: 4px;
+  }
+
+  @media (max-width: 640px) {
+    header, .tabs, .main { padding-left: 20px; padding-right: 20px; }
+    header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .logo-area h1 { font-size: 1.8rem; }
+    .tab-btn { padding: 14px 16px; font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <h1>Gander <em>Cafe</em></h1>
+    <div class="brand-sub">Coffee Roaster</div>
+    <p>生豆庫存 ／ 熟豆現貨管理系統</p>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" onclick="switchTab('roasted')">
+    <span class="dot"></span>熟豆現貨
+  </button>
+  <button class="tab-btn" onclick="switchTab('green')">
+    <span class="dot"></span>生豆庫存
+  </button>
+</nav>
+
+<main class="main">
+
+  <!-- ─── Roasted Beans Panel ─── -->
+  <div id="panel-roasted" class="panel active">
+    <div class="section-title">
+      <h2>熟豆現貨 <span>ROASTED BEANS</span></h2>
+      <button class="btn-add" onclick="openModal('roasted')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        新增熟豆
+      </button>
+    </div>
+    <div class="summary-bar" id="roasted-summary"></div>
+    <div class="cards-grid" id="roasted-cards"></div>
+
+    <div class="roast-log-section">
+      <div class="section-title">
+        <h2>烘豆記錄 <span>ROAST LOG</span></h2>
+        <button class="btn-add" onclick="openModal('log')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          新增烘豆記錄
+        </button>
+      </div>
+      <div class="log-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>生豆來源</th>
+              <th>生豆用量</th>
+              <th>烘焙度</th>
+              <th>熟豆產出</th>
+              <th>熟豆名稱</th>
+              <th>備註</th>
+            </tr>
+          </thead>
+          <tbody id="log-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Green Beans Panel ─── -->
+  <div id="panel-green" class="panel">
+    <div class="section-title">
+      <h2>生豆庫存 <span>GREEN BEANS</span></h2>
+      <button class="btn-add" onclick="openModal('green')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        新增生豆
+      </button>
+    </div>
+    <div class="summary-bar" id="green-summary"></div>
+    <div class="cards-grid" id="green-cards"></div>
+  </div>
+
+</main>
+
+<!-- ─── Add Green Bean Modal ─── -->
+<div class="modal-overlay" id="modal-green">
+  <div class="modal">
+    <h3>新增生豆</h3>
+    <div class="form-row">
+      <label>豆名 Bean Name</label>
+      <input type="text" id="g-name" placeholder="例：衣索比亞 耶加雪菲">
+    </div>
+    <div class="form-row-2">
+      <div class="form-row" style="margin:0">
+        <label>產地 Origin</label>
+        <input type="text" id="g-origin" placeholder="衣索比亞">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>處理法 Process</label>
+        <input type="text" id="g-process" placeholder="日曬">
+      </div>
+    </div>
+    <div class="form-row-2" style="margin-top:18px">
+      <div class="form-row" style="margin:0">
+        <label>庫存 (g)</label>
+        <input type="number" id="g-stock" placeholder="5000" min="0">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>最大容量 (g)</label>
+        <input type="number" id="g-max" placeholder="10000" min="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>備註 Notes</label>
+      <textarea id="g-notes" placeholder="批次、採購日期…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('green')">取消</button>
+      <button class="btn-save" onclick="saveGreen()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Add Roasted Bean Modal ─── -->
+<div class="modal-overlay" id="modal-roasted">
+  <div class="modal">
+    <h3>新增熟豆現貨</h3>
+    <div class="form-row">
+      <label>品名 Name</label>
+      <input type="text" id="r-name" placeholder="例：耶加雪菲 日曬淺焙">
+    </div>
+    <div class="form-row-2">
+      <div class="form-row" style="margin:0">
+        <label>烘焙度</label>
+        <select id="r-roast">
+          <option value="light">淺焙 Light</option>
+          <option value="medium-light">淺中焙 Medium Light</option>
+          <option value="medium">中焙 Medium</option>
+          <option value="dark">深焙 Dark</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>庫存 (g)</label>
+        <input type="number" id="r-stock" placeholder="500" min="0">
+      </div>
+    </div>
+    <div class="form-row-2" style="margin-top:18px">
+      <div class="form-row" style="margin:0">
+        <label>最大容量 (g)</label>
+        <input type="number" id="r-max" placeholder="2000" min="0">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>可購買</label>
+        <select id="r-available">
+          <option value="yes">是 ✓</option>
+          <option value="no">否 ✗</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>備註 Notes</label>
+      <textarea id="r-notes" placeholder="風味描述、烘豆日期…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('roasted')">取消</button>
+      <button class="btn-save" onclick="saveRoasted()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Add Roast Log Modal ─── -->
+<div class="modal-overlay" id="modal-log">
+  <div class="modal">
+    <h3>新增烘豆記錄</h3>
+    <div class="form-row-2">
+      <div class="form-row" style="margin:0">
+        <label>烘豆日期</label>
+        <input type="date" id="l-date">
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>生豆用量 (g)</label>
+        <input type="number" id="l-green-amount" placeholder="500" min="0">
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:18px">
+      <label>生豆來源</label>
+      <select id="l-green-src"></select>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row" style="margin:0">
+        <label>烘焙度</label>
+        <select id="l-roast">
+          <option value="light">淺焙 Light</option>
+          <option value="medium-light">淺中焙 Medium Light</option>
+          <option value="medium">中焙 Medium</option>
+          <option value="dark">深焙 Dark</option>
+        </select>
+      </div>
+      <div class="form-row" style="margin:0">
+        <label>熟豆產出 (g)</label>
+        <input type="number" id="l-output" placeholder="430" min="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>更新熟豆庫存</label>
+      <select id="l-roasted-dest">
+        <option value="">-- 不更新 --</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>備註</label>
+      <textarea id="l-notes" placeholder="烘豆機、曲線、觀察…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('log')">取消</button>
+      <button class="btn-save" onclick="saveLog()">儲存並更新</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Data Store ───────────────────────────────────────────
+const STORAGE_KEY = 'coffee_inventory_v1';
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {
+    green: [
+      { id: 1, name: '耶加雪菲 G1', origin: '衣索比亞', process: '日曬', stock: 4500, max: 8000, notes: '2024新批次' },
+      { id: 2, name: '瓜地馬拉 安提瓜', origin: '瓜地馬拉', process: '水洗', stock: 2200, max: 5000, notes: '莊園直購' },
+      { id: 3, name: '巴西 喜拉朵', origin: '巴西', process: '日曬', stock: 7800, max: 10000, notes: '' },
+    ],
+    roasted: [
+      { id: 1, name: '耶加雪菲淺焙', roast: 'light', stock: 380, max: 1000, available: 'yes', notes: '藍莓、茉莉花香' },
+      { id: 2, name: '安提瓜中焙', roast: 'medium', stock: 620, max: 1500, available: 'yes', notes: '焦糖、堅果' },
+      { id: 3, name: '喜拉朵深焙', roast: 'dark', stock: 90, max: 1200, available: 'no', notes: '巧克力、醇厚' },
+    ],
+    logs: [
+      { id: 1, date: '2025-03-14', greenSrc: '耶加雪菲 G1', greenAmount: 600, roast: 'light', output: 512, roastedDest: '耶加雪菲淺焙', notes: '一爆密集' },
+    ],
+    nextId: { green: 4, roasted: 4, log: 2 }
+  };
+}
+
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+let data = loadData();
+
+// ─── Date ─────────────────────────────────────────────────
+function updateDate() {
+  const now = new Date();
+  const days = ['日','一','二','三','四','五','六'];
+  document.getElementById('headerDate').innerHTML =
+    `${now.getFullYear()} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日<br>星期${days[now.getDay()]}`;
+}
+updateDate();
+
+// ─── Tabs ─────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0 && tab==='roasted') || (i===1 && tab==='green'));
+  });
+  document.getElementById('panel-roasted').classList.toggle('active', tab==='roasted');
+  document.getElementById('panel-green').classList.toggle('active', tab==='green');
+}
+
+// ─── Render ───────────────────────────────────────────────
+const roastLabel = { light:'淺焙', 'medium-light':'淺中焙', medium:'中焙', dark:'深焙' };
+const roastClass = { light:'roast-light', 'medium-light':'roast-medium-light', medium:'roast-medium', dark:'roast-dark' };
+
+function renderGreen() {
+  const totalStock = data.green.reduce((s,b)=>s+b.stock, 0);
+  const varieties  = data.green.length;
+  document.getElementById('green-summary').innerHTML = `
+    <div class="summary-stat">
+      <div class="s-label">品項數量</div>
+      <div class="s-value">${varieties}<span class="s-unit">種</span></div>
+    </div>
+    <div class="summary-stat">
+      <div class="s-label">總庫存</div>
+      <div class="s-value">${(totalStock/1000).toFixed(1)}<span class="s-unit">kg</span></div>
+    </div>
+  `;
+  const grid = document.getElementById('green-cards');
+  if (!data.green.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🌱</div>尚無生豆庫存，請新增</div>`;
+    return;
+  }
+  grid.innerHTML = data.green.map(b => {
+    const pct = Math.min(100, Math.round(b.stock / b.max * 100));
+    return `
+    <div class="bean-card green" style="animation-delay:${Math.random()*0.15}s">
+      <div class="card-header">
+        <div>
+          <div class="card-name">${b.name}</div>
+          <div class="card-origin">${b.origin} · ${b.process}</div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-icon" onclick="editGreen(${b.id})" title="編輯">✎</button>
+          <button class="btn-icon" onclick="deleteBean('green',${b.id})" title="刪除">✕</button>
+        </div>
+      </div>
+      <div class="card-stock">
+        <div class="stock-label">庫存量</div>
+        <div class="stock-value">${b.stock >= 1000 ? (b.stock/1000).toFixed(1) : b.stock}</div>
+        <div class="stock-unit">${b.stock >= 1000 ? 'kg' : 'g'} / ${b.max >= 1000 ? (b.max/1000).toFixed(1)+'kg' : b.max+'g'} &nbsp;(${pct}%)</div>
+      </div>
+      <div class="stock-bar-wrap"><div class="stock-bar" style="width:${pct}%"></div></div>
+      ${b.notes ? `<div class="card-meta"><div class="meta-item">備註 <strong>${b.notes}</strong></div></div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderRoasted() {
+  const avail = data.roasted.filter(b=>b.available==='yes').length;
+  const totalStock = data.roasted.reduce((s,b)=>s+b.stock, 0);
+  document.getElementById('roasted-summary').innerHTML = `
+    <div class="summary-stat">
+      <div class="s-label">可購買品項</div>
+      <div class="s-value">${avail}<span class="s-unit">種</span></div>
+    </div>
+    <div class="summary-stat">
+      <div class="s-label">總現貨</div>
+      <div class="s-value">${(totalStock/1000).toFixed(2)}<span class="s-unit">kg</span></div>
+    </div>
+  `;
+  const grid = document.getElementById('roasted-cards');
+  if (!data.roasted.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">☕</div>尚無熟豆現貨，請新增</div>`;
+    return;
+  }
+  grid.innerHTML = data.roasted.map(b => {
+    const pct = Math.min(100, Math.round(b.stock / b.max * 100));
+    return `
+    <div class="bean-card roasted" style="animation-delay:${Math.random()*0.15}s">
+      <div class="card-header">
+        <div>
+          <div class="card-name">${b.name}</div>
+          <div style="margin-top:5px"><span class="roast-badge ${roastClass[b.roast]}">${roastLabel[b.roast]}</span></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-icon" onclick="editRoasted(${b.id})" title="編輯">✎</button>
+          <button class="btn-icon" onclick="deleteBean('roasted',${b.id})" title="刪除">✕</button>
+        </div>
+      </div>
+      <div class="avail-badge ${b.available}">
+        <span class="avail-dot"></span>
+        ${b.available==='yes' ? '可購買' : '暫無供應'}
+      </div>
+      <div class="card-stock" style="margin-top:10px">
+        <div class="stock-label">現貨量</div>
+        <div class="stock-value">${b.stock >= 1000 ? (b.stock/1000).toFixed(2) : b.stock}</div>
+        <div class="stock-unit">${b.stock >= 1000 ? 'kg' : 'g'} / ${b.max >= 1000 ? (b.max/1000).toFixed(1)+'kg' : b.max+'g'} &nbsp;(${pct}%)</div>
+      </div>
+      <div class="stock-bar-wrap"><div class="stock-bar" style="width:${pct}%"></div></div>
+      ${b.notes ? `<div class="card-meta"><div class="meta-item">風味 <strong>${b.notes}</strong></div></div>` : ''}
+    </div>`;
+  }).join('');
+
+  // Log
+  const tbody = document.getElementById('log-body');
+  if (!data.logs.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon" style="font-size:1.5rem">📋</div>尚無記錄</td></tr>`;
+    return;
+  }
+  const roastTW = {light:'淺焙','medium-light':'淺中焙',medium:'中焙',dark:'深焙'};
+  tbody.innerHTML = [...data.logs].reverse().map(l => `
+    <tr>
+      <td class="log-date">${l.date}</td>
+      <td>${l.greenSrc}</td>
+      <td>${l.greenAmount} g</td>
+      <td><span class="roast-badge ${roastClass[l.roast]}">${roastTW[l.roast]}</span></td>
+      <td>${l.output} g</td>
+      <td>${l.roastedDest || '—'}</td>
+      <td style="color:var(--text-muted);font-size:0.8rem">${l.notes || '—'}</td>
+    </tr>
+  `).join('');
+}
+
+function render() { renderGreen(); renderRoasted(); }
+render();
+
+// ─── Modal helpers ─────────────────────────────────────────
+function openModal(type) {
+  if (type === 'log') {
+    const gSrc = document.getElementById('l-green-src');
+    gSrc.innerHTML = data.green.map(b=>`<option>${b.name}</option>`).join('');
+    const rDest = document.getElementById('l-roasted-dest');
+    rDest.innerHTML = `<option value="">-- 不更新 --</option>` + data.roasted.map(b=>`<option>${b.name}</option>`).join('');
+    document.getElementById('l-date').value = new Date().toISOString().slice(0,10);
+  }
+  document.getElementById('modal-'+type).classList.add('open');
+}
+function closeModal(type) {
+  document.getElementById('modal-'+type).classList.remove('open');
+}
+// Close on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ─── CRUD: Green ──────────────────────────────────────────
+let editingGreenId = null;
+function saveGreen() {
+  const name = document.getElementById('g-name').value.trim();
+  const origin = document.getElementById('g-origin').value.trim();
+  const process = document.getElementById('g-process').value.trim();
+  const stock = parseInt(document.getElementById('g-stock').value) || 0;
+  const max = parseInt(document.getElementById('g-max').value) || 1000;
+  const notes = document.getElementById('g-notes').value.trim();
+  if (!name) { alert('請填寫豆名'); return; }
+  if (editingGreenId) {
+    const b = data.green.find(b=>b.id===editingGreenId);
+    Object.assign(b, {name,origin,process,stock,max,notes});
+    editingGreenId = null;
+  } else {
+    data.green.push({ id: data.nextId.green++, name, origin, process, stock, max, notes });
+  }
+  saveData(); render(); closeModal('green');
+  ['g-name','g-origin','g-process','g-stock','g-max','g-notes'].forEach(id => document.getElementById(id).value='');
+}
+function editGreen(id) {
+  const b = data.green.find(b=>b.id===id);
+  editingGreenId = id;
+  document.getElementById('g-name').value = b.name;
+  document.getElementById('g-origin').value = b.origin;
+  document.getElementById('g-process').value = b.process;
+  document.getElementById('g-stock').value = b.stock;
+  document.getElementById('g-max').value = b.max;
+  document.getElementById('g-notes').value = b.notes;
+  openModal('green');
+}
+
+// ─── CRUD: Roasted ────────────────────────────────────────
+let editingRoastedId = null;
+function saveRoasted() {
+  const name = document.getElementById('r-name').value.trim();
+  const roast = document.getElementById('r-roast').value;
+  const stock = parseInt(document.getElementById('r-stock').value) || 0;
+  const max = parseInt(document.getElementById('r-max').value) || 1000;
+  const available = document.getElementById('r-available').value;
+  const notes = document.getElementById('r-notes').value.trim();
+  if (!name) { alert('請填寫品名'); return; }
+  if (editingRoastedId) {
+    const b = data.roasted.find(b=>b.id===editingRoastedId);
+    Object.assign(b, {name,roast,stock,max,available,notes});
+    editingRoastedId = null;
+  } else {
+    data.roasted.push({ id: data.nextId.roasted++, name, roast, stock, max, available, notes });
+  }
+  saveData(); render(); closeModal('roasted');
+  ['r-name','r-stock','r-max','r-notes'].forEach(id => document.getElementById(id).value='');
+}
+function editRoasted(id) {
+  const b = data.roasted.find(b=>b.id===id);
+  editingRoastedId = id;
+  document.getElementById('r-name').value = b.name;
+  document.getElementById('r-roast').value = b.roast;
+  document.getElementById('r-stock').value = b.stock;
+  document.getElementById('r-max').value = b.max;
+  document.getElementById('r-available').value = b.available;
+  document.getElementById('r-notes').value = b.notes;
+  openModal('roasted');
+}
+
+function deleteBean(type, id) {
+  if (!confirm('確定刪除？')) return;
+  data[type] = data[type].filter(b=>b.id!==id);
+  saveData(); render();
+}
+
+// ─── Roast Log ────────────────────────────────────────────
+function saveLog() {
+  const date = document.getElementById('l-date').value;
+  const greenSrc = document.getElementById('l-green-src').value;
+  const greenAmount = parseInt(document.getElementById('l-green-amount').value) || 0;
+  const roast = document.getElementById('l-roast').value;
+  const output = parseInt(document.getElementById('l-output').value) || 0;
+  const roastedDest = document.getElementById('l-roasted-dest').value;
+  const notes = document.getElementById('l-notes').value.trim();
+
+  if (!date || !greenSrc || !greenAmount) { alert('請填寫日期、生豆來源與用量'); return; }
+
+  // Deduct green bean stock
+  const gb = data.green.find(b=>b.name===greenSrc);
+  if (gb) {
+    if (gb.stock < greenAmount) {
+      if (!confirm(`生豆庫存不足（現有 ${gb.stock}g，使用 ${greenAmount}g），仍要繼續？`)) return;
+    }
+    gb.stock = Math.max(0, gb.stock - greenAmount);
+  }
+
+  // Add to roasted bean stock
+  if (roastedDest) {
+    const rb = data.roasted.find(b=>b.name===roastedDest);
+    if (rb) { rb.stock += output; rb.available = 'yes'; }
+  }
+
+  data.logs.push({ id: data.nextId.log++, date, greenSrc, greenAmount, roast, output, roastedDest, notes });
+  saveData(); render(); closeModal('log');
+  ['l-green-amount','l-output','l-notes'].forEach(id => document.getElementById(id).value='');
+}
+</script>
+</body>
+</html>
