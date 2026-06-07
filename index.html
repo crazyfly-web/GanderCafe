@@ -3,1001 +3,1882 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gander Cafe — 庫存管理</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<title>Gander Cafe — 精品咖啡</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+TC:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream: #F5EFE0;
-    --parchment: #EDE3CC;
-    --espresso: #1A0F0A;
-    --dark-roast: #2C1810;
-    --medium-roast: #5C3317;
-    --light-roast: #8B5E3C;
-    --green-bean: #4A5E3A;
-    --green-bean-light: #6B7F5A;
-    --accent-gold: #C49A3C;
-    --accent-gold-light: #E8C66D;
-    --text-muted: #8A7A6A;
-    --border: rgba(90,60,30,0.18);
-    --shadow: rgba(26,15,10,0.12);
-  }
+:root {
+  --cream: #F7F2E8;
+  --parchment: #EDE5D0;
+  --warm-white: #FDFAF4;
+  --espresso: #1C0F08;
+  --roast-deep: #2E1810;
+  --roast-mid: #6B3A22;
+  --roast-light: #A0633A;
+  --gold: #C8922A;
+  --gold-pale: #F0D898;
+  --sage: #5A6B4E;
+  --sage-light: #8FA37E;
+  --muted: #8C7B6A;
+  --border: rgba(100,65,35,0.15);
+  --border-strong: rgba(100,65,35,0.3);
+  --shadow-sm: 0 2px 12px rgba(28,15,8,0.08);
+  --shadow-md: 0 8px 40px rgba(28,15,8,0.14);
+  --shadow-lg: 0 20px 60px rgba(28,15,8,0.20);
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 
-  body {
-    background-color: var(--cream);
-    font-family: 'Noto Serif TC', serif;
-    color: var(--espresso);
-    min-height: 100vh;
-    background-image:
-      radial-gradient(ellipse at 10% 20%, rgba(196,154,60,0.07) 0%, transparent 50%),
-      radial-gradient(ellipse at 90% 80%, rgba(92,51,23,0.06) 0%, transparent 50%),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235C3317' fill-opacity='0.025'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
+body {
+  font-family:'Noto Serif TC',serif;
+  background:var(--cream);
+  color:var(--espresso);
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-  header {
-    padding: 48px 60px 32px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-  }
+/* ── TOPBAR ── */
+.topbar {
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(247,242,232,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  height:64px;
+}
+.topbar-brand {
+  display:flex;flex-direction:column;
+}
+.brand-en {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.55rem;font-weight:600;
+  letter-spacing:0.06em;
+  color:var(--roast-deep);
+  line-height:1;
+}
+.brand-en em{font-style:italic;color:var(--gold);}
+.brand-tagline {
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--muted);
+  margin-top:2px;
+}
+.topbar-nav {
+  display:flex;align-items:center;gap:32px;
+}
+.nav-link {
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--muted);
+  text-decoration:none;cursor:pointer;
+  transition:color 0.2s;border:none;background:none;
+}
+.nav-link:hover{color:var(--roast-deep);}
+.topbar-actions{display:flex;align-items:center;gap:16px;}
 
-  header::before {
-    content: '';
-    position: absolute;
-    top: -40px; left: -40px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(196,154,60,0.12), transparent 70%);
-    pointer-events: none;
-  }
+/* Cart button */
+.btn-cart {
+  position:relative;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px;
+  background:var(--roast-deep);
+  color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;letter-spacing:0.1em;
+  transition:background 0.2s,transform 0.15s;
+}
+.btn-cart:hover{background:var(--roast-mid);transform:translateY(-1px);}
+.cart-count {
+  position:absolute;top:-6px;right:-6px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--gold);color:var(--roast-deep);
+  font-size:0.65rem;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+}
 
-  .logo-area h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.6rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    line-height: 1.05;
-    color: var(--dark-roast);
-  }
-  .logo-area h1 em {
-    font-style: italic;
-    color: var(--accent-gold);
-  }
-  .logo-area .brand-sub {
-    margin-top: 3px;
-    font-size: 0.72rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--accent-gold);
-    font-family: 'DM Mono', monospace;
-    font-weight: 400;
-  }
-  .logo-area p {
-    margin-top: 6px;
-    font-size: 0.78rem;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-    font-weight: 300;
-  }
+/* Member button */
+.btn-member {
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;
+  border:1px solid var(--border-strong);
+  background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.1em;color:var(--muted);
+  transition:all 0.2s;
+}
+.btn-member:hover{border-color:var(--gold);color:var(--roast-deep);}
+.member-avatar {
+  width:22px;height:22px;border-radius:50%;
+  background:var(--gold);color:var(--roast-deep);
+  font-size:0.65rem;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+}
 
-  .header-date {
-    text-align: right;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    line-height: 1.7;
-  }
+/* Admin button */
+.btn-admin {
+  padding:6px 12px;
+  border:1px solid var(--border);
+  background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;letter-spacing:0.1em;color:var(--muted);
+  transition:all 0.2s;
+}
+.btn-admin:hover{border-color:var(--roast-mid);color:var(--roast-mid);}
 
-  .tabs {
-    display: flex;
-    gap: 0;
-    padding: 0 60px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.3);
-  }
-  .tab-btn {
-    padding: 16px 32px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-family: 'Noto Serif TC', serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: all 0.25s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .tab-btn.active {
-    color: var(--medium-roast);
-    border-bottom-color: var(--accent-gold);
-  }
-  .tab-btn:hover:not(.active) { color: var(--espresso); }
-  .tab-btn .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    display: inline-block;
-  }
-  .tab-btn:nth-child(1) .dot { background: var(--medium-roast); }
-  .tab-btn:nth-child(2) .dot { background: var(--green-bean); }
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  padding:120px 40px 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before {
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(200,146,42,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(107,58,34,0.05) 0%, transparent 60%);
+}
+.hero-eyebrow {
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.28em;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:24px;
+}
+.hero-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3.5rem,8vw,7rem);
+  font-weight:300;line-height:0.95;
+  color:var(--roast-deep);
+  margin-bottom:28px;
+}
+.hero-title em{font-style:italic;color:var(--gold);}
+.hero-subtitle {
+  font-size:1rem;line-height:1.8;
+  color:var(--muted);max-width:480px;
+  font-weight:300;
+  margin-bottom:48px;
+}
+.hero-cta {
+  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+}
+.btn-primary {
+  padding:14px 36px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.8rem;letter-spacing:0.15em;
+  text-transform:uppercase;
+  transition:background 0.25s,transform 0.15s;
+}
+.btn-primary:hover{background:var(--roast-mid);transform:translateY(-2px);}
+.btn-outline {
+  padding:13px 36px;
+  background:none;color:var(--roast-deep);
+  border:1px solid var(--border-strong);border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.8rem;letter-spacing:0.15em;
+  text-transform:uppercase;
+  transition:all 0.25s;
+}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
 
-  .main { padding: 40px 60px; }
+/* ── SECTION ── */
+.section{padding:100px 80px;}
+.section-header{margin-bottom:60px;}
+.section-eyebrow {
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:12px;
+}
+.section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:300;color:var(--roast-deep);
+  line-height:1.15;
+}
+.section-title em{font-style:italic;}
+.section-desc {
+  margin-top:12px;font-size:0.9rem;
+  color:var(--muted);line-height:1.8;
+  max-width:520px;font-weight:300;
+}
 
-  .panel { display: none; }
-  .panel.active { display: block; }
+/* ── PRODUCT GRID ── */
+.product-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:32px;
+}
+.product-card {
+  background:var(--warm-white);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  transition:box-shadow 0.3s,transform 0.25s;
+  position:relative;
+}
+.product-card:hover{
+  box-shadow:var(--shadow-md);
+  transform:translateY(-4px);
+}
+.product-img {
+  width:100%;aspect-ratio:4/3;
+  object-fit:cover;
+  background:var(--parchment);
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;color:var(--muted);
+  position:relative;overflow:hidden;
+}
+.product-img-placeholder {
+  width:100%;aspect-ratio:4/3;
+  background:linear-gradient(135deg,var(--parchment) 0%,#e8dfc8 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:3.5rem;color:var(--roast-light);
+  font-style:italic;
+}
+.avail-tag {
+  position:absolute;top:12px;left:12px;
+  padding:4px 10px;border-radius:2px;
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.1em;
+}
+.avail-tag.yes{background:rgba(90,107,78,0.9);color:#e8f0e0;}
+.avail-tag.no {background:rgba(28,15,8,0.7);color:rgba(247,242,232,0.7);}
+.avail-tag.preorder{background:rgba(200,146,42,0.9);color:#2E1810;}
+.product-body{padding:20px 22px 24px;}
+.product-roast {
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.12em;
+  margin-bottom:8px;
+}
+.roast-dot {
+  display:inline-block;
+  width:7px;height:7px;border-radius:50%;
+  margin-right:6px;vertical-align:middle;
+}
+.rl  .roast-dot{background:#C8922A;}
+.rml .roast-dot{background:#A0633A;}
+.rm  .roast-dot{background:#7A4020;}
+.rd  .roast-dot{background:#3A1C10;}
+.rl {color:#A0633A;} .rml{color:#8B5030;} .rm{color:#6B3A22;} .rd{color:#3A1C10;}
+.product-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-weight:600;
+  color:var(--roast-deep);line-height:1.3;
+  margin-bottom:6px;
+}
+.product-origin {
+  font-size:0.78rem;color:var(--muted);
+  font-family:'DM Mono',monospace;
+  margin-bottom:10px;
+}
+.product-flavor {
+  font-size:0.82rem;color:var(--muted);
+  line-height:1.7;font-weight:300;
+  margin-bottom:16px;
+  border-left:2px solid var(--gold-pale);
+  padding-left:10px;
+}
+.product-footer {
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:16px;padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.product-spec {
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;color:var(--muted);
+  line-height:1.5;
+}
+.product-price {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:600;
+  color:var(--roast-deep);
+}
+.product-price span{
+  font-size:0.75rem;font-family:'DM Mono',monospace;
+  color:var(--muted);margin-left:2px;
+}
+.qty-control {
+  display:flex;align-items:center;gap:8px;margin-top:12px;
+}
+.qty-btn {
+  width:28px;height:28px;border-radius:2px;
+  border:1px solid var(--border-strong);
+  background:none;cursor:pointer;
+  font-size:1rem;color:var(--roast-mid);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.qty-btn:hover{background:var(--roast-deep);color:var(--cream);border-color:var(--roast-deep);}
+.qty-num {
+  font-family:'DM Mono',monospace;
+  font-size:0.85rem;min-width:28px;text-align:center;
+}
+.btn-add-cart {
+  width:100%;margin-top:14px;
+  padding:10px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;letter-spacing:0.12em;
+  transition:background 0.2s;
+}
+.btn-add-cart:hover{background:var(--roast-mid);}
+.btn-add-cart:disabled{background:var(--muted);cursor:not-allowed;opacity:0.6;}
 
-  /* ─── Section Title ─── */
-  .section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-  .section-title h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: var(--dark-roast);
-  }
-  .section-title h2 span {
-    font-size: 0.75rem;
-    font-family: 'DM Mono', monospace;
-    font-weight: 300;
-    color: var(--text-muted);
-    margin-left: 12px;
-    letter-spacing: 0.1em;
-  }
+/* ── PREORDER SECTION ── */
+.preorder-section{
+  background:var(--roast-deep);
+  color:var(--cream);
+  padding:80px;
+}
+.preorder-section .section-eyebrow{color:var(--gold-pale);}
+.preorder-section .section-title{color:var(--cream);}
+.preorder-section .section-desc{color:rgba(247,242,232,0.6);}
+.green-bean-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:24px;margin-top:48px;
+}
+.green-bean-card {
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:4px;padding:24px;
+}
+.green-bean-card:hover{background:rgba(255,255,255,0.08);}
+.gb-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:600;color:var(--cream);
+  margin-bottom:4px;
+}
+.gb-stock {
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;letter-spacing:0.1em;
+  color:var(--sage-light);margin-bottom:10px;
+}
+.gb-flavor {
+  font-size:0.82rem;color:rgba(247,242,232,0.6);
+  line-height:1.7;font-weight:300;
+  border-left:2px solid rgba(200,146,42,0.4);
+  padding-left:10px;margin-bottom:16px;
+}
+.gb-order {
+  display:flex;align-items:center;gap:10px;
+}
+.gb-select {
+  flex:1;
+  padding:8px 10px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:2px;
+  color:var(--cream);
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;
+}
+.gb-select option{background:#2E1810;color:var(--cream);}
+.btn-preorder {
+  padding:8px 16px;
+  background:var(--gold);color:var(--roast-deep);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.08em;
+  white-space:nowrap;
+  transition:opacity 0.2s;
+}
+.btn-preorder:hover{opacity:0.85;}
 
-  /* ─── Add Button ─── */
-  .btn-add {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 20px;
-    background: var(--espresso);
-    color: var(--cream);
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-family: 'Noto Serif TC', serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .btn-add:hover { background: var(--dark-roast); transform: translateY(-1px); }
-  .btn-add svg { width: 14px; height: 14px; }
+/* ── DIVIDER ── */
+.divider {
+  width:60px;height:1px;
+  background:var(--gold);
+  margin:24px auto;
+}
 
-  /* ─── Cards Grid ─── */
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 48px;
-  }
+/* ── OVERLAY PANELS ── */
+.overlay {
+  display:none;position:fixed;inset:0;z-index:400;
+  background:rgba(28,15,8,0.5);
+  backdrop-filter:blur(4px);
+  align-items:flex-start;justify-content:flex-end;
+}
+.overlay.open{display:flex;}
 
-  .bean-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    transition: box-shadow 0.25s, transform 0.2s;
-    animation: cardIn 0.4s ease both;
-  }
-  @keyframes cardIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .bean-card:hover {
-    box-shadow: 0 8px 32px var(--shadow);
-    transform: translateY(-2px);
-  }
-  .bean-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .bean-card.green::before { background: var(--green-bean); }
-  .bean-card.roasted::before { background: linear-gradient(90deg, var(--medium-roast), var(--accent-gold)); }
+/* Cart Panel */
+.cart-panel {
+  width:min(480px,100vw);
+  height:100vh;
+  background:var(--warm-white);
+  box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;
+  animation:slideIn 0.35s cubic-bezier(.25,.8,.25,1);
+}
+@keyframes slideIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+.panel-header {
+  padding:24px 28px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:400;color:var(--roast-deep);
+}
+.btn-close {
+  width:32px;height:32px;border:1px solid var(--border);
+  border-radius:2px;background:none;cursor:pointer;
+  font-size:1.1rem;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.btn-close:hover{border-color:var(--roast-deep);color:var(--roast-deep);}
+.cart-body{flex:1;overflow-y:auto;padding:20px 28px;}
+.cart-empty {
+  text-align:center;padding:60px 20px;
+  color:var(--muted);font-size:0.9rem;
+}
+.cart-item {
+  display:flex;gap:14px;
+  padding:16px 0;
+  border-bottom:1px solid var(--border);
+}
+.cart-item:last-child{border-bottom:none;}
+.cart-item-img {
+  width:56px;height:56px;border-radius:2px;
+  background:var(--parchment);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;color:var(--roast-light);font-style:italic;
+}
+.cart-item-info{flex:1;}
+.cart-item-name {
+  font-size:0.9rem;font-weight:500;
+  color:var(--roast-deep);margin-bottom:3px;
+}
+.cart-item-spec {
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;color:var(--muted);margin-bottom:8px;
+}
+.cart-item-controls {
+  display:flex;align-items:center;gap:8px;
+}
+.cart-item-price {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:600;
+  color:var(--roast-deep);
+  align-self:center;margin-left:auto;white-space:nowrap;
+}
+.btn-remove {
+  width:22px;height:22px;border:none;background:none;
+  cursor:pointer;color:var(--muted);
+  font-size:0.9rem;transition:color 0.15s;
+}
+.btn-remove:hover{color:#c0392b;}
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-  }
-  .card-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--dark-roast);
-    line-height: 1.3;
-  }
-  .card-origin {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 3px;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.08em;
-  }
-  .card-actions {
-    display: flex;
-    gap: 6px;
-  }
-  .btn-icon {
-    width: 28px; height: 28px;
-    border: 1px solid var(--border);
-    background: none;
-    border-radius: 3px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted);
-    transition: all 0.15s;
-    font-size: 13px;
-  }
-  .btn-icon:hover { border-color: var(--accent-gold); color: var(--medium-roast); background: rgba(196,154,60,0.06); }
+/* Discount row */
+.discount-row {
+  padding:16px 28px;
+  border-top:1px solid var(--border);
+  background:rgba(200,146,42,0.05);
+}
+.discount-row label {
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.1em;
+  color:var(--muted);display:block;margin-bottom:8px;
+}
+.discount-input-row {
+  display:flex;gap:8px;
+}
+.discount-input {
+  flex:1;padding:8px 12px;
+  border:1px solid var(--border-strong);border-radius:2px;
+  background:white;
+  font-family:'DM Mono',monospace;font-size:0.8rem;
+  color:var(--espresso);
+}
+.btn-apply-code {
+  padding:8px 14px;
+  background:var(--roast-mid);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.72rem;
+  letter-spacing:0.08em;
+}
+.discount-applied {
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;color:var(--sage);
+  margin-top:8px;display:none;
+}
 
-  .card-stock {
-    margin-top: 12px;
-  }
-  .stock-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-  }
-  .stock-value {
-    font-size: 2rem;
-    font-weight: 700;
-    font-family: 'Playfair Display', serif;
-    line-height: 1;
-    margin: 4px 0 2px;
-  }
-  .bean-card.green .stock-value { color: var(--green-bean); }
-  .bean-card.roasted .stock-value { color: var(--medium-roast); }
-  .stock-unit {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-  }
+/* Cart footer */
+.cart-footer{padding:20px 28px;border-top:1px solid var(--border);}
+.cart-summary-row {
+  display:flex;justify-content:space-between;
+  font-size:0.85rem;color:var(--muted);
+  margin-bottom:6px;
+}
+.cart-summary-row.total {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;color:var(--roast-deep);
+  font-weight:600;margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.cart-summary-row.discount-line{color:var(--sage);}
 
-  .stock-bar-wrap {
-    margin-top: 14px;
-    background: var(--parchment);
-    border-radius: 2px;
-    height: 5px;
-    overflow: hidden;
-  }
-  .stock-bar {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.6s cubic-bezier(.4,0,.2,1);
-  }
-  .bean-card.green .stock-bar { background: linear-gradient(90deg, var(--green-bean-light), var(--green-bean)); }
-  .bean-card.roasted .stock-bar { background: linear-gradient(90deg, var(--accent-gold-light), var(--medium-roast)); }
+/* Shipping selector */
+.shipping-select-section{margin:14px 0;}
+.shipping-select-section label {
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.1em;
+  color:var(--muted);display:block;margin-bottom:8px;
+}
+.shipping-options{display:flex;flex-direction:column;gap:6px;}
+.shipping-opt {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;
+  border:1px solid var(--border);border-radius:2px;cursor:pointer;
+  transition:border-color 0.15s;
+}
+.shipping-opt:hover{border-color:var(--roast-mid);}
+.shipping-opt.selected{border-color:var(--gold);background:rgba(200,146,42,0.04);}
+.shipping-opt-left{display:flex;align-items:center;gap:8px;}
+.shipping-opt input[type=radio]{accent-color:var(--gold);}
+.shipping-opt-name {
+  font-size:0.82rem;color:var(--roast-deep);
+}
+.shipping-opt-note {
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;color:var(--muted);margin-top:2px;
+}
+.shipping-opt-price {
+  font-family:'DM Mono',monospace;
+  font-size:0.78rem;color:var(--roast-mid);
+}
+.btn-checkout {
+  width:100%;margin-top:16px;
+  padding:14px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.82rem;letter-spacing:0.15em;
+  transition:background 0.2s;
+}
+.btn-checkout:hover{background:var(--roast-mid);}
 
-  .card-meta {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .meta-item { font-size: 0.75rem; color: var(--text-muted); font-family: 'DM Mono', monospace; }
-  .meta-item strong { color: var(--espresso); font-weight: 400; }
+/* ── MODAL: centered ── */
+.modal-overlay {
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(28,15,8,0.55);
+  backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex;}
+.modal {
+  background:var(--warm-white);
+  border-radius:4px;
+  box-shadow:var(--shadow-lg);
+  width:min(480px,96vw);
+  max-height:90vh;
+  overflow-y:auto;
+  animation:modalIn 0.3s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(0.93) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-header {
+  padding:28px 32px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;color:var(--roast-deep);font-weight:400;
+}
+.modal-body{padding:24px 32px;}
+.modal-footer{padding:16px 32px 28px;display:flex;gap:10px;justify-content:flex-end;}
 
-  /* Roast Level badge */
-  .roast-badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.06em;
-  }
-  .roast-light        { background: #f0e6d0; color: #8B5E3C; }
-  .roast-medium-light { background: #eadcc4; color: #7A4E2C; }
-  .roast-medium       { background: #e8d5c0; color: #6B3F20; }
-  .roast-dark         { background: #d4c0b0; color: #3A1A0A; }
+/* Form elements */
+.form-group{margin-bottom:18px;}
+.form-label {
+  display:block;
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--muted);
+  margin-bottom:7px;
+}
+.form-input, .form-select, .form-textarea {
+  width:100%;padding:10px 14px;
+  border:1px solid var(--border-strong);border-radius:2px;
+  background:white;
+  font-family:'Noto Serif TC',serif;
+  font-size:0.9rem;color:var(--espresso);
+  transition:border-color 0.2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  outline:none;border-color:var(--gold);
+}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn-modal-cancel {
+  padding:9px 20px;border:1px solid var(--border-strong);
+  background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  color:var(--muted);transition:all 0.2s;
+}
+.btn-modal-cancel:hover{border-color:var(--espresso);color:var(--espresso);}
+.btn-modal-save {
+  padding:9px 24px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  transition:background 0.2s;
+}
+.btn-modal-save:hover{background:var(--roast-mid);}
 
-  /* ─── Available badge for roasted ─── */
-  .avail-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.72rem;
-    font-family: 'DM Mono', monospace;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-top: 10px;
-  }
-  .avail-badge.yes { background: #e8f0e0; color: var(--green-bean); }
-  .avail-badge.no  { background: #f0e8e0; color: #9A5A3A; }
-  .avail-dot { width: 6px; height: 6px; border-radius: 50%; }
-  .avail-badge.yes .avail-dot { background: var(--green-bean); }
-  .avail-badge.no  .avail-dot { background: #9A5A3A; }
+/* ── ADMIN PANEL ── */
+.admin-overlay {
+  display:none;position:fixed;inset:0;z-index:300;
+  background:var(--cream);overflow-y:auto;
+  animation:fadeIn 0.25s ease;
+}
+.admin-overlay.open{display:block;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.admin-topbar {
+  background:var(--roast-deep);color:var(--cream);
+  padding:16px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+}
+.admin-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-weight:400;
+}
+.admin-title small {
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.12em;
+  color:rgba(247,242,232,0.5);margin-left:12px;
+}
+.admin-body{padding:48px;}
+.admin-tabs{display:flex;gap:0;margin-bottom:40px;border-bottom:1px solid var(--border);}
+.admin-tab {
+  padding:12px 28px;border:none;background:none;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  letter-spacing:0.1em;color:var(--muted);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:all 0.2s;
+}
+.admin-tab.active{color:var(--roast-mid);border-bottom-color:var(--gold);}
+.admin-section{display:none;}
+.admin-section.active{display:block;}
+.admin-section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.admin-section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:400;color:var(--roast-deep);
+}
 
-  /* ─── Modal ─── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(26,15,10,0.45);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(3px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--cream);
-    border-radius: 8px;
-    padding: 36px 40px;
-    width: 460px;
-    max-width: 95vw;
-    box-shadow: 0 24px 64px rgba(26,15,10,0.25);
-    animation: modalIn 0.3s cubic-bezier(.34,1.4,.64,1);
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.92) translateY(10px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .modal h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    margin-bottom: 24px;
-    color: var(--dark-roast);
-  }
-  .form-row { margin-bottom: 18px; }
-  .form-row label {
-    display: block;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 7px;
-  }
-  .form-row input, .form-row select, .form-row textarea {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: white;
-    font-family: 'Noto Serif TC', serif;
-    font-size: 0.9rem;
-    color: var(--espresso);
-    transition: border-color 0.2s;
-  }
-  .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
-    outline: none;
-    border-color: var(--accent-gold);
-  }
-  .form-row textarea { resize: vertical; min-height: 70px; }
-  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 28px;
-  }
-  .btn-cancel {
-    padding: 9px 20px;
-    border: 1px solid var(--border);
-    background: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-family: 'Noto Serif TC', serif;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    transition: all 0.2s;
-  }
-  .btn-cancel:hover { border-color: var(--espresso); color: var(--espresso); }
-  .btn-save {
-    padding: 9px 24px;
-    background: var(--medium-roast);
-    color: var(--cream);
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-family: 'Noto Serif TC', serif;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-  }
-  .btn-save:hover { background: var(--dark-roast); }
+/* Admin Table */
+.admin-table-wrap{
+  border:1px solid var(--border);border-radius:4px;overflow:hidden;
+}
+.admin-table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+.admin-table th {
+  background:var(--parchment);padding:12px 16px;text-align:left;
+  font-family:'DM Mono',monospace;font-size:0.68rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);font-weight:400;
+  border-bottom:1px solid var(--border);
+}
+.admin-table td {
+  padding:12px 16px;
+  border-bottom:1px solid rgba(100,65,35,0.07);
+  color:var(--espresso);vertical-align:middle;
+}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:rgba(200,146,42,0.03);}
+.tbl-actions{display:flex;gap:6px;}
+.btn-tbl {
+  padding:4px 10px;
+  border:1px solid var(--border);background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.06em;color:var(--muted);
+  transition:all 0.15s;
+}
+.btn-tbl:hover{border-color:var(--gold);color:var(--roast-mid);}
+.btn-tbl.danger:hover{border-color:#c0392b;color:#c0392b;}
 
-  /* ─── Roast Log ─── */
-  .roast-log-section { margin-top: 40px; }
-  .log-table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-  }
-  th {
-    background: var(--parchment);
-    padding: 12px 18px;
-    text-align: left;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    font-weight: 400;
-    border-bottom: 1px solid var(--border);
-  }
-  td {
-    padding: 13px 18px;
-    border-bottom: 1px solid rgba(90,60,30,0.08);
-    color: var(--espresso);
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.6); }
-  .log-date { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text-muted); }
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-  }
-  .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+/* ── TOAST ── */
+.toast {
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--roast-deep);color:var(--cream);
+  padding:12px 28px;border-radius:2px;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  letter-spacing:0.06em;z-index:600;
+  opacity:0;transition:opacity 0.3s,transform 0.3s;
+  pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  /* ─── Summary bar ─── */
-  .summary-bar {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
-  }
-  .summary-stat {
-    flex: 1;
-    min-width: 140px;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 18px 22px;
-  }
-  .summary-stat .s-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-  .summary-stat .s-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--dark-roast);
-  }
-  .summary-stat .s-unit {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-left: 4px;
-  }
+/* ── FOOTER ── */
+footer {
+  background:var(--roast-deep);color:rgba(247,242,232,0.55);
+  padding:60px 80px 40px;
+  text-align:center;
+}
+footer .brand-en{color:var(--cream);font-size:1.8rem;margin-bottom:8px;}
+footer p{font-size:0.8rem;line-height:1.9;font-family:'DM Mono',monospace;font-size:0.72rem;}
+footer a{color:var(--gold-pale);text-decoration:none;}
 
-  @media (max-width: 640px) {
-    header, .tabs, .main { padding-left: 20px; padding-right: 20px; }
-    header { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .logo-area h1 { font-size: 1.8rem; }
-    .tab-btn { padding: 14px 16px; font-size: 0.82rem; }
-  }
+/* ── MEMBER LOGIN MODAL EXTRAS ── */
+.login-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid var(--border);}
+.login-tab {
+  flex:1;padding:10px;border:none;background:none;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.08em;
+  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:all 0.2s;
+}
+.login-tab.active{color:var(--roast-mid);border-bottom-color:var(--gold);}
+.login-panel{display:none;}
+.login-panel.active{display:block;}
+.member-badge {
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:20px;
+  font-family:'DM Mono',monospace;font-size:0.68rem;
+  margin-bottom:16px;
+}
+.member-badge.gold{background:#f7e8c0;color:#8B6010;}
+.member-badge.premium{background:#e8d5c0;color:#6B3F20;}
+.discount-tier-info {
+  background:rgba(200,146,42,0.08);
+  border:1px solid rgba(200,146,42,0.25);
+  border-radius:2px;padding:12px 16px;margin-top:14px;
+}
+.discount-tier-info p {
+  font-family:'DM Mono',monospace;font-size:0.72rem;
+  color:var(--muted);line-height:1.8;
+}
+.discount-tier-info strong{color:var(--gold);}
+
+@media(max-width:768px){
+  .topbar{padding:0 20px;}
+  .hero{padding:100px 24px 60px;}
+  .section{padding:60px 24px;}
+  .preorder-section{padding:60px 24px;}
+  .admin-body{padding:24px 20px;}
+  .admin-topbar{padding:16px 20px;}
+  .product-grid{grid-template-columns:1fr;}
+  footer{padding:40px 24px 32px;}
+  .topbar-nav{display:none;}
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-area">
-    <h1>Gander <em>Cafe</em></h1>
-    <div class="brand-sub">Coffee Roaster</div>
-    <p>生豆庫存 ／ 熟豆現貨管理系統</p>
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-en">Gander <em>Cafe</em></div>
+    <div class="brand-tagline">Specialty Coffee Roaster · 花蓮</div>
   </div>
-  <div class="header-date" id="headerDate"></div>
+  <nav class="topbar-nav">
+    <button class="nav-link" onclick="scrollTo('#roasted-section')">熟豆選購</button>
+    <button class="nav-link" onclick="scrollTo('#preorder-section')">預購生豆</button>
+    <button class="nav-link" onclick="scrollTo('#about-section')">關於我們</button>
+  </nav>
+  <div class="topbar-actions">
+    <button class="btn-admin" onclick="openAdmin()">店家後台</button>
+    <button class="btn-member" onclick="openMemberModal()" id="memberBtn">
+      <span id="memberLabel">會員登入</span>
+    </button>
+    <button class="btn-cart" onclick="openCart()">
+      🛒 購物車
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
 </header>
 
-<nav class="tabs">
-  <button class="tab-btn active" onclick="switchTab('roasted')">
-    <span class="dot"></span>熟豆現貨
-  </button>
-  <button class="tab-btn" onclick="switchTab('green')">
-    <span class="dot"></span>生豆庫存
-  </button>
-</nav>
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">Specialty Coffee · Single Origin · Hand Roasted</div>
+  <h1 class="hero-title">從產地到<br><em>你的杯中</em></h1>
+  <p class="hero-subtitle">每一批生豆都來自與農民長期合作的莊園，<br>以精確的烘焙曲線釋放最純粹的風味。</p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="scrollTo('#roasted-section')">選購熟豆</button>
+    <button class="btn-outline" onclick="scrollTo('#preorder-section')">預購接單烘焙</button>
+  </div>
+</section>
 
-<main class="main">
+<!-- ── ROASTED BEANS ── -->
+<section class="section" id="roasted-section">
+  <div class="section-header">
+    <div class="section-eyebrow">現貨 · In Stock</div>
+    <h2 class="section-title">精選<em>熟豆</em></h2>
+    <p class="section-desc">以下品項皆為本週新鮮烘焙，現貨有限，售完為止。</p>
+  </div>
+  <div class="product-grid" id="roastedGrid"></div>
+</section>
 
-  <!-- ─── Roasted Beans Panel ─── -->
-  <div id="panel-roasted" class="panel active">
-    <div class="section-title">
-      <h2>熟豆現貨 <span>ROASTED BEANS</span></h2>
-      <button class="btn-add" onclick="openModal('roasted')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        新增熟豆
-      </button>
+<!-- ── PREORDER ── -->
+<section class="preorder-section" id="preorder-section">
+  <div class="section-header">
+    <div class="section-eyebrow">接單烘焙 · Made to Order</div>
+    <h2 class="section-title" style="color:var(--cream)">預購<em style="color:var(--gold-pale)">生豆</em>烘焙</h2>
+    <p class="section-desc">下單後 3–5 個工作天出貨，每包 240g 半磅裝。</p>
+  </div>
+  <div class="green-bean-grid" id="greenBeanGrid"></div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="section" id="about-section" style="text-align:center;max-width:680px;margin:0 auto;padding:80px 40px;">
+  <div class="section-eyebrow">About</div>
+  <h2 class="section-title">關於 <em>Gander Cafe</em></h2>
+  <div class="divider"></div>
+  <p style="font-size:0.95rem;line-height:2;color:var(--muted);font-weight:300;margin-top:20px;">
+    Gander Cafe 是位於花蓮的精品咖啡烘焙品牌，<br>
+    專注於挑選具產地溯源的批次生豆，<br>
+    以小批量手工烘焙保留最豐富的風味層次。
+  </p>
+  <p style="margin-top:28px;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;color:var(--gold);">
+    ECpay 綠界安全付款 · 全台超商 / 郵局 / 黑貓宅配
+  </p>
+</section>
+
+<footer>
+  <div class="brand-en" style="font-family:'Cormorant Garamond',serif;">Gander <em style="color:var(--gold-pale)">Cafe</em></div>
+  <p style="margin-top:16px;">花蓮 · 精品咖啡烘焙</p>
+  <p style="margin-top:8px;font-size:0.65rem;opacity:0.5;">© 2025 Gander Cafe · All rights reserved</p>
+</footer>
+
+<!-- ── CART PANEL ── -->
+<div class="overlay" id="cartOverlay" onclick="closeIfOverlay(event,'cartOverlay')">
+  <aside class="cart-panel">
+    <div class="panel-header">
+      <span class="panel-title">購物車</span>
+      <button class="btn-close" onclick="closeCart()">✕</button>
     </div>
-    <div class="summary-bar" id="roasted-summary"></div>
-    <div class="cards-grid" id="roasted-cards"></div>
+    <div class="cart-body" id="cartBody">
+      <div class="cart-empty">還沒有商品喔 ☕</div>
+    </div>
 
-    <div class="roast-log-section">
-      <div class="section-title">
-        <h2>烘豆記錄 <span>ROAST LOG</span></h2>
-        <button class="btn-add" onclick="openModal('log')">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          新增烘豆記錄
-        </button>
+    <!-- Discount code -->
+    <div class="discount-row">
+      <label>折扣碼 / 優惠代碼</label>
+      <div class="discount-input-row">
+        <input class="discount-input" id="discountInput" placeholder="輸入折扣碼" />
+        <button class="btn-apply-code" onclick="applyDiscountCode()">套用</button>
       </div>
-      <div class="log-table-wrap">
-        <table>
+      <div class="discount-applied" id="discountMsg"></div>
+    </div>
+
+    <div class="cart-footer">
+      <!-- Shipping -->
+      <div class="shipping-select-section">
+        <label>運送方式</label>
+        <div class="shipping-options" id="shippingOptions"></div>
+      </div>
+      <!-- Summary -->
+      <div class="cart-summary-row"><span>商品小計</span><span id="subtotalDisplay">NT$0</span></div>
+      <div class="cart-summary-row" id="discountDisplay" style="display:none;"><span>折扣</span><span id="discountAmtDisplay" style="color:var(--sage)"></span></div>
+      <div class="cart-summary-row"><span>運費</span><span id="shippingDisplay">NT$0</span></div>
+      <div class="cart-summary-row total"><span>合計</span><span id="totalDisplay">NT$0</span></div>
+      <button class="btn-checkout" onclick="checkout()">前往結帳 — ECpay 綠界</button>
+    </div>
+  </aside>
+</div>
+
+<!-- ── MEMBER LOGIN MODAL ── -->
+<div class="modal-overlay" id="memberModal" onclick="closeIfOverlay(event,'memberModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="memberModalTitle">會員中心</span>
+      <button class="btn-close" onclick="closeModal('memberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="memberContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN LOGIN MODAL ── -->
+<div class="modal-overlay" id="adminLoginModal" onclick="closeIfOverlay(event,'adminLoginModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">店家後台登入</span>
+      <button class="btn-close" onclick="closeModal('adminLoginModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">密碼</label>
+        <input type="password" class="form-input" id="adminPwInput" placeholder="輸入管理員密碼" />
+      </div>
+      <p style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;">示範密碼：<strong>admin123</strong></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('adminLoginModal')">取消</button>
+      <button class="btn-modal-save" onclick="doAdminLogin()">登入後台</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PRODUCT EDIT MODAL ── -->
+<div class="modal-overlay" id="productModal" onclick="closeIfOverlay(event,'productModal')">
+  <div class="modal" style="width:min(560px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="productModalTitle">新增熟豆</span>
+      <button class="btn-close" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">豆名</label>
+        <input type="text" class="form-input" id="pm-name" placeholder="例：耶加雪菲 日曬" />
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">烘焙度</label>
+          <select class="form-select" id="pm-roast">
+            <option value="light">淺焙</option>
+            <option value="medium-light">淺中焙</option>
+            <option value="medium">中焙</option>
+            <option value="dark">深焙</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">產地 / 品種</label>
+          <input type="text" class="form-input" id="pm-origin" placeholder="衣索比亞 · Heirloom" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">風味描述</label>
+        <textarea class="form-textarea" id="pm-flavor" placeholder="藍莓、茉莉花、柑橘酸質"></textarea>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">單包售價 (NT$)</label>
+          <input type="number" class="form-input" id="pm-price" placeholder="450" min="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">現貨數量 (包)</label>
+          <input type="number" class="form-input" id="pm-qty" placeholder="10" min="0" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">照片網址（選填）</label>
+        <input type="text" class="form-input" id="pm-img" placeholder="https://..." />
+      </div>
+      <div class="form-group">
+        <label class="form-label">可購買</label>
+        <select class="form-select" id="pm-avail">
+          <option value="yes">是 — 公開販售</option>
+          <option value="no">否 — 暫停供應</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('productModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveProduct()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GREEN BEAN EDIT MODAL ── -->
+<div class="modal-overlay" id="greenModal" onclick="closeIfOverlay(event,'greenModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="greenModalTitle">新增生豆</span>
+      <button class="btn-close" onclick="closeModal('greenModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">豆名</label>
+        <input type="text" class="form-input" id="gm-name" placeholder="衣索比亞 耶加雪菲 G1" />
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">產地 / 處理法</label>
+          <input type="text" class="form-input" id="gm-origin" placeholder="衣索比亞 · 日曬" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">庫存 (kg)</label>
+          <input type="number" class="form-input" id="gm-stock" placeholder="5.0" min="0" step="0.1" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">豆商提供風味描述</label>
+        <textarea class="form-textarea" id="gm-flavor" placeholder="黑糖、藍莓、熱帶水果…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">預購單包售價 (NT$，240g)</label>
+        <input type="number" class="form-input" id="gm-price" placeholder="380" min="0" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('greenModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveGreenBean()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MEMBER VOUCHER MODAL ── -->
+<div class="modal-overlay" id="voucherModal" onclick="closeIfOverlay(event,'voucherModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">建立儲值帳號</span>
+      <button class="btn-close" onclick="closeModal('voucherModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">姓名</label>
+        <input type="text" class="form-input" id="vc-name" placeholder="王小明" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="vc-email" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">設定密碼</label>
+        <input type="password" class="form-input" id="vc-pw" placeholder="至少 6 字元" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">儲值碼（由店家提供）</label>
+        <input type="text" class="form-input" id="vc-code" placeholder="GANDER-XXXX" />
+      </div>
+      <div class="discount-tier-info">
+        <p>
+          輸入店家提供的儲值碼後，系統自動綁定您的消費折扣：<br>
+          <strong>累計消費滿萬元</strong>享 <strong>95 折</strong><br>
+          <strong>累計消費滿兩萬元</strong>享 <strong>9 折</strong><br>
+          <strong>累計消費滿三萬元</strong>享 <strong>85 折</strong>
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('voucherModal')">取消</button>
+      <button class="btn-modal-save" onclick="registerWithVoucher()">建立帳號</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN PANEL ── -->
+<div class="admin-overlay" id="adminPanel">
+  <div class="admin-topbar">
+    <div class="admin-title">Gander Cafe 後台管理 <small>ADMIN DASHBOARD</small></div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(247,242,232,0.5);">管理員已登入</span>
+      <button class="btn-modal-cancel" onclick="closeAdmin()" style="border-color:rgba(255,255,255,0.2);color:rgba(247,242,232,0.7);">離開後台</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('roasted')">熟豆管理</button>
+      <button class="admin-tab" onclick="switchAdminTab('green')">生豆管理</button>
+      <button class="admin-tab" onclick="switchAdminTab('members')">會員管理</button>
+    </div>
+
+    <!-- Roasted tab -->
+    <div class="admin-section active" id="admin-roasted">
+      <div class="admin-section-header">
+        <span class="admin-section-title">熟豆品項管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openProductModal()">＋ 新增熟豆</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
           <thead>
             <tr>
-              <th>日期</th>
-              <th>生豆來源</th>
-              <th>生豆用量</th>
-              <th>烘焙度</th>
-              <th>熟豆產出</th>
-              <th>熟豆名稱</th>
-              <th>備註</th>
+              <th>豆名</th><th>烘焙度</th><th>產地</th>
+              <th>售價</th><th>現貨(包)</th><th>狀態</th><th>操作</th>
             </tr>
           </thead>
-          <tbody id="log-body"></tbody>
+          <tbody id="adminRoastedTbl"></tbody>
         </table>
       </div>
     </div>
-  </div>
 
-  <!-- ─── Green Beans Panel ─── -->
-  <div id="panel-green" class="panel">
-    <div class="section-title">
-      <h2>生豆庫存 <span>GREEN BEANS</span></h2>
-      <button class="btn-add" onclick="openModal('green')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        新增生豆
-      </button>
+    <!-- Green tab -->
+    <div class="admin-section" id="admin-green">
+      <div class="admin-section-header">
+        <span class="admin-section-title">生豆庫存管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openGreenModal()">＋ 新增生豆</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>豆名</th><th>產地/處理法</th><th>庫存(kg)</th><th>預購價</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="adminGreenTbl"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="summary-bar" id="green-summary"></div>
-    <div class="cards-grid" id="green-cards"></div>
-  </div>
 
-</main>
-
-<!-- ─── Add Green Bean Modal ─── -->
-<div class="modal-overlay" id="modal-green">
-  <div class="modal">
-    <h3>新增生豆</h3>
-    <div class="form-row">
-      <label>豆名 Bean Name</label>
-      <input type="text" id="g-name" placeholder="例：衣索比亞 耶加雪菲">
-    </div>
-    <div class="form-row-2">
-      <div class="form-row" style="margin:0">
-        <label>產地 Origin</label>
-        <input type="text" id="g-origin" placeholder="衣索比亞">
+    <!-- Members tab -->
+    <div class="admin-section" id="admin-members">
+      <div class="admin-section-header">
+        <span class="admin-section-title">會員管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openIssueVoucher()">＋ 發行儲值碼</button>
       </div>
-      <div class="form-row" style="margin:0">
-        <label>處理法 Process</label>
-        <input type="text" id="g-process" placeholder="日曬">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>姓名</th><th>Email</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
+          </thead>
+          <tbody id="adminMemberTbl"></tbody>
+        </table>
       </div>
-    </div>
-    <div class="form-row-2" style="margin-top:18px">
-      <div class="form-row" style="margin:0">
-        <label>庫存 (g)</label>
-        <input type="number" id="g-stock" placeholder="5000" min="0">
+      <div style="margin-top:32px;">
+        <div class="admin-section-title" style="font-size:1.1rem;margin-bottom:16px;">現有折扣碼</div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>折扣碼</th><th>折扣</th><th>使用次數</th><th>操作</th></tr></thead>
+            <tbody id="adminCouponTbl"></tbody>
+          </table>
+        </div>
+        <button class="btn-outline" style="margin-top:16px;font-size:0.75rem;padding:10px 20px;" onclick="openAddCoupon()">＋ 建立折扣碼</button>
       </div>
-      <div class="form-row" style="margin:0">
-        <label>最大容量 (g)</label>
-        <input type="number" id="g-max" placeholder="10000" min="0">
-      </div>
-    </div>
-    <div class="form-row">
-      <label>備註 Notes</label>
-      <textarea id="g-notes" placeholder="批次、採購日期…"></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('green')">取消</button>
-      <button class="btn-save" onclick="saveGreen()">儲存</button>
     </div>
   </div>
 </div>
 
-<!-- ─── Add Roasted Bean Modal ─── -->
-<div class="modal-overlay" id="modal-roasted">
+<!-- Issue Voucher Modal -->
+<div class="modal-overlay" id="issueVoucherModal" onclick="closeIfOverlay(event,'issueVoucherModal')">
   <div class="modal">
-    <h3>新增熟豆現貨</h3>
-    <div class="form-row">
-      <label>品名 Name</label>
-      <input type="text" id="r-name" placeholder="例：耶加雪菲 日曬淺焙">
+    <div class="modal-header">
+      <span class="modal-title">發行儲值碼</span>
+      <button class="btn-close" onclick="closeModal('issueVoucherModal')">✕</button>
     </div>
-    <div class="form-row-2">
-      <div class="form-row" style="margin:0">
-        <label>烘焙度</label>
-        <select id="r-roast">
-          <option value="light">淺焙 Light</option>
-          <option value="medium-light">淺中焙 Medium Light</option>
-          <option value="medium">中焙 Medium</option>
-          <option value="dark">深焙 Dark</option>
-        </select>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">儲值碼（留空自動產生）</label>
+        <input type="text" class="form-input" id="iv-code" placeholder="GANDER-XXXX" />
       </div>
-      <div class="form-row" style="margin:0">
-        <label>庫存 (g)</label>
-        <input type="number" id="r-stock" placeholder="500" min="0">
+      <div class="discount-tier-info">
+        <p>儲值碼讓指定消費者建立帳號後，系統依其累計消費自動套用折扣。</p>
       </div>
-    </div>
-    <div class="form-row-2" style="margin-top:18px">
-      <div class="form-row" style="margin:0">
-        <label>最大容量 (g)</label>
-        <input type="number" id="r-max" placeholder="2000" min="0">
-      </div>
-      <div class="form-row" style="margin:0">
-        <label>可購買</label>
-        <select id="r-available">
-          <option value="yes">是 ✓</option>
-          <option value="no">否 ✗</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <label>備註 Notes</label>
-      <textarea id="r-notes" placeholder="風味描述、烘豆日期…"></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('roasted')">取消</button>
-      <button class="btn-save" onclick="saveRoasted()">儲存</button>
+      <button class="btn-modal-cancel" onclick="closeModal('issueVoucherModal')">取消</button>
+      <button class="btn-modal-save" onclick="issueVoucher()">產生儲值碼</button>
     </div>
   </div>
 </div>
 
-<!-- ─── Add Roast Log Modal ─── -->
-<div class="modal-overlay" id="modal-log">
+<!-- Add Coupon Modal -->
+<div class="modal-overlay" id="couponModal" onclick="closeIfOverlay(event,'couponModal')">
   <div class="modal">
-    <h3>新增烘豆記錄</h3>
-    <div class="form-row-2">
-      <div class="form-row" style="margin:0">
-        <label>烘豆日期</label>
-        <input type="date" id="l-date">
-      </div>
-      <div class="form-row" style="margin:0">
-        <label>生豆用量 (g)</label>
-        <input type="number" id="l-green-amount" placeholder="500" min="0">
-      </div>
+    <div class="modal-header">
+      <span class="modal-title">建立折扣碼</span>
+      <button class="btn-close" onclick="closeModal('couponModal')">✕</button>
     </div>
-    <div class="form-row" style="margin-top:18px">
-      <label>生豆來源</label>
-      <select id="l-green-src"></select>
-    </div>
-    <div class="form-row-2">
-      <div class="form-row" style="margin:0">
-        <label>烘焙度</label>
-        <select id="l-roast">
-          <option value="light">淺焙 Light</option>
-          <option value="medium-light">淺中焙 Medium Light</option>
-          <option value="medium">中焙 Medium</option>
-          <option value="dark">深焙 Dark</option>
-        </select>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">折扣碼</label>
+          <input type="text" class="form-input" id="cp-code" placeholder="SUMMER10" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">折扣 (%)</label>
+          <input type="number" class="form-input" id="cp-pct" placeholder="10" min="1" max="50" />
+        </div>
       </div>
-      <div class="form-row" style="margin:0">
-        <label>熟豆產出 (g)</label>
-        <input type="number" id="l-output" placeholder="430" min="0">
-      </div>
-    </div>
-    <div class="form-row">
-      <label>更新熟豆庫存</label>
-      <select id="l-roasted-dest">
-        <option value="">-- 不更新 --</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label>備註</label>
-      <textarea id="l-notes" placeholder="烘豆機、曲線、觀察…"></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('log')">取消</button>
-      <button class="btn-save" onclick="saveLog()">儲存並更新</button>
+      <button class="btn-modal-cancel" onclick="closeModal('couponModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveCoupon()">建立</button>
     </div>
   </div>
 </div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script>
-// ─── Data Store ───────────────────────────────────────────
-const STORAGE_KEY = 'coffee_inventory_v1';
+// ════════════════════════════════════════
+// API CONFIG
+// 部署 Workers 後，將下方 URL 換成你的 Workers 網址
+// 例：https://gander-cafe-api.YOUR-SUBDOMAIN.workers.dev
+// ════════════════════════════════════════
+const API = 'https://gander-cafe-api.crazyfly.workers.dev';
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
-  return {
-    green: [
-      { id: 1, name: '耶加雪菲 G1', origin: '衣索比亞', process: '日曬', stock: 4500, max: 8000, notes: '2024新批次' },
-      { id: 2, name: '瓜地馬拉 安提瓜', origin: '瓜地馬拉', process: '水洗', stock: 2200, max: 5000, notes: '莊園直購' },
-      { id: 3, name: '巴西 喜拉朵', origin: '巴西', process: '日曬', stock: 7800, max: 10000, notes: '' },
-    ],
-    roasted: [
-      { id: 1, name: '耶加雪菲淺焙', roast: 'light', stock: 380, max: 1000, available: 'yes', notes: '藍莓、茉莉花香' },
-      { id: 2, name: '安提瓜中焙', roast: 'medium', stock: 620, max: 1500, available: 'yes', notes: '焦糖、堅果' },
-      { id: 3, name: '喜拉朵深焙', roast: 'dark', stock: 90, max: 1200, available: 'no', notes: '巧克力、醇厚' },
-    ],
-    logs: [
-      { id: 1, date: '2025-03-14', greenSrc: '耶加雪菲 G1', greenAmount: 600, roast: 'light', output: 512, roastedDest: '耶加雪菲淺焙', notes: '一爆密集' },
-    ],
-    nextId: { green: 4, roasted: 4, log: 2 }
-  };
-}
+// In-memory cache (讀自 API，不再用 localStorage)
+let store = { roasted: [], green: [], members: [], vouchers: [], coupons: [] };
 
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-let data = loadData();
+// Token storage (只存在 sessionStorage，關分頁即清除)
+function getAdminToken(){ return sessionStorage.getItem('gander_admin_tk') || ''; }
+function setAdminToken(t){ sessionStorage.setItem('gander_admin_tk', t); }
+function getMemberToken(){ return sessionStorage.getItem('gander_member_tk') || ''; }
+function setMemberToken(t){ sessionStorage.setItem('gander_member_tk', t); }
+function clearMemberToken(){ sessionStorage.removeItem('gander_member_tk'); }
 
-// ─── Date ─────────────────────────────────────────────────
-function updateDate() {
-  const now = new Date();
-  const days = ['日','一','二','三','四','五','六'];
-  document.getElementById('headerDate').innerHTML =
-    `${now.getFullYear()} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日<br>星期${days[now.getDay()]}`;
-}
-updateDate();
-
-// ─── Tabs ─────────────────────────────────────────────────
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => {
-    b.classList.toggle('active', (i===0 && tab==='roasted') || (i===1 && tab==='green'));
+// ── Core fetch helpers ─────────────────
+async function apiFetch(path, opts = {}) {
+  const token = opts.admin ? getAdminToken() : getMemberToken();
+  const res = await fetch(API + path, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+    },
+    ...opts,
   });
-  document.getElementById('panel-roasted').classList.toggle('active', tab==='roasted');
-  document.getElementById('panel-green').classList.toggle('active', tab==='green');
+  return res.json();
 }
 
-// ─── Render ───────────────────────────────────────────────
-const roastLabel = { light:'淺焙', 'medium-light':'淺中焙', medium:'中焙', dark:'深焙' };
-const roastClass = { light:'roast-light', 'medium-light':'roast-medium-light', medium:'roast-medium', dark:'roast-dark' };
+async function apiGet(path, admin = false) {
+  return apiFetch(path, { method: 'GET', admin });
+}
+async function apiPost(path, body, admin = false) {
+  return apiFetch(path, { method: 'POST', body: JSON.stringify(body), admin });
+}
+async function apiPut(path, body) {
+  return apiFetch(path, { method: 'PUT', body: JSON.stringify(body), admin: true });
+}
+async function apiDel(path) {
+  return apiFetch(path, { method: 'DELETE', admin: true });
+}
 
-function renderGreen() {
-  const totalStock = data.green.reduce((s,b)=>s+b.stock, 0);
-  const varieties  = data.green.length;
-  document.getElementById('green-summary').innerHTML = `
-    <div class="summary-stat">
-      <div class="s-label">品項數量</div>
-      <div class="s-value">${varieties}<span class="s-unit">種</span></div>
-    </div>
-    <div class="summary-stat">
-      <div class="s-label">總庫存</div>
-      <div class="s-value">${(totalStock/1000).toFixed(1)}<span class="s-unit">kg</span></div>
-    </div>
-  `;
-  const grid = document.getElementById('green-cards');
-  if (!data.green.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🌱</div>尚無生豆庫存，請新增</div>`;
-    return;
+// ── Bootstrap: load public data on page open ──
+async function loadPublicData() {
+  const [r, g] = await Promise.all([
+    apiGet('/api/roasted'),
+    apiGet('/api/green'),
+  ]);
+  if (r.ok) store.roasted = r.data;
+  if (g.ok) store.green   = g.data;
+  // Normalise field names (API uses img_url / stock_kg)
+  store.roasted = store.roasted.map(b => ({ ...b, img: b.img_url, avail: b.avail }));
+  store.green   = store.green.map(b => ({ ...b, stock: b.stock_kg }));
+  renderRoastedGrid();
+  renderGreenGrid();
+}
+
+// ── Load admin data (after admin login) ──
+async function loadAdminData() {
+  const [m, v, c] = await Promise.all([
+    apiGet('/api/members', true),
+    apiGet('/api/vouchers', true),
+    apiGet('/api/coupons'),
+  ]);
+  if (m.ok) store.members  = m.data;
+  if (v.ok) store.vouchers = v.data;
+  if (c.ok) store.coupons  = c.data.map(x => ({ code: x.code, pct: x.discount_pct, used: x.used_count }));
+  renderAdminAll();
+}
+
+// ════════════════════════════════════════
+// CART
+// ════════════════════════════════════════
+let cart = [];         // [{id, name, type:'roasted'|'preorder', qty, price, spec}]
+let currentMember = null;
+let appliedDiscount = 0;  // percentage off (e.g. 5 = 5% off)
+let selectedShipping = 'post';
+let editingProductId = null;
+let editingGreenId = null;
+
+const SHIPPING = {
+  post:    { name:'郵局寄送', note:'滿千免運，未滿 NT$80', base:80 },
+  cvs:     { name:'超商店到店', note:'滿千免運，未滿 NT$60', base:60 },
+  kerry:   { name:'黑貓宅配', note:'滿千NT$100，滿兩千NT$50，滿兩千免運(需購滿NT$2000)', base:100 },
+};
+
+function cartSubtotal(){
+  return cart.reduce((s,i)=>s+i.price*i.qty, 0);
+}
+function calcShipping(sub){
+  if(selectedShipping==='post'||selectedShipping==='cvs'){
+    return sub>=1000 ? 0 : SHIPPING[selectedShipping].base;
+  } else {
+    if(sub>=2000) return 0;
+    if(sub>=1000) return 50;
+    return 100;
   }
-  grid.innerHTML = data.green.map(b => {
-    const pct = Math.min(100, Math.round(b.stock / b.max * 100));
-    return `
-    <div class="bean-card green" style="animation-delay:${Math.random()*0.15}s">
-      <div class="card-header">
+}
+function memberDiscount(){
+  if(!currentMember) return 0;
+  const s = currentMember.spent;
+  if(s>=30000) return 15;
+  if(s>=20000) return 10;
+  if(s>=10000) return 5;
+  return 0;
+}
+function calcTotal(){
+  const sub = cartSubtotal();
+  const discPct = Math.max(appliedDiscount, memberDiscount());
+  const discAmt = Math.round(sub * discPct / 100);
+  const ship = calcShipping(sub);
+  return { sub, discPct, discAmt, ship, total: sub - discAmt + ship };
+}
+
+function updateCartCount(){
+  const n = cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').textContent = n;
+}
+
+function renderCart(){
+  const body = document.getElementById('cartBody');
+  if(!cart.length){ body.innerHTML='<div class="cart-empty">還沒有商品喔 ☕</div>'; }
+  else {
+    body.innerHTML = cart.map((item,i)=>`
+      <div class="cart-item">
+        <div class="cart-item-img">${item.name[0]}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-spec">${item.spec}</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="cartQty(${i},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="cartQty(${i},1)">＋</button>
+            <button class="btn-remove" onclick="cartRemove(${i})" title="移除">✕</button>
+          </div>
+        </div>
+        <div class="cart-item-price">NT$${(item.price*item.qty).toLocaleString()}</div>
+      </div>`).join('');
+  }
+  // Shipping options
+  const so = document.getElementById('shippingOptions');
+  so.innerHTML = Object.entries(SHIPPING).map(([k,v])=>`
+    <div class="shipping-opt ${selectedShipping===k?'selected':''}" onclick="selectShipping('${k}')">
+      <div class="shipping-opt-left">
+        <input type="radio" name="shipping" ${selectedShipping===k?'checked':''} />
         <div>
-          <div class="card-name">${b.name}</div>
-          <div class="card-origin">${b.origin} · ${b.process}</div>
-        </div>
-        <div class="card-actions">
-          <button class="btn-icon" onclick="editGreen(${b.id})" title="編輯">✎</button>
-          <button class="btn-icon" onclick="deleteBean('green',${b.id})" title="刪除">✕</button>
+          <div class="shipping-opt-name">${v.name}</div>
+          <div class="shipping-opt-note">${v.note}</div>
         </div>
       </div>
-      <div class="card-stock">
-        <div class="stock-label">庫存量</div>
-        <div class="stock-value">${b.stock >= 1000 ? (b.stock/1000).toFixed(1) : b.stock}</div>
-        <div class="stock-unit">${b.stock >= 1000 ? 'kg' : 'g'} / ${b.max >= 1000 ? (b.max/1000).toFixed(1)+'kg' : b.max+'g'} &nbsp;(${pct}%)</div>
+      <div class="shipping-opt-price">${calcShipping(cartSubtotal())===0&&selectedShipping===k?'免運':'NT$'+calcShipping(cartSubtotal())}</div>
+    </div>`).join('');
+  // Summary
+  const {sub,discPct,discAmt,ship,total} = calcTotal();
+  document.getElementById('subtotalDisplay').textContent = 'NT$'+sub.toLocaleString();
+  document.getElementById('shippingDisplay').textContent = ship===0?'免運':'NT$'+ship;
+  document.getElementById('totalDisplay').textContent = 'NT$'+total.toLocaleString();
+  const discRow = document.getElementById('discountDisplay');
+  if(discPct>0){
+    discRow.style.display='flex';
+    document.getElementById('discountAmtDisplay').textContent = '-NT$'+discAmt.toLocaleString()+` (${100-discPct}折)`;
+  } else { discRow.style.display='none'; }
+  updateCartCount();
+}
+
+function cartQty(i, d){
+  cart[i].qty = Math.max(1, cart[i].qty + d);
+  renderCart();
+}
+function cartRemove(i){ cart.splice(i,1); renderCart(); }
+function selectShipping(k){ selectedShipping=k; renderCart(); }
+
+function addToCart(type, id, qty){
+  const item = type==='roasted'
+    ? store.roasted.find(b=>b.id===id)
+    : store.green.find(b=>b.id===id);
+  if(!item) return;
+  const spec = type==='roasted'
+    ? `半磅 240g · ${roastLabel(item.roast)}`
+    : `預購接單烘焙 · 240g×${qty}包`;
+  const existing = cart.find(c=>c.id===id&&c.type===type);
+  if(existing){ existing.qty+=qty; }
+  else { cart.push({id, name:item.name, type, qty, price:item.price, spec}); }
+  renderCart(); openCart();
+  showToast(`「${item.name}」已加入購物車`);
+}
+
+function openCart(){ document.getElementById('cartOverlay').classList.add('open'); }
+function closeCart(){ document.getElementById('cartOverlay').classList.remove('open'); }
+
+// ════════════════════════════════════════
+// DISCOUNT CODE
+// ════════════════════════════════════════
+async function applyDiscountCode(){
+  const code = document.getElementById('discountInput').value.trim().toUpperCase();
+  const msg = document.getElementById('discountMsg');
+  msg.style.display='block'; msg.style.color='var(--muted)'; msg.textContent='驗證中…';
+  try {
+    const r = await apiPost('/api/coupons/apply', { code });
+    if(r.ok){
+      appliedDiscount = r.discount_pct;
+      msg.style.color='var(--sage)';
+      msg.textContent = `✓ 折扣碼已套用：${r.discount_pct}% off`;
+      renderCart();
+    } else {
+      msg.style.color='#c0392b';
+      msg.textContent = r.error || '折扣碼無效，請確認後重試';
+    }
+  } catch { msg.style.color='#c0392b'; msg.textContent='網路錯誤，請稍後再試'; }
+}
+
+// ════════════════════════════════════════
+// CHECKOUT (ECpay mock → Phase 3 real)
+// ════════════════════════════════════════
+async function checkout(){
+  if(!cart.length){ showToast('購物車是空的'); return; }
+  const {sub,discAmt,ship,total} = calcTotal();
+  // Phase 3: POST to /api/orders → Workers 產生 ECpay 表單 → redirect
+  const r = await apiPost('/api/orders', {
+    member_id: currentMember?.id || null,
+    items: cart,
+    subtotal: sub,
+    discount_amt: discAmt,
+    shipping_fee: ship,
+    total,
+    shipping_type: selectedShipping,
+  });
+  if(r.ok){
+    alert(`【模擬結帳】訂單 #${r.order_id} 已建立\n合計 NT$${total.toLocaleString()}\n運送：${SHIPPING[selectedShipping].name}\n\n正式串接 ECpay 後將自動跳轉付款頁面。`);
+    cart = []; renderCart();
+  } else {
+    showToast('結帳失敗，請稍後再試');
+  }
+}
+
+// ════════════════════════════════════════
+// MEMBER SYSTEM
+// ════════════════════════════════════════
+function openMemberModal(){
+  document.getElementById('memberModal').classList.add('open');
+  renderMemberContent();
+}
+function renderMemberContent(){
+  const el = document.getElementById('memberContent');
+  if(currentMember){
+    const disc = memberDiscount();
+    const tier = disc===15?'85折會員':disc===10?'9折會員':disc===5?'95折會員':'一般會員';
+    el.innerHTML = `
+      <div style="text-align:center;padding:8px 0 20px;">
+        <div class="member-avatar" style="width:56px;height:56px;font-size:1.2rem;margin:0 auto 12px;">${currentMember.name[0]}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--roast-deep);">${currentMember.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-top:4px;">${currentMember.email}</div>
+        ${disc>0?`<div class="member-badge gold" style="margin:12px auto 0;">★ ${tier}</div>`:''}
       </div>
-      <div class="stock-bar-wrap"><div class="stock-bar" style="width:${pct}%"></div></div>
-      ${b.notes ? `<div class="card-meta"><div class="meta-item">備註 <strong>${b.notes}</strong></div></div>` : ''}
+      <div class="discount-tier-info">
+        <p>累計消費：<strong>NT$${(currentMember.spent||0).toLocaleString()}</strong><br>
+        ${disc>0?`目前享有：<strong>${100-disc}折優惠</strong>`:'消費累計滿萬元即享折扣'}</p>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;">
+        <button class="btn-outline" style="flex:1;font-size:0.75rem;" onclick="closeModal('memberModal')">關閉</button>
+        <button class="btn-modal-save" style="flex:1;" onclick="memberLogout()">登出</button>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div class="login-tabs">
+        <button class="login-tab active" onclick="switchLoginTab('login')">會員登入</button>
+        <button class="login-tab" onclick="switchLoginTab('register')">儲值碼建立帳號</button>
+      </div>
+      <div class="login-panel active" id="lp-login">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="li-email" placeholder="your@email.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">密碼</label>
+          <input type="password" class="form-input" id="li-pw" placeholder="密碼"/>
+        </div>
+        <button class="btn-modal-save" style="width:100%;margin-top:4px;" onclick="doLogin()">登入</button>
+      </div>
+      <div class="login-panel" id="lp-register">
+        <p style="font-size:0.82rem;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+          持有店家發行的儲值碼，可建立專屬帳號，享有累計消費折扣。
+        </p>
+        <button class="btn-outline" style="width:100%;" onclick="openRegister()">以儲值碼建立帳號</button>
+      </div>`;
+  }
+}
+function switchLoginTab(t){
+  document.querySelectorAll('.login-tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='register')));
+  document.getElementById('lp-login').classList.toggle('active',t==='login');
+  document.getElementById('lp-register').classList.toggle('active',t==='register');
+}
+async function doLogin(){
+  const email = document.getElementById('li-email').value.trim();
+  const pw = document.getElementById('li-pw').value;
+  try {
+    const r = await apiPost('/api/auth/login', { email, password: pw });
+    if(r.ok){
+      setMemberToken(r.token);
+      currentMember = r.member;
+      updateMemberBtn(); closeModal('memberModal');
+      showToast(`歡迎回來，${r.member.name}！`);
+      renderCart();
+    } else { showToast(r.error || '帳號或密碼錯誤'); }
+  } catch { showToast('網路錯誤'); }
+}
+function memberLogout(){
+  currentMember=null; appliedDiscount=0;
+  clearMemberToken();
+  updateMemberBtn(); closeModal('memberModal');
+  renderCart(); showToast('已登出');
+}
+function updateMemberBtn(){
+  const btn = document.getElementById('memberBtn');
+  if(currentMember){
+    btn.innerHTML = `<div class="member-avatar">${currentMember.name[0]}</div> ${currentMember.name}`;
+  } else { btn.textContent = '會員登入'; }
+}
+function openRegister(){
+  closeModal('memberModal');
+  document.getElementById('voucherModal').classList.add('open');
+}
+async function registerWithVoucher(){
+  const name  = document.getElementById('vc-name').value.trim();
+  const email = document.getElementById('vc-email').value.trim();
+  const pw    = document.getElementById('vc-pw').value;
+  const code  = document.getElementById('vc-code').value.trim().toUpperCase();
+  if(!name||!email||!pw){ showToast('請填寫所有欄位'); return; }
+  try {
+    const r = await apiPost('/api/auth/register', { name, email, password: pw, voucher_code: code });
+    if(r.ok){
+      setMemberToken(r.token);
+      currentMember = r.member;
+      updateMemberBtn();
+      closeModal('voucherModal');
+      showToast(`帳號建立成功，歡迎 ${name}！`);
+      renderCart();
+    } else { showToast(r.error || '註冊失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+
+// ════════════════════════════════════════
+// PRODUCT CARDS RENDER
+// ════════════════════════════════════════
+const roastMap = { light:['rl','淺焙'], 'medium-light':['rml','淺中焙'], medium:['rm','中焙'], dark:['rd','深焙'] };
+function roastLabel(r){ return roastMap[r]?roastMap[r][1]:r; }
+function roastClass(r){ return roastMap[r]?roastMap[r][0]:'rl'; }
+
+function renderRoastedGrid(){
+  const grid = document.getElementById('roastedGrid');
+  if(!store.roasted.length){ grid.innerHTML='<p style="color:var(--muted)">載入中…</p>'; return; }
+  grid.innerHTML = store.roasted.map(b=>{
+    const avail = b.avail==='yes'&&b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img?`<img src="${b.img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.innerHTML='☕'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">
+          ${avail?'現貨':b.qty===0?'售完':'暫停供應'}
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="product-roast ${roastClass(b.roast)}">
+          <span class="roast-dot"></span>${roastLabel(b.roast)}
+        </div>
+        <div class="product-name">${b.name}</div>
+        <div class="product-origin">${b.origin}</div>
+        <div class="product-flavor">${b.flavor}</div>
+        <div class="product-footer">
+          <div class="product-spec">半磅 240g / 包<br>現貨：${b.qty} 包</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}<span>/包</span></div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('r${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-r${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('r${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('roasted',${b.id},parseInt(document.getElementById('qty-r${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停供應'}
+        </button>
+      </div>
     </div>`;
   }).join('');
 }
 
-function renderRoasted() {
-  const avail = data.roasted.filter(b=>b.available==='yes').length;
-  const totalStock = data.roasted.reduce((s,b)=>s+b.stock, 0);
-  document.getElementById('roasted-summary').innerHTML = `
-    <div class="summary-stat">
-      <div class="s-label">可購買品項</div>
-      <div class="s-value">${avail}<span class="s-unit">種</span></div>
-    </div>
-    <div class="summary-stat">
-      <div class="s-label">總現貨</div>
-      <div class="s-value">${(totalStock/1000).toFixed(2)}<span class="s-unit">kg</span></div>
-    </div>
-  `;
-  const grid = document.getElementById('roasted-cards');
-  if (!data.roasted.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">☕</div>尚無熟豆現貨，請新增</div>`;
-    return;
-  }
-  grid.innerHTML = data.roasted.map(b => {
-    const pct = Math.min(100, Math.round(b.stock / b.max * 100));
-    return `
-    <div class="bean-card roasted" style="animation-delay:${Math.random()*0.15}s">
-      <div class="card-header">
-        <div>
-          <div class="card-name">${b.name}</div>
-          <div style="margin-top:5px"><span class="roast-badge ${roastClass[b.roast]}">${roastLabel[b.roast]}</span></div>
-        </div>
-        <div class="card-actions">
-          <button class="btn-icon" onclick="editRoasted(${b.id})" title="編輯">✎</button>
-          <button class="btn-icon" onclick="deleteBean('roasted',${b.id})" title="刪除">✕</button>
-        </div>
+function renderGreenGrid(){
+  const grid = document.getElementById('greenBeanGrid');
+  if(!store.green.length){ grid.innerHTML='<p style="color:rgba(247,242,232,0.5)">載入中…</p>'; return; }
+  grid.innerHTML = store.green.map(b=>`
+    <div class="green-bean-card">
+      <div class="gb-name">${b.name}</div>
+      <div class="gb-stock">庫存 ${b.stock} kg · ${b.origin}</div>
+      <div class="gb-flavor">${b.flavor}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(247,242,232,0.6);margin-bottom:12px;">
+        預購價 NT$${b.price.toLocaleString()} / 240g包
       </div>
-      <div class="avail-badge ${b.available}">
-        <span class="avail-dot"></span>
-        ${b.available==='yes' ? '可購買' : '暫無供應'}
+      <div class="gb-order">
+        <select class="gb-select" id="gb-qty-${b.id}">
+          ${[1,2,3,4,5,6].map(n=>`<option value="${n}">${n} 包 (${n*240}g)</option>`).join('')}
+        </select>
+        <button class="btn-preorder" onclick="preorderGreen(${b.id})">預購</button>
       </div>
-      <div class="card-stock" style="margin-top:10px">
-        <div class="stock-label">現貨量</div>
-        <div class="stock-value">${b.stock >= 1000 ? (b.stock/1000).toFixed(2) : b.stock}</div>
-        <div class="stock-unit">${b.stock >= 1000 ? 'kg' : 'g'} / ${b.max >= 1000 ? (b.max/1000).toFixed(1)+'kg' : b.max+'g'} &nbsp;(${pct}%)</div>
-      </div>
-      <div class="stock-bar-wrap"><div class="stock-bar" style="width:${pct}%"></div></div>
-      ${b.notes ? `<div class="card-meta"><div class="meta-item">風味 <strong>${b.notes}</strong></div></div>` : ''}
-    </div>`;
-  }).join('');
+    </div>`).join('');
+}
 
-  // Log
-  const tbody = document.getElementById('log-body');
-  if (!data.logs.length) {
-    tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon" style="font-size:1.5rem">📋</div>尚無記錄</td></tr>`;
-    return;
-  }
-  const roastTW = {light:'淺焙','medium-light':'淺中焙',medium:'中焙',dark:'深焙'};
-  tbody.innerHTML = [...data.logs].reverse().map(l => `
+function adjustQty(key, d){
+  const el = document.getElementById('qty-'+key);
+  if(!el) return;
+  el.textContent = Math.max(1, parseInt(el.textContent)+d);
+}
+function preorderGreen(id){
+  const qty = parseInt(document.getElementById('gb-qty-'+id).value)||1;
+  addToCart('preorder', id, qty);
+}
+
+// ════════════════════════════════════════
+// ADMIN
+// ════════════════════════════════════════
+let adminLoggedIn = false;
+function openAdmin(){
+  if(adminLoggedIn){ document.getElementById('adminPanel').classList.add('open'); renderAdminAll(); }
+  else { document.getElementById('adminLoginModal').classList.add('open'); }
+}
+function closeAdmin(){ document.getElementById('adminPanel').classList.remove('open'); }
+async function doAdminLogin(){
+  const pw = document.getElementById('adminPwInput').value;
+  try {
+    const r = await apiPost('/api/admin/login', { password: pw });
+    if(r.ok){
+      setAdminToken(r.token);
+      adminLoggedIn = true;
+      closeModal('adminLoginModal');
+      document.getElementById('adminPanel').classList.add('open');
+      await loadAdminData();
+    } else { showToast('密碼錯誤'); }
+  } catch { showToast('網路錯誤'); }
+}
+function switchAdminTab(t){
+  document.querySelectorAll('.admin-tab').forEach((b,i)=>{
+    b.classList.toggle('active',['roasted','green','members'][i]===t);
+  });
+  document.querySelectorAll('.admin-section').forEach((s,i)=>{
+    s.classList.toggle('active',['admin-roasted','admin-green','admin-members'][i]==='admin-'+t);
+  });
+}
+function renderAdminAll(){ renderAdminRoastedTbl(); renderAdminGreenTbl(); renderAdminMemberTbl(); renderAdminCouponTbl(); }
+function renderAdminRoastedTbl(){
+  document.getElementById('adminRoastedTbl').innerHTML = store.roasted.map(b=>`
     <tr>
-      <td class="log-date">${l.date}</td>
-      <td>${l.greenSrc}</td>
-      <td>${l.greenAmount} g</td>
-      <td><span class="roast-badge ${roastClass[l.roast]}">${roastTW[l.roast]}</span></td>
-      <td>${l.output} g</td>
-      <td>${l.roastedDest || '—'}</td>
-      <td style="color:var(--text-muted);font-size:0.8rem">${l.notes || '—'}</td>
-    </tr>
-  `).join('');
+      <td>${b.name}</td>
+      <td>${roastLabel(b.roast)}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${b.origin}</td>
+      <td>NT$${b.price}</td><td>${b.qty}</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openProductModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteRoasted(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function renderAdminGreenTbl(){
+  document.getElementById('adminGreenTbl').innerHTML = store.green.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${b.origin}</td>
+      <td>${b.stock} kg</td><td>NT$${b.price}</td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openGreenModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteGreen(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function renderAdminMemberTbl(){
+  document.getElementById('adminMemberTbl').innerHTML = store.members.map(m=>{
+    const d = m.spent>=30000?15:m.spent>=20000?10:m.spent>=10000?5:0;
+    return `<tr>
+      <td>${m.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${m.email}</td>
+      <td>NT$${(m.spent||0).toLocaleString()}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${d>0?'var(--sage)':'var(--muted)'}">
+        ${d>0?`${100-d}折`:'一般'}
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">${m.voucher_used||'—'}</td>
+      <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
+    </tr>`;
+  }).join('');
+}
+function renderAdminCouponTbl(){
+  document.getElementById('adminCouponTbl').innerHTML = store.coupons.map(c=>`
+    <tr>
+      <td style="font-family:'DM Mono',monospace">${c.code}</td>
+      <td>${c.pct}%</td>
+      <td>${c.used} 次</td>
+      <td><button class="btn-tbl danger" onclick="deleteCoupon('${c.code}')">刪除</button></td>
+    </tr>`).join('');
 }
 
-function render() { renderGreen(); renderRoasted(); }
-render();
+// Product modal
+function openProductModal(id){
+  editingProductId = id||null;
+  const b = id ? store.roasted.find(b=>b.id===id) : null;
+  document.getElementById('productModalTitle').textContent = b?'編輯熟豆':'新增熟豆';
+  document.getElementById('pm-name').value  = b?b.name:'';
+  document.getElementById('pm-roast').value = b?b.roast:'light';
+  document.getElementById('pm-origin').value= b?b.origin:'';
+  document.getElementById('pm-flavor').value= b?b.flavor:'';
+  document.getElementById('pm-price').value = b?b.price:'';
+  document.getElementById('pm-qty').value   = b?b.qty:'';
+  document.getElementById('pm-img').value   = b?(b.img||b.img_url||''):'';
+  document.getElementById('pm-avail').value = b?b.avail:'yes';
+  document.getElementById('productModal').classList.add('open');
+}
+async function saveProduct(){
+  const d = {
+    name:  document.getElementById('pm-name').value.trim(),
+    roast: document.getElementById('pm-roast').value,
+    origin:document.getElementById('pm-origin').value.trim(),
+    flavor:document.getElementById('pm-flavor').value.trim(),
+    price: parseInt(document.getElementById('pm-price').value)||0,
+    qty:   parseInt(document.getElementById('pm-qty').value)||0,
+    img_url:document.getElementById('pm-img').value.trim(),
+    avail: document.getElementById('pm-avail').value,
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingProductId
+      ? await apiPut(`/api/roasted/${editingProductId}`, d)
+      : await apiPost('/api/roasted', d, true);
+    if(r.ok){
+      // Refresh from API
+      const fresh = await apiGet('/api/roasted');
+      if(fresh.ok) store.roasted = fresh.data.map(b=>({...b,img:b.img_url}));
+      closeModal('productModal');
+      renderRoastedGrid(); renderAdminRoastedTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteRoasted(id){
+  if(!confirm('確定刪除這個品項？')) return;
+  await apiDel(`/api/roasted/${id}`);
+  store.roasted = store.roasted.filter(b=>b.id!==id);
+  renderRoastedGrid(); renderAdminRoastedTbl();
+}
 
-// ─── Modal helpers ─────────────────────────────────────────
-function openModal(type) {
-  if (type === 'log') {
-    const gSrc = document.getElementById('l-green-src');
-    gSrc.innerHTML = data.green.map(b=>`<option>${b.name}</option>`).join('');
-    const rDest = document.getElementById('l-roasted-dest');
-    rDest.innerHTML = `<option value="">-- 不更新 --</option>` + data.roasted.map(b=>`<option>${b.name}</option>`).join('');
-    document.getElementById('l-date').value = new Date().toISOString().slice(0,10);
-  }
-  document.getElementById('modal-'+type).classList.add('open');
+// Green bean modal
+function openGreenModal(id){
+  editingGreenId=id||null;
+  const b = id ? store.green.find(b=>b.id===id) : null;
+  document.getElementById('greenModalTitle').textContent = b?'編輯生豆':'新增生豆';
+  document.getElementById('gm-name').value  = b?b.name:'';
+  document.getElementById('gm-origin').value= b?b.origin:'';
+  document.getElementById('gm-stock').value = b?b.stock:'';
+  document.getElementById('gm-flavor').value= b?b.flavor:'';
+  document.getElementById('gm-price').value = b?b.price:'';
+  document.getElementById('greenModal').classList.add('open');
 }
-function closeModal(type) {
-  document.getElementById('modal-'+type).classList.remove('open');
+async function saveGreenBean(){
+  const d = {
+    name:    document.getElementById('gm-name').value.trim(),
+    origin:  document.getElementById('gm-origin').value.trim(),
+    stock_kg:parseFloat(document.getElementById('gm-stock').value)||0,
+    flavor:  document.getElementById('gm-flavor').value.trim(),
+    price:   parseInt(document.getElementById('gm-price').value)||0,
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingGreenId
+      ? await apiPut(`/api/green/${editingGreenId}`, d)
+      : await apiPost('/api/green', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/green');
+      if(fresh.ok) store.green = fresh.data.map(b=>({...b,stock:b.stock_kg}));
+      closeModal('greenModal');
+      renderGreenGrid(); renderAdminGreenTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
 }
-// Close on backdrop click
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+async function deleteGreen(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/green/${id}`);
+  store.green = store.green.filter(b=>b.id!==id);
+  renderGreenGrid(); renderAdminGreenTbl();
+}
+
+// Member management
+async function deleteMember(id){
+  if(!confirm('確定移除此會員？')) return;
+  await apiDel(`/api/members/${id}`);
+  store.members = store.members.filter(m=>m.id!==id);
+  renderAdminMemberTbl();
+}
+
+// Voucher / Coupon
+function openIssueVoucher(){
+  document.getElementById('iv-code').value='';
+  document.getElementById('issueVoucherModal').classList.add('open');
+}
+async function issueVoucher(){
+  let code = document.getElementById('iv-code').value.trim().toUpperCase();
+  try {
+    const r = await apiPost('/api/vouchers', { code }, true);
+    if(r.ok){
+      closeModal('issueVoucherModal');
+      showToast(`儲值碼已產生：${r.code}`);
+      const fresh = await apiGet('/api/vouchers', true);
+      if(fresh.ok) store.vouchers = fresh.data;
+    } else { showToast(r.error||'建立失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+function openAddCoupon(){
+  document.getElementById('cp-code').value='';
+  document.getElementById('cp-pct').value='';
+  document.getElementById('couponModal').classList.add('open');
+}
+async function saveCoupon(){
+  const code = document.getElementById('cp-code').value.trim().toUpperCase();
+  const pct  = parseInt(document.getElementById('cp-pct').value)||0;
+  if(!code||!pct){showToast('請填寫折扣碼與折扣百分比');return;}
+  try {
+    const r = await apiPost('/api/coupons', { code, discount_pct: pct }, true);
+    if(r.ok){
+      store.coupons.push({code,pct,used:0});
+      closeModal('couponModal');
+      renderAdminCouponTbl(); showToast(`折扣碼 ${code} 已建立`);
+    } else { showToast(r.error||'建立失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteCoupon(code){
+  await apiDel(`/api/coupons/${encodeURIComponent(code)}`);
+  store.coupons = store.coupons.filter(c=>c.code!==code);
+  renderAdminCouponTbl();
+}
+
+// ════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function closeIfOverlay(e, id){ if(e.target===document.getElementById(id)) closeModal(id); }
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+function scrollTo(selector){ document.querySelector(selector)?.scrollIntoView({behavior:'smooth'}); }
+
+document.getElementById('cartOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('cartOverlay')) closeCart();
 });
 
-// ─── CRUD: Green ──────────────────────────────────────────
-let editingGreenId = null;
-function saveGreen() {
-  const name = document.getElementById('g-name').value.trim();
-  const origin = document.getElementById('g-origin').value.trim();
-  const process = document.getElementById('g-process').value.trim();
-  const stock = parseInt(document.getElementById('g-stock').value) || 0;
-  const max = parseInt(document.getElementById('g-max').value) || 1000;
-  const notes = document.getElementById('g-notes').value.trim();
-  if (!name) { alert('請填寫豆名'); return; }
-  if (editingGreenId) {
-    const b = data.green.find(b=>b.id===editingGreenId);
-    Object.assign(b, {name,origin,process,stock,max,notes});
-    editingGreenId = null;
-  } else {
-    data.green.push({ id: data.nextId.green++, name, origin, process, stock, max, notes });
-  }
-  saveData(); render(); closeModal('green');
-  ['g-name','g-origin','g-process','g-stock','g-max','g-notes'].forEach(id => document.getElementById(id).value='');
-}
-function editGreen(id) {
-  const b = data.green.find(b=>b.id===id);
-  editingGreenId = id;
-  document.getElementById('g-name').value = b.name;
-  document.getElementById('g-origin').value = b.origin;
-  document.getElementById('g-process').value = b.process;
-  document.getElementById('g-stock').value = b.stock;
-  document.getElementById('g-max').value = b.max;
-  document.getElementById('g-notes').value = b.notes;
-  openModal('green');
-}
-
-// ─── CRUD: Roasted ────────────────────────────────────────
-let editingRoastedId = null;
-function saveRoasted() {
-  const name = document.getElementById('r-name').value.trim();
-  const roast = document.getElementById('r-roast').value;
-  const stock = parseInt(document.getElementById('r-stock').value) || 0;
-  const max = parseInt(document.getElementById('r-max').value) || 1000;
-  const available = document.getElementById('r-available').value;
-  const notes = document.getElementById('r-notes').value.trim();
-  if (!name) { alert('請填寫品名'); return; }
-  if (editingRoastedId) {
-    const b = data.roasted.find(b=>b.id===editingRoastedId);
-    Object.assign(b, {name,roast,stock,max,available,notes});
-    editingRoastedId = null;
-  } else {
-    data.roasted.push({ id: data.nextId.roasted++, name, roast, stock, max, available, notes });
-  }
-  saveData(); render(); closeModal('roasted');
-  ['r-name','r-stock','r-max','r-notes'].forEach(id => document.getElementById(id).value='');
-}
-function editRoasted(id) {
-  const b = data.roasted.find(b=>b.id===id);
-  editingRoastedId = id;
-  document.getElementById('r-name').value = b.name;
-  document.getElementById('r-roast').value = b.roast;
-  document.getElementById('r-stock').value = b.stock;
-  document.getElementById('r-max').value = b.max;
-  document.getElementById('r-available').value = b.available;
-  document.getElementById('r-notes').value = b.notes;
-  openModal('roasted');
-}
-
-function deleteBean(type, id) {
-  if (!confirm('確定刪除？')) return;
-  data[type] = data[type].filter(b=>b.id!==id);
-  saveData(); render();
-}
-
-// ─── Roast Log ────────────────────────────────────────────
-function saveLog() {
-  const date = document.getElementById('l-date').value;
-  const greenSrc = document.getElementById('l-green-src').value;
-  const greenAmount = parseInt(document.getElementById('l-green-amount').value) || 0;
-  const roast = document.getElementById('l-roast').value;
-  const output = parseInt(document.getElementById('l-output').value) || 0;
-  const roastedDest = document.getElementById('l-roasted-dest').value;
-  const notes = document.getElementById('l-notes').value.trim();
-
-  if (!date || !greenSrc || !greenAmount) { alert('請填寫日期、生豆來源與用量'); return; }
-
-  // Deduct green bean stock
-  const gb = data.green.find(b=>b.name===greenSrc);
-  if (gb) {
-    if (gb.stock < greenAmount) {
-      if (!confirm(`生豆庫存不足（現有 ${gb.stock}g，使用 ${greenAmount}g），仍要繼續？`)) return;
+// ════════════════════════════════════════
+// INIT — 嘗試從 API 載入；失敗時顯示提示
+// ════════════════════════════════════════
+async function init(){
+  renderCart();
+  try {
+    await loadPublicData();
+    // 若有 member token，嘗試恢復登入狀態
+    if(getMemberToken()){
+      const r = await apiGet('/api/auth/me');
+      if(r.ok){ currentMember=r.member; updateMemberBtn(); renderCart(); }
+      else { clearMemberToken(); }
     }
-    gb.stock = Math.max(0, gb.stock - greenAmount);
+  } catch(e) {
+    // API 未部署時顯示提示（Phase 1 相容）
+    document.getElementById('roastedGrid').innerHTML =
+      `<div style="grid-column:1/-1;padding:40px;background:rgba(200,146,42,0.08);border:1px solid rgba(200,146,42,0.3);border-radius:4px;text-align:center;">
+        <p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gold);margin-bottom:8px;">⚠ API 尚未連線</p>
+        <p style="font-size:0.82rem;color:var(--muted);">請依照部署說明將 Workers 上線後，更新 API 網址即可正常使用。</p>
+      </div>`;
+    document.getElementById('greenBeanGrid').innerHTML =
+      `<p style="color:rgba(247,242,232,0.4);font-family:'DM Mono',monospace;font-size:0.78rem;">⚠ 等待 API 連線…</p>`;
   }
-
-  // Add to roasted bean stock
-  if (roastedDest) {
-    const rb = data.roasted.find(b=>b.name===roastedDest);
-    if (rb) { rb.stock += output; rb.available = 'yes'; }
-  }
-
-  data.logs.push({ id: data.nextId.log++, date, greenSrc, greenAmount, roast, output, roastedDest, notes });
-  saveData(); render(); closeModal('log');
-  ['l-green-amount','l-output','l-notes'].forEach(id => document.getElementById(id).value='');
 }
+init();
 </script>
 </body>
 </html>
