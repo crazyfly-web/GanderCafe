@@ -1761,7 +1761,7 @@ async function saveAdjustSpent(){
   const id    = parseInt(document.getElementById('as-member-id').value);
   const spent = parseInt(document.getElementById('as-spent').value) || 0;
   try {
-    const r = await apiPut(\`/api/members/\${id}/spent\`, { spent });
+    const r = await apiPut(`/api/members/${id}/spent`, { spent });
     if(r.ok){
       const m = store.members.find(m=>m.id===id);
       if(m) m.spent = spent;
