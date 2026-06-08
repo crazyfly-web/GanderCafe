@@ -1194,6 +1194,38 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   </div>
 </div>
 
+
+<!-- ── ADJUST SPENT MODAL ── -->
+<div class="modal-overlay" id="adjustSpentModal" onclick="closeIfOverlay(event,'adjustSpentModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">調整累計消費</span>
+      <button class="btn-close" onclick="closeModal('adjustSpentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="as-member-id">
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:20px;">
+        會員：<strong id="as-member-name"></strong>
+      </p>
+      <div class="form-group">
+        <label class="form-label">累計消費金額 (NT$)</label>
+        <input type="number" class="form-input" id="as-spent" min="0" step="1000" placeholder="0"/>
+      </div>
+      <div class="discount-tier-info">
+        <p>
+          滿 <strong>10,000</strong> → 95折 &nbsp;|&nbsp;
+          滿 <strong>20,000</strong> → 9折 &nbsp;|&nbsp;
+          滿 <strong>30,000</strong> → 85折
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('adjustSpentModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveAdjustSpent()">更新</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -1415,25 +1447,53 @@ async function applyDiscountCode(){
 // ════════════════════════════════════════
 async function checkout(){
   if(!cart.length){ showToast('購物車是空的'); return; }
-  const {sub,discAmt,ship,total} = calcTotal();
-  // Phase 3: POST to /api/orders → Workers 產生 ECpay 表單 → redirect
-  const r = await apiPost('/api/orders', {
-    member_id: currentMember?.id || null,
-    items: cart,
-    subtotal: sub,
-    discount_amt: discAmt,
-    shipping_fee: ship,
-    total,
-    shipping_type: selectedShipping,
-  });
-  if(r.ok){
-    alert(`【模擬結帳】訂單 #${r.order_id} 已建立\n合計 NT$${total.toLocaleString()}\n運送：${SHIPPING[selectedShipping].name}\n\n正式串接 ECpay 後將自動跳轉付款頁面。`);
-    cart = []; renderCart();
-  } else {
-    showToast('結帳失敗，請稍後再試');
+
+  const btn = document.querySelector('.btn-checkout');
+  btn.textContent = '處理中…'; btn.disabled = true;
+
+  const {sub, discAmt, ship, total} = calcTotal();
+
+  try {
+    const res = await fetch(API + '/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(getMemberToken() ? { 'Authorization': 'Bearer ' + getMemberToken() } : {}),
+      },
+      body: JSON.stringify({
+        items: cart,
+        subtotal: sub,
+        discount_amt: discAmt,
+        shipping_fee: ship,
+        total,
+        shipping_type: selectedShipping,
+        member_id: currentMember?.id || null,
+      }),
+    });
+
+    if (!res.ok) {
+      showToast('結帳失敗，請稍後再試');
+      btn.textContent = '前往結帳 — ECpay 綠界'; btn.disabled = false;
+      return;
+    }
+
+    // Workers 回傳 ECpay 自動提交表單 HTML
+    const html = await res.text();
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+    } else {
+      document.open(); document.write(html); document.close();
+    }
+
+    cart = []; renderCart(); closeCart();
+  } catch(e) {
+    showToast('網路錯誤，請稍後再試');
+  } finally {
+    btn.textContent = '前往結帳 — ECpay 綠界'; btn.disabled = false;
   }
 }
-
 // ════════════════════════════════════════
 // MEMBER SYSTEM
 // ════════════════════════════════════════
@@ -1677,7 +1737,10 @@ function renderAdminMemberTbl(){
     return `<tr>
       <td>${m.name}</td>
       <td style="font-size:0.8rem;color:var(--muted)">${m.email}</td>
-      <td>NT$${(m.spent||0).toLocaleString()}</td>
+      <td>
+        <span id="spent-val-${m.id}">NT$${(m.spent||0).toLocaleString()}</span>
+        <button class="btn-tbl" style="margin-left:8px;" onclick="openAdjustSpent(${m.id},'${m.name}',${m.spent||0})">調整</button>
+      </td>
       <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${d>0?'var(--sage)':'var(--muted)'}">
         ${d>0?`${100-d}折`:'一般'}
       </td>
@@ -1685,6 +1748,28 @@ function renderAdminMemberTbl(){
       <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
     </tr>`;
   }).join('');
+}
+
+// 調整累計消費 Modal
+function openAdjustSpent(id, name, current){
+  document.getElementById('as-member-name').textContent = name;
+  document.getElementById('as-spent').value = current;
+  document.getElementById('as-member-id').value = id;
+  document.getElementById('adjustSpentModal').classList.add('open');
+}
+async function saveAdjustSpent(){
+  const id    = parseInt(document.getElementById('as-member-id').value);
+  const spent = parseInt(document.getElementById('as-spent').value) || 0;
+  try {
+    const r = await apiPut(\`/api/members/\${id}/spent\`, { spent });
+    if(r.ok){
+      const m = store.members.find(m=>m.id===id);
+      if(m) m.spent = spent;
+      renderAdminMemberTbl();
+      closeModal('adjustSpentModal');
+      showToast('累計消費已更新');
+    } else { showToast(r.error||'更新失敗'); }
+  } catch { showToast('網路錯誤'); }
 }
 function renderAdminCouponTbl(){
   document.getElementById('adminCouponTbl').innerHTML = store.coupons.map(c=>`
