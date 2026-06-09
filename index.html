@@ -1485,16 +1485,12 @@ async function checkout(){
     }
 
     // Workers 回傳 ECpay 自動提交表單 HTML
-    // 用隱藏 iframe 提交，避免 Safari 封鎖彈出視窗
+    // 直接替換當前頁面內容並提交
     const html = await res.text();
-    const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;background:#fff;';
-    document.body.appendChild(iframe);
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(html);
-    iframe.contentDocument.close();
-
     cart = []; renderCart(); closeCart();
+    document.open();
+    document.write(html);
+    document.close();
   } catch(e) {
     showToast('網路錯誤，請稍後再試');
   } finally {
