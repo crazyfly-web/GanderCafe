@@ -444,7 +444,7 @@ body {
   color:var(--muted);font-size:0.9rem;
 }
 .cart-item {
-  display:flex;gap:14px;
+  display:flex;gap:12px;align-items:flex-start;
   padding:16px 0;
   border-bottom:1px solid var(--border);
 }
@@ -457,10 +457,11 @@ body {
   font-family:'Cormorant Garamond',serif;
   font-size:1.3rem;color:var(--roast-light);font-style:italic;
 }
-.cart-item-info{flex:1;}
+.cart-item-info{flex:1;min-width:0;overflow:hidden;}
 .cart-item-name {
   font-size:0.9rem;font-weight:500;
   color:var(--roast-deep);margin-bottom:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .cart-item-spec {
   font-family:'DM Mono',monospace;
@@ -787,9 +788,9 @@ footer a{color:var(--gold-pale);text-decoration:none;}
     <div class="brand-tagline">Specialty Coffee Roaster · 花蓮</div>
   </div>
   <nav class="topbar-nav">
-    <button class="nav-link" onclick="scrollTo('#roasted-section')">熟豆選購</button>
-    <button class="nav-link" onclick="scrollTo('#preorder-section')">預購生豆</button>
-    <button class="nav-link" onclick="scrollTo('#about-section')">關於我們</button>
+    <button class="nav-link" onclick="smoothScrollTo('#roasted-section')">熟豆選購</button>
+    <button class="nav-link" onclick="smoothScrollTo('#preorder-section')">預購生豆</button>
+    <button class="nav-link" onclick="smoothScrollTo('#about-section')">關於我們</button>
   </nav>
   <div class="topbar-actions">
     <button class="btn-admin" onclick="openAdmin()">店家後台</button>
@@ -809,8 +810,8 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   <h1 class="hero-title">從產地到<br><em>你的杯中</em></h1>
   <p class="hero-subtitle">每一批生豆都來自與農民長期合作的莊園，<br>以精確的烘焙曲線釋放最純粹的風味。</p>
   <div class="hero-cta">
-    <button class="btn-primary" onclick="scrollTo('#roasted-section')">選購熟豆</button>
-    <button class="btn-outline" onclick="scrollTo('#preorder-section')">預購接單烘焙</button>
+    <button class="btn-primary" onclick="smoothScrollTo('#roasted-section')">選購熟豆</button>
+    <button class="btn-outline" onclick="smoothScrollTo('#preorder-section')">預購接單烘焙</button>
   </div>
 </section>
 
@@ -1933,7 +1934,7 @@ function showToast(msg){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
 }
-function scrollTo(selector){ document.querySelector(selector)?.scrollIntoView({behavior:'smooth'}); }
+function smoothScrollTo(selector){ document.querySelector(selector)?.scrollIntoView({behavior:'smooth'}); }
 
 document.getElementById('cartOverlay').addEventListener('click',e=>{
   if(e.target===document.getElementById('cartOverlay')) closeCart();
