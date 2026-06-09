@@ -973,8 +973,18 @@ footer a{color:var(--gold-pale);text-decoration:none;}
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">照片網址（選填）</label>
-        <input type="text" class="form-input" id="pm-img" placeholder="https://..." />
+        <label class="form-label">商品照片</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px dashed var(--border-strong);border-radius:2px;cursor:pointer;background:var(--parchment);font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);transition:all 0.2s;" id="pm-upload-label">
+            <span id="pm-upload-text">📷 點此上傳照片</span>
+            <input type="file" id="pm-img-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleImgUpload(this)">
+          </label>
+        </div>
+        <div id="pm-img-preview" style="display:none;margin-bottom:8px;">
+          <img id="pm-img-preview-el" style="width:100%;max-height:160px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+        </div>
+        <input type="text" class="form-input" id="pm-img" placeholder="或直接貼上照片網址 https://..." style="font-size:0.8rem;" />
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:4px;">支援 JPG、PNG、WebP，上限 5MB</div>
       </div>
       <div class="form-group">
         <label class="form-label">可購買</label>
@@ -1784,6 +1794,50 @@ function renderAdminCouponTbl(){
     </tr>`).join('');
 }
 
+// Image upload
+async function handleImgUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const label = document.getElementById('pm-upload-label');
+  const txt   = document.getElementById('pm-upload-text');
+  txt.textContent = '上傳中…';
+  label.style.opacity = '0.6';
+
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+
+    const res = await fetch(API + '/api/images/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getAdminToken() },
+      body: fd,
+    });
+    const r = await res.json();
+    if (r.ok) {
+      // Show preview
+      const imgUrl = API + r.url;
+      document.getElementById('pm-img').value = imgUrl;
+      const preview = document.getElementById('pm-img-preview');
+      const previewEl = document.getElementById('pm-img-preview-el');
+      previewEl.src = imgUrl;
+      preview.style.display = 'block';
+      txt.textContent = '✓ 已上傳，點此更換';
+      label.style.opacity = '1';
+      label.style.borderColor = 'var(--sage)';
+      showToast('照片上傳成功！');
+    } else {
+      txt.textContent = '📷 點此上傳照片';
+      label.style.opacity = '1';
+      showToast(r.error || '上傳失敗');
+    }
+  } catch(e) {
+    txt.textContent = '📷 點此上傳照片';
+    label.style.opacity = '1';
+    showToast('網路錯誤，上傳失敗');
+  }
+}
+
 // Product modal
 function openProductModal(id){
   editingProductId = id||null;
@@ -1796,6 +1850,13 @@ function openProductModal(id){
   document.getElementById('pm-price').value = b?b.price:'';
   document.getElementById('pm-qty').value   = b?b.qty:'';
   document.getElementById('pm-img').value   = b?(b.img||b.img_url||''):'';
+  // Reset image preview
+  const preview = document.getElementById('pm-img-preview');
+  const previewEl = document.getElementById('pm-img-preview-el');
+  const imgVal = b?(b.img||b.img_url||''):'';
+  if(imgVal){ previewEl.src=imgVal; preview.style.display='block'; }
+  else { preview.style.display='none'; previewEl.src=''; }
+  document.getElementById('pm-upload-text').textContent = imgVal ? '✓ 已有照片，點此更換' : '📷 點此上傳照片';
   document.getElementById('pm-avail').value = b?b.avail:'yes';
   document.getElementById('productModal').classList.add('open');
 }
