@@ -1206,7 +1206,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
         <div class="admin-section-title" style="font-size:1.1rem;margin-bottom:16px;">現有折扣碼</div>
         <div class="admin-table-wrap">
           <table class="admin-table">
-            <thead><tr><th>折扣碼</th><th>折扣</th><th>使用次數</th><th>操作</th></tr></thead>
+            <thead><tr><th>折扣碼</th><th>類型</th><th>折扣內容</th><th>使用次數</th><th>操作</th></tr></thead>
             <tbody id="adminCouponTbl"></tbody>
           </table>
         </div>
@@ -1357,14 +1357,23 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <button class="btn-close" onclick="closeModal('couponModal')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-row-2">
-        <div class="form-group">
-          <label class="form-label">折扣碼</label>
-          <input type="text" class="form-input" id="cp-code" placeholder="SUMMER10" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">折扣 (%)</label>
-          <input type="number" class="form-input" id="cp-pct" placeholder="10" min="1" max="50" />
+      <div class="form-group">
+        <label class="form-label">折扣碼</label>
+        <input type="text" class="form-input" id="cp-code" placeholder="SUMMER10" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">折扣類型</label>
+        <select class="form-select" id="cp-type" onchange="toggleCouponValueField()">
+          <option value="percent">百分比折扣（例：9折、95折）</option>
+          <option value="fixed">固定金額折扣（例：折 NT$100）</option>
+          <option value="freeship">免運費</option>
+        </select>
+      </div>
+      <div class="form-group" id="cp-value-group">
+        <label class="form-label" id="cp-value-label">折扣數值</label>
+        <input type="number" class="form-input" id="cp-value" placeholder="10" min="1" />
+        <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:4px;" id="cp-value-hint">
+          百分比：輸入 10 = 打9折；輸入 5 = 打95折
         </div>
       </div>
     </div>
@@ -1490,9 +1499,11 @@ async function loadAdminData() {
 // ════════════════════════════════════════
 // CART
 // ════════════════════════════════════════
-let cart = [];         // [{id, name, type:'roasted'|'preorder', qty, price, spec}]
-let currentMember = null;
-let appliedDiscount = 0;  // percentage off (e.g. 5 = 5% off)
+let cart = [];
+let currentMember    = null;
+let appliedDiscount  = 0;    // percentage off (e.g. 5 = 5% off)
+let appliedFixed     = 0;    // fixed amount off (e.g. 100 = NT$100 off)
+let appliedFreeship  = false; // free shipping coupon
 let selectedShipping = 'post';
 let editingProductId = null;
 let editingGreenId = null;
@@ -1524,11 +1535,26 @@ function memberDiscount(){
   return 0;
 }
 function calcTotal(){
-  const sub = cartSubtotal();
-  const discPct = Math.max(appliedDiscount, memberDiscount());
-  const discAmt = Math.round(sub * discPct / 100);
-  const ship = calcShipping(sub);
-  return { sub, discPct, discAmt, ship, total: sub - discAmt + ship };
+  const sub      = cartSubtotal();
+  const memDisc  = memberDiscount();
+  const discPct  = Math.max(appliedDiscount, memDisc);
+
+  // 百分比折扣（會員折扣 or 折扣碼百分比，取較大值）
+  const pctAmt   = Math.round(sub * discPct / 100);
+
+  // 固定金額折扣（不與百分比疊加，取較優惠者）
+  const fixedAmt = appliedFixed > 0 ? Math.min(appliedFixed, sub) : 0;
+
+  // 實際商品折扣：百分比 vs 固定金額，取較大者
+  const discAmt  = Math.max(pctAmt, fixedAmt);
+
+  // 運費：先算正常運費
+  let ship = calcShipping(sub);
+
+  // 免運費折扣碼：未滿千才生效（滿千本來就免運，不重複）
+  if (appliedFreeship && sub < 1000) ship = 0;
+
+  return { sub, discPct, discAmt, ship, total: Math.max(0, sub - discAmt + ship) };
 }
 
 function updateCartCount(){
@@ -1611,14 +1637,32 @@ function closeCart(){ document.getElementById('cartOverlay').classList.remove('o
 // ════════════════════════════════════════
 async function applyDiscountCode(){
   const code = document.getElementById('discountInput').value.trim().toUpperCase();
-  const msg = document.getElementById('discountMsg');
+  const msg  = document.getElementById('discountMsg');
   msg.style.display='block'; msg.style.color='var(--muted)'; msg.textContent='驗證中…';
   try {
     const r = await apiPost('/api/coupons/apply', { code });
     if(r.ok){
-      appliedDiscount = r.discount_pct;
-      msg.style.color='var(--sage)';
-      msg.textContent = `✓ 折扣碼已套用：${r.discount_pct}% off`;
+      // Reset all discount types first
+      appliedDiscount = 0; appliedFixed = 0; appliedFreeship = false;
+      if(r.type === 'percent'){
+        appliedDiscount = r.discount_pct;
+        msg.style.color='var(--sage)';
+        msg.textContent = `✓ 折扣碼已套用：${r.discount_pct}% off`;
+      } else if(r.type === 'fixed'){
+        appliedFixed = r.discount_fixed;
+        msg.style.color='var(--sage)';
+        msg.textContent = `✓ 折扣碼已套用：折扣 NT$${r.discount_fixed}`;
+      } else if(r.type === 'freeship'){
+        appliedFreeship = true;
+        const sub = cartSubtotal();
+        if(sub >= 1000){
+          msg.style.color='var(--muted)';
+          msg.textContent = `✓ 免運費碼已套用（本訂單已滿千免運，自動生效）`;
+        } else {
+          msg.style.color='var(--sage)';
+          msg.textContent = `✓ 免運費碼已套用`;
+        }
+      }
       renderCart();
     } else {
       msg.style.color='#c0392b';
@@ -1956,13 +2000,20 @@ async function saveAdjustSpent(){
   } catch { showToast('網路錯誤'); }
 }
 function renderAdminCouponTbl(){
-  document.getElementById('adminCouponTbl').innerHTML = store.coupons.map(c=>`
-    <tr>
+  const typeLabel = { percent:'百分比', fixed:'固定金額', freeship:'免運費' };
+  document.getElementById('adminCouponTbl').innerHTML = store.coupons.map(c=>{
+    const type = c.type || 'percent';
+    const val  = type==='percent' ? `${c.pct||c.discount_value}% off`
+               : type==='fixed'   ? `折 NT$${c.discount_value}`
+               : '免運費';
+    return `<tr>
       <td style="font-family:'DM Mono',monospace">${c.code}</td>
-      <td>${c.pct}%</td>
-      <td>${c.used} 次</td>
+      <td style="font-size:0.78rem;color:var(--muted)">${typeLabel[type]||type}</td>
+      <td>${val}</td>
+      <td>${c.used||c.used_count||0} 次</td>
       <td><button class="btn-tbl danger" onclick="deleteCoupon('${c.code}')">刪除</button></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 // Image upload (pm prefix uses universal handler)
@@ -2089,21 +2140,53 @@ async function issueVoucher(){
     } else { showToast(r.error||'建立失敗'); }
   } catch { showToast('網路錯誤'); }
 }
+function toggleCouponValueField(){
+  const type  = document.getElementById('cp-type').value;
+  const group = document.getElementById('cp-value-group');
+  const label = document.getElementById('cp-value-label');
+  const hint  = document.getElementById('cp-value-hint');
+  const input = document.getElementById('cp-value');
+  if(type === 'freeship'){
+    group.style.display = 'none';
+  } else {
+    group.style.display = 'block';
+    if(type === 'percent'){
+      label.textContent = '折扣百分比 (%)';
+      input.placeholder = '10';
+      hint.textContent  = '輸入 10 = 打9折；輸入 5 = 打95折';
+    } else {
+      label.textContent = '折抵金額 (NT$)';
+      input.placeholder = '100';
+      hint.textContent  = '輸入 100 = 折抵 NT$100';
+    }
+  }
+}
 function openAddCoupon(){
-  document.getElementById('cp-code').value='';
-  document.getElementById('cp-pct').value='';
+  document.getElementById('cp-code').value  = '';
+  document.getElementById('cp-value').value = '';
+  document.getElementById('cp-type').value  = 'percent';
+  document.getElementById('cp-value-group').style.display = 'block';
+  toggleCouponValueField();
   document.getElementById('couponModal').classList.add('open');
 }
 async function saveCoupon(){
-  const code = document.getElementById('cp-code').value.trim().toUpperCase();
-  const pct  = parseInt(document.getElementById('cp-pct').value)||0;
-  if(!code||!pct){showToast('請填寫折扣碼與折扣百分比');return;}
+  const code  = document.getElementById('cp-code').value.trim().toUpperCase();
+  const type  = document.getElementById('cp-type').value;
+  const value = parseInt(document.getElementById('cp-value').value)||0;
+  if(!code){ showToast('請填寫折扣碼'); return; }
+  if(type !== 'freeship' && !value){ showToast('請填寫折扣數值'); return; }
   try {
-    const r = await apiPost('/api/coupons', { code, discount_pct: pct }, true);
+    const r = await apiPost('/api/coupons', {
+      code,
+      type,
+      discount_pct:   type==='percent'  ? value : 0,
+      discount_value: value,
+    }, true);
     if(r.ok){
-      store.coupons.push({code,pct,used:0});
+      store.coupons.push({ code, type, pct: type==='percent'?value:0, discount_value:value, used:0 });
       closeModal('couponModal');
-      renderAdminCouponTbl(); showToast(`折扣碼 ${code} 已建立`);
+      renderAdminCouponTbl();
+      showToast(`折扣碼 ${code} 已建立`);
     } else { showToast(r.error||'建立失敗'); }
   } catch { showToast('網路錯誤'); }
 }
