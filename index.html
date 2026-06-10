@@ -793,7 +793,9 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   </div>
   <nav class="topbar-nav">
     <button class="nav-link" onclick="smoothScrollTo('#roasted-section')">熟豆選購</button>
-    <button class="nav-link" onclick="smoothScrollTo('#preorder-section')">預購生豆</button>
+    <button class="nav-link" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
+    <button class="nav-link" onclick="smoothScrollTo('#greensale-section')">生豆販售</button>
+    <button class="nav-link" onclick="smoothScrollTo('#other-section')">其他商品</button>
     <button class="nav-link" onclick="smoothScrollTo('#about-section')">關於我們</button>
   </nav>
   <div class="topbar-actions">
@@ -815,7 +817,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   <p class="hero-subtitle">每一批生豆都來自與農民長期合作的莊園，<br>以精確的烘焙曲線釋放最純粹的風味。</p>
   <div class="hero-cta">
     <button class="btn-primary" onclick="smoothScrollTo('#roasted-section')">選購熟豆</button>
-    <button class="btn-outline" onclick="smoothScrollTo('#preorder-section')">預購接單烘焙</button>
+    <button class="btn-outline" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
   </div>
 </section>
 
@@ -833,10 +835,30 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <section class="preorder-section" id="preorder-section">
   <div class="section-header">
     <div class="section-eyebrow">接單烘焙 · Made to Order</div>
-    <h2 class="section-title" style="color:var(--cream)">預購<em style="color:var(--gold-pale)">生豆</em>烘焙</h2>
-    <p class="section-desc">下單後 3–5 個工作天出貨，每包 240g 半磅裝。</p>
+    <h2 class="section-title" style="color:var(--cream)">預購<em style="color:var(--gold-pale)">烘焙</em></h2>
+    <p class="section-desc" style="color:rgba(247,242,232,0.6)">指定生豆接單烘焙，下單後 3–5 個工作天出貨，每包 240g 半磅裝。</p>
   </div>
   <div class="green-bean-grid" id="greenBeanGrid"></div>
+</section>
+
+<!-- ── GREEN SALE ── -->
+<section class="section" id="greensale-section">
+  <div class="section-header">
+    <div class="section-eyebrow">生豆販售 · Green Bean Shop</div>
+    <h2 class="section-title">生豆<em>直購</em></h2>
+    <p class="section-desc">精選批次生豆，1kg 包裝，適合自家烘焙愛好者。</p>
+  </div>
+  <div class="product-grid" id="greenSaleGrid"></div>
+</section>
+
+<!-- ── OTHER PRODUCTS ── -->
+<section class="section" id="other-section" style="background:var(--parchment);">
+  <div class="section-header">
+    <div class="section-eyebrow">其他商品 · Accessories</div>
+    <h2 class="section-title">器材<em>選物</em></h2>
+    <p class="section-desc">濾紙、手沖器具與咖啡相關配件。</p>
+  </div>
+  <div class="product-grid" id="otherGrid"></div>
 </section>
 
 <!-- ── ABOUT ── -->
@@ -1091,7 +1113,9 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   <div class="admin-body">
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="switchAdminTab('roasted')">熟豆管理</button>
-      <button class="admin-tab" onclick="switchAdminTab('green')">生豆管理</button>
+      <button class="admin-tab" onclick="switchAdminTab('green')">預購生豆</button>
+      <button class="admin-tab" onclick="switchAdminTab('greensale')">生豆販售</button>
+      <button class="admin-tab" onclick="switchAdminTab('other')">其他商品</button>
       <button class="admin-tab" onclick="switchAdminTab('members')">會員管理</button>
     </div>
 
@@ -1132,6 +1156,38 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       </div>
     </div>
 
+    <!-- Green Sale tab -->
+    <div class="admin-section" id="admin-greensale">
+      <div class="admin-section-header">
+        <span class="admin-section-title">生豆販售管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openGreenSaleModal()">＋ 新增生豆</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>豆名</th><th>處理法</th><th>售價(1kg)</th><th>數量</th><th>狀態</th><th>操作</th></tr>
+          </thead>
+          <tbody id="adminGreenSaleTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Other Products tab -->
+    <div class="admin-section" id="admin-other">
+      <div class="admin-section-header">
+        <span class="admin-section-title">其他商品管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openOtherModal()">＋ 新增商品</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>名稱</th><th>售價</th><th>數量</th><th>狀態</th><th>操作</th></tr>
+          </thead>
+          <tbody id="adminOtherTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- Members tab -->
     <div class="admin-section" id="admin-members">
       <div class="admin-section-header">
@@ -1156,6 +1212,116 @@ footer a{color:var(--gold-pale);text-decoration:none;}
         </div>
         <button class="btn-outline" style="margin-top:16px;font-size:0.75rem;padding:10px 20px;" onclick="openAddCoupon()">＋ 建立折扣碼</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GREEN SALE MODAL ── -->
+<div class="modal-overlay" id="greenSaleModal" onclick="closeIfOverlay(event,'greenSaleModal')">
+  <div class="modal" style="width:min(560px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="greenSaleModalTitle">新增生豆販售</span>
+      <button class="btn-close" onclick="closeModal('greenSaleModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">豆名</label>
+        <input type="text" class="form-input" id="gs-name" placeholder="衣索比亞 耶加雪菲 G1"/>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">處理法</label>
+          <input type="text" class="form-input" id="gs-process" placeholder="日曬 / 水洗 / 蜜處理"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">售價 (NT$/1kg)</label>
+          <input type="number" class="form-input" id="gs-price" placeholder="800" min="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">豆商提供風味描述</label>
+        <textarea class="form-textarea" id="gs-flavor" placeholder="藍莓、茉莉花、柑橘…"></textarea>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">數量 (kg)</label>
+          <input type="number" class="form-input" id="gs-qty" placeholder="5" min="0"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">可購買</label>
+          <select class="form-select" id="gs-avail">
+            <option value="yes">是 — 公開販售</option>
+            <option value="no">否 — 暫停供應</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">商品照片</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px dashed var(--border-strong);border-radius:2px;cursor:pointer;background:var(--parchment);font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);" id="gs-upload-label">
+            <span id="gs-upload-text">📷 點此上傳照片</span>
+            <input type="file" id="gs-img-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleImgUploadFor(this,'gs')">
+          </label>
+        </div>
+        <div id="gs-img-preview" style="display:none;margin-bottom:8px;">
+          <img id="gs-img-preview-el" style="width:100%;max-height:140px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+        </div>
+        <input type="text" class="form-input" id="gs-img" placeholder="或貼上照片網址 https://..." style="font-size:0.8rem;"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('greenSaleModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveGreenSale()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── OTHER PRODUCT MODAL ── -->
+<div class="modal-overlay" id="otherModal" onclick="closeIfOverlay(event,'otherModal')">
+  <div class="modal" style="width:min(520px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="otherModalTitle">新增其他商品</span>
+      <button class="btn-close" onclick="closeModal('otherModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">商品名稱</label>
+        <input type="text" class="form-input" id="ot-name" placeholder="Hario V60 濾紙 01 漂白 100入"/>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">售價 (NT$)</label>
+          <input type="number" class="form-input" id="ot-price" placeholder="200" min="0"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">數量</label>
+          <input type="number" class="form-input" id="ot-qty" placeholder="10" min="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">可購買</label>
+        <select class="form-select" id="ot-avail">
+          <option value="yes">是 — 公開販售</option>
+          <option value="no">否 — 暫停供應</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">商品照片</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px dashed var(--border-strong);border-radius:2px;cursor:pointer;background:var(--parchment);font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);" id="ot-upload-label">
+            <span id="ot-upload-text">📷 點此上傳照片</span>
+            <input type="file" id="ot-img-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleImgUploadFor(this,'ot')">
+          </label>
+        </div>
+        <div id="ot-img-preview" style="display:none;margin-bottom:8px;">
+          <img id="ot-img-preview-el" style="width:100%;max-height:140px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+        </div>
+        <input type="text" class="form-input" id="ot-img" placeholder="或貼上照片網址 https://..." style="font-size:0.8rem;"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('otherModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveOther()">儲存</button>
     </div>
   </div>
 </div>
@@ -1253,7 +1419,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 const API = 'https://gander-cafe-api.crazyfly.workers.dev';
 
 // In-memory cache (讀自 API，不再用 localStorage)
-let store = { roasted: [], green: [], members: [], vouchers: [], coupons: [] };
+let store = { roasted: [], green: [], greenSale: [], other: [], members: [], vouchers: [], coupons: [] };
 
 // Token storage (只存在 sessionStorage，關分頁即清除)
 function getAdminToken(){ return sessionStorage.getItem('gander_admin_tk') || ''; }
@@ -1290,17 +1456,22 @@ async function apiDel(path) {
 
 // ── Bootstrap: load public data on page open ──
 async function loadPublicData() {
-  const [r, g] = await Promise.all([
+  const [r, g, gs, ot] = await Promise.all([
     apiGet('/api/roasted'),
     apiGet('/api/green'),
+    apiGet('/api/green-sale'),
+    apiGet('/api/other'),
   ]);
-  if (r.ok) store.roasted = r.data;
-  if (g.ok) store.green   = g.data;
-  // Normalise field names (API uses img_url / stock_kg)
-  store.roasted = store.roasted.map(b => ({ ...b, img: b.img_url, avail: b.avail }));
+  if (r.ok)  store.roasted   = r.data;
+  if (g.ok)  store.green     = g.data;
+  if (gs.ok) store.greenSale = gs.data;
+  if (ot.ok) store.other     = ot.data;
+  store.roasted = store.roasted.map(b => ({ ...b, img: b.img_url }));
   store.green   = store.green.map(b => ({ ...b, stock: b.stock_kg }));
   renderRoastedGrid();
   renderGreenGrid();
+  renderGreenSaleGrid();
+  renderOtherGrid();
 }
 
 // ── Load admin data (after admin login) ──
@@ -1419,13 +1590,12 @@ function cartRemove(i){ cart.splice(i,1); renderCart(); }
 function selectShipping(k){ selectedShipping=k; renderCart(); }
 
 function addToCart(type, id, qty){
-  const item = type==='roasted'
-    ? store.roasted.find(b=>b.id===id)
-    : store.green.find(b=>b.id===id);
-  if(!item) return;
-  const spec = type==='roasted'
-    ? `半磅 240g · ${roastLabel(item.roast)}`
-    : `預購接單烘焙 · 240g×${qty}包`;
+  let item, spec;
+  if(type==='roasted'){ item=store.roasted.find(b=>b.id===id); spec=`半磅 240g · ${roastLabel(item?.roast)}`; }
+  else if(type==='preorder'){ item=store.green.find(b=>b.id===id); spec=`預購烘焙 · 240g×${qty}包`; }
+  else if(type==='greensale'){ item=store.greenSale.find(b=>b.id===id); spec=`生豆 1kg × ${qty}`; }
+  else if(type==='other'){ item=store.other.find(b=>b.id===id); spec=`數量 × ${qty}`; }
+  else { item=store.green.find(b=>b.id===id); spec=`預購烘焙 · 240g×${qty}包`; }
   const existing = cart.find(c=>c.id===id&&c.type===type);
   if(existing){ existing.qty+=qty; }
   else { cart.push({id, name:item.name, type, qty, price:item.price, spec}); }
@@ -1710,14 +1880,15 @@ async function doAdminLogin(){
   } catch { showToast('網路錯誤'); }
 }
 function switchAdminTab(t){
+  const tabs = ['roasted','green','greensale','other','members'];
   document.querySelectorAll('.admin-tab').forEach((b,i)=>{
-    b.classList.toggle('active',['roasted','green','members'][i]===t);
+    b.classList.toggle('active', tabs[i]===t);
   });
   document.querySelectorAll('.admin-section').forEach((s,i)=>{
-    s.classList.toggle('active',['admin-roasted','admin-green','admin-members'][i]==='admin-'+t);
+    s.classList.toggle('active', 'admin-'+tabs[i]==='admin-'+t);
   });
 }
-function renderAdminAll(){ renderAdminRoastedTbl(); renderAdminGreenTbl(); renderAdminMemberTbl(); renderAdminCouponTbl(); }
+function renderAdminAll(){ renderAdminRoastedTbl(); renderAdminGreenTbl(); renderAdminGreenSaleTbl(); renderAdminOtherTbl(); renderAdminMemberTbl(); renderAdminCouponTbl(); }
 function renderAdminRoastedTbl(){
   document.getElementById('adminRoastedTbl').innerHTML = store.roasted.map(b=>`
     <tr>
@@ -1794,49 +1965,8 @@ function renderAdminCouponTbl(){
     </tr>`).join('');
 }
 
-// Image upload
-async function handleImgUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  const label = document.getElementById('pm-upload-label');
-  const txt   = document.getElementById('pm-upload-text');
-  txt.textContent = '上傳中…';
-  label.style.opacity = '0.6';
-
-  try {
-    const fd = new FormData();
-    fd.append('file', file);
-
-    const res = await fetch(API + '/api/images/upload', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + getAdminToken() },
-      body: fd,
-    });
-    const r = await res.json();
-    if (r.ok) {
-      // Show preview
-      const imgUrl = API + r.url;
-      document.getElementById('pm-img').value = imgUrl;
-      const preview = document.getElementById('pm-img-preview');
-      const previewEl = document.getElementById('pm-img-preview-el');
-      previewEl.src = imgUrl;
-      preview.style.display = 'block';
-      txt.textContent = '✓ 已上傳，點此更換';
-      label.style.opacity = '1';
-      label.style.borderColor = 'var(--sage)';
-      showToast('照片上傳成功！');
-    } else {
-      txt.textContent = '📷 點此上傳照片';
-      label.style.opacity = '1';
-      showToast(r.error || '上傳失敗');
-    }
-  } catch(e) {
-    txt.textContent = '📷 點此上傳照片';
-    label.style.opacity = '1';
-    showToast('網路錯誤，上傳失敗');
-  }
-}
+// Image upload (pm prefix uses universal handler)
+function handleImgUpload(input){ handleImgUploadFor(input,'pm'); }
 
 // Product modal
 function openProductModal(id){
@@ -1981,6 +2111,246 @@ async function deleteCoupon(code){
   await apiDel(`/api/coupons/${encodeURIComponent(code)}`);
   store.coupons = store.coupons.filter(c=>c.code!==code);
   renderAdminCouponTbl();
+}
+
+// ════════════════════════════════════════
+// GREEN SALE GRID
+// ════════════════════════════════════════
+function renderGreenSaleGrid(){
+  const grid = document.getElementById('greenSaleGrid');
+  if(!grid) return;
+  if(!store.greenSale.length){ grid.innerHTML='<p style="color:var(--muted)">目前無生豆販售品項。</p>'; return; }
+  grid.innerHTML = store.greenSale.map(b=>{
+    const avail = b.avail==='yes' && b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img_url?`<img src="${b.img_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">${avail?'現貨':b.qty===0?'售完':'暫停'}</div>
+      </div>
+      <div class="product-body">
+        <div class="product-roast rml"><span class="roast-dot"></span>生豆 · ${b.process}</div>
+        <div class="product-name">${b.name}</div>
+        <div class="product-flavor">${b.flavor}</div>
+        <div class="product-footer">
+          <div class="product-spec">1kg / 包<br>現貨：${b.qty} kg</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}<span>/kg</span></div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('gs${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-gs${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('gs${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('greensale',${b.id},parseInt(document.getElementById('qty-gs${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// OTHER PRODUCTS GRID
+// ════════════════════════════════════════
+function renderOtherGrid(){
+  const grid = document.getElementById('otherGrid');
+  if(!grid) return;
+  if(!store.other.length){ grid.innerHTML='<p style="color:var(--muted)">目前無其他商品。</p>'; return; }
+  grid.innerHTML = store.other.map(b=>{
+    const avail = b.avail==='yes' && b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img_url?`<img src="${b.img_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">${avail?'現貨':b.qty===0?'售完':'暫停'}</div>
+      </div>
+      <div class="product-body">
+        <div class="product-name">${b.name}</div>
+        <div class="product-footer">
+          <div class="product-spec">數量：${b.qty}</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}</div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('ot${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-ot${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('ot${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('other',${b.id},parseInt(document.getElementById('qty-ot${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// ADMIN: GREEN SALE
+// ════════════════════════════════════════
+let editingGreenSaleId = null;
+function renderAdminGreenSaleTbl(){
+  const tbl = document.getElementById('adminGreenSaleTbl');
+  if(!tbl) return;
+  tbl.innerHTML = store.greenSale.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${b.process}</td>
+      <td>NT$${b.price}</td>
+      <td>${b.qty} kg</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openGreenSaleModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteGreenSale(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function openGreenSaleModal(id){
+  editingGreenSaleId = id||null;
+  const b = id ? store.greenSale.find(b=>b.id===id) : null;
+  document.getElementById('greenSaleModalTitle').textContent = b?'編輯生豆販售':'新增生豆販售';
+  document.getElementById('gs-name').value    = b?b.name:'';
+  document.getElementById('gs-process').value = b?b.process:'';
+  document.getElementById('gs-flavor').value  = b?b.flavor:'';
+  document.getElementById('gs-price').value   = b?b.price:'';
+  document.getElementById('gs-qty').value     = b?b.qty:'';
+  document.getElementById('gs-avail').value   = b?b.avail:'yes';
+  document.getElementById('gs-img').value     = b?b.img_url:'';
+  const preview = document.getElementById('gs-img-preview');
+  const previewEl = document.getElementById('gs-img-preview-el');
+  if(b?.img_url){ previewEl.src=b.img_url; preview.style.display='block'; }
+  else { preview.style.display='none'; }
+  document.getElementById('gs-upload-text').textContent = b?.img_url?'✓ 已有照片，點此更換':'📷 點此上傳照片';
+  openModal('greenSaleModal');
+}
+async function saveGreenSale(){
+  const d = {
+    name:    document.getElementById('gs-name').value.trim(),
+    process: document.getElementById('gs-process').value.trim(),
+    flavor:  document.getElementById('gs-flavor').value.trim(),
+    price:   parseInt(document.getElementById('gs-price').value)||0,
+    qty:     parseInt(document.getElementById('gs-qty').value)||0,
+    avail:   document.getElementById('gs-avail').value,
+    img_url: document.getElementById('gs-img').value.trim(),
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingGreenSaleId
+      ? await apiPut(`/api/green-sale/${editingGreenSaleId}`, d)
+      : await apiPost('/api/green-sale', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/green-sale');
+      if(fresh.ok) store.greenSale = fresh.data;
+      closeModal('greenSaleModal');
+      renderGreenSaleGrid(); renderAdminGreenSaleTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteGreenSale(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/green-sale/${id}`);
+  store.greenSale = store.greenSale.filter(b=>b.id!==id);
+  renderGreenSaleGrid(); renderAdminGreenSaleTbl();
+}
+
+// ════════════════════════════════════════
+// ADMIN: OTHER PRODUCTS
+// ════════════════════════════════════════
+let editingOtherId = null;
+function renderAdminOtherTbl(){
+  const tbl = document.getElementById('adminOtherTbl');
+  if(!tbl) return;
+  tbl.innerHTML = store.other.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td>NT$${b.price}</td>
+      <td>${b.qty}</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openOtherModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteOther(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function openOtherModal(id){
+  editingOtherId = id||null;
+  const b = id ? store.other.find(b=>b.id===id) : null;
+  document.getElementById('otherModalTitle').textContent = b?'編輯商品':'新增其他商品';
+  document.getElementById('ot-name').value  = b?b.name:'';
+  document.getElementById('ot-price').value = b?b.price:'';
+  document.getElementById('ot-qty').value   = b?b.qty:'';
+  document.getElementById('ot-avail').value = b?b.avail:'yes';
+  document.getElementById('ot-img').value   = b?b.img_url:'';
+  const preview = document.getElementById('ot-img-preview');
+  const previewEl = document.getElementById('ot-img-preview-el');
+  if(b?.img_url){ previewEl.src=b.img_url; preview.style.display='block'; }
+  else { preview.style.display='none'; }
+  document.getElementById('ot-upload-text').textContent = b?.img_url?'✓ 已有照片，點此更換':'📷 點此上傳照片';
+  openModal('otherModal');
+}
+async function saveOther(){
+  const d = {
+    name:    document.getElementById('ot-name').value.trim(),
+    price:   parseInt(document.getElementById('ot-price').value)||0,
+    qty:     parseInt(document.getElementById('ot-qty').value)||0,
+    avail:   document.getElementById('ot-avail').value,
+    img_url: document.getElementById('ot-img').value.trim(),
+  };
+  if(!d.name){showToast('請填寫商品名稱');return;}
+  try {
+    const r = editingOtherId
+      ? await apiPut(`/api/other/${editingOtherId}`, d)
+      : await apiPost('/api/other', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/other');
+      if(fresh.ok) store.other = fresh.data;
+      closeModal('otherModal');
+      renderOtherGrid(); renderAdminOtherTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteOther(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/other/${id}`);
+  store.other = store.other.filter(b=>b.id!==id);
+  renderOtherGrid(); renderAdminOtherTbl();
+}
+
+// ════════════════════════════════════════
+// UNIVERSAL IMAGE UPLOAD (for any modal)
+// ════════════════════════════════════════
+async function handleImgUploadFor(input, prefix) {
+  const file = input.files[0];
+  if (!file) return;
+  const label = document.getElementById(`${prefix}-upload-label`);
+  const txt   = document.getElementById(`${prefix}-upload-text`);
+  txt.textContent = '上傳中…'; label.style.opacity='0.6';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(API + '/api/images/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getAdminToken() },
+      body: fd,
+    });
+    const r = await res.json();
+    if(r.ok){
+      const imgUrl = API + r.url;
+      document.getElementById(`${prefix}-img`).value = imgUrl;
+      const preview = document.getElementById(`${prefix}-img-preview`);
+      document.getElementById(`${prefix}-img-preview-el`).src = imgUrl;
+      preview.style.display = 'block';
+      txt.textContent = '✓ 已上傳，點此更換';
+      label.style.opacity='1'; label.style.borderColor='var(--sage)';
+      showToast('照片上傳成功！');
+    } else {
+      txt.textContent='📷 點此上傳照片'; label.style.opacity='1';
+      showToast(r.error||'上傳失敗');
+    }
+  } catch {
+    txt.textContent='📷 點此上傳照片'; label.style.opacity='1';
+    showToast('網路錯誤，上傳失敗');
+  }
 }
 
 // ════════════════════════════════════════
