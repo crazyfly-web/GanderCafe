@@ -720,13 +720,14 @@ body {
 
 /* ── TOAST ── */
 .toast {
-  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(10px);
+  position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(10px);
   background:var(--roast-deep);color:var(--cream);
-  padding:12px 28px;border-radius:2px;
-  font-family:'DM Mono',monospace;font-size:0.78rem;
+  padding:14px 32px;border-radius:3px;
+  font-family:'DM Mono',monospace;font-size:0.82rem;
   letter-spacing:0.06em;z-index:600;
   opacity:0;transition:opacity 0.3s,transform 0.3s;
   pointer-events:none;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(28,15,8,0.3);
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
@@ -1203,6 +1204,19 @@ footer a{color:var(--gold-pale);text-decoration:none;}
         </table>
       </div>
       <div style="margin-top:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div class="admin-section-title" style="font-size:1.1rem;">已發行儲值碼</div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>儲值碼</th><th>狀態</th><th>使用者</th><th>操作</th></tr></thead>
+            <tbody id="adminVoucherTbl"></tbody>
+          </table>
+        </div>
+        <button class="btn-outline" style="margin-top:16px;font-size:0.75rem;padding:10px 20px;" onclick="openIssueVoucher()">＋ 發行新儲值碼</button>
+      </div>
+
+      <div style="margin-top:32px;">
         <div class="admin-section-title" style="font-size:1.1rem;margin-bottom:16px;">現有折扣碼</div>
         <div class="admin-table-wrap">
           <table class="admin-table">
@@ -1491,7 +1505,7 @@ async function loadAdminData() {
     apiGet('/api/coupons'),
   ]);
   if (m.ok) store.members  = m.data;
-  if (v.ok) store.vouchers = v.data;
+  if (v.ok) store.vouchers = v.data; // array of {code, used, used_by}
   if (c.ok) store.coupons  = c.data.map(x => ({ code: x.code, pct: x.discount_pct, used: x.used_count }));
   renderAdminAll();
 }
@@ -1932,7 +1946,60 @@ function switchAdminTab(t){
     s.classList.toggle('active', 'admin-'+tabs[i]==='admin-'+t);
   });
 }
-function renderAdminAll(){ renderAdminRoastedTbl(); renderAdminGreenTbl(); renderAdminGreenSaleTbl(); renderAdminOtherTbl(); renderAdminMemberTbl(); renderAdminCouponTbl(); }
+function renderAdminAll(){ renderAdminRoastedTbl(); renderAdminGreenTbl(); renderAdminGreenSaleTbl(); renderAdminOtherTbl(); renderAdminMemberTbl(); renderAdminVoucherTbl(); renderAdminCouponTbl(); }
+
+function renderAdminVoucherTbl(){
+  const tbl = document.getElementById('adminVoucherTbl');
+  if(!tbl) return;
+  if(!store.vouchers.length){
+    tbl.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);font-size:0.82rem;padding:20px;">尚無已發行的儲值碼</td></tr>';
+    return;
+  }
+  tbl.innerHTML = store.vouchers.map(v=>{
+    const used   = v.used === 1;
+    const usedBy = v.used_by || '—';
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace;font-weight:500;">${v.code}</td>
+      <td>
+        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${used?'var(--muted)':'var(--sage)'};">
+          ${used?'已使用':'未使用'}
+        </span>
+      </td>
+      <td style="font-size:0.8rem;color:var(--muted)">${usedBy}</td>
+      <td>
+        <div class="tbl-actions">
+          <button class="btn-tbl" onclick="copyVoucherCode('${v.code}')" ${used?'disabled style="opacity:0.4"':''}>複製</button>
+          <button class="btn-tbl danger" onclick="deleteVoucher('${v.code}')">刪除</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function copyVoucherCode(code){
+  navigator.clipboard.writeText(code).then(()=>{
+    showToast(`已複製：${code}`);
+  }).catch(()=>{
+    // fallback
+    const el = document.createElement('textarea');
+    el.value = code; document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast(`已複製：${code}`);
+  });
+}
+
+async function deleteVoucher(code){
+  if(!confirm(`確定刪除儲值碼 ${code}？`)) return;
+  try {
+    const r = await apiDel(`/api/vouchers/${encodeURIComponent(code)}`);
+    if(r.ok){
+      store.vouchers = store.vouchers.filter(v=>v.code!==code);
+      renderAdminVoucherTbl();
+      showToast('已刪除');
+    }
+  } catch { showToast('網路錯誤'); }
+}
 function renderAdminRoastedTbl(){
   document.getElementById('adminRoastedTbl').innerHTML = store.roasted.map(b=>`
     <tr>
@@ -2448,7 +2515,7 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
 }
 function smoothScrollTo(selector){ document.querySelector(selector)?.scrollIntoView({behavior:'smooth'}); }
 
