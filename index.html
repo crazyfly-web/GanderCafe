@@ -1898,7 +1898,7 @@ function renderGreenGrid(){
       </div>
       <div class="gb-order">
         <select class="gb-select" id="gb-qty-${b.id}">
-          ${[1,2,3,4,5,6].map(n=>`<option value="${n}">${n} 包 (${n*240}g)</option>`).join('')}
+          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}">${n} 包 (${n*240}g)</option>`).join('')}
         </select>
         <button class="btn-preorder" onclick="preorderGreen(${b.id})">預購</button>
       </div>
@@ -1908,7 +1908,35 @@ function renderGreenGrid(){
 function adjustQty(key, d){
   const el = document.getElementById('qty-'+key);
   if(!el) return;
-  el.textContent = Math.max(1, parseInt(el.textContent)+d);
+  const current = parseInt(el.textContent);
+  let max = 99;
+
+  // 熟豆：上限為現貨數量
+  if(key.startsWith('r')){
+    const id = parseInt(key.slice(1));
+    const bean = store.roasted.find(b=>b.id===id);
+    if(bean) max = bean.qty;
+  }
+  // 生豆販售：上限為現貨數量
+  else if(key.startsWith('gs')){
+    const id = parseInt(key.slice(2));
+    const bean = store.greenSale.find(b=>b.id===id);
+    if(bean) max = bean.qty;
+  }
+  // 預購烘焙：上限 10 包
+  else if(key.startsWith('gb')){
+    max = 10;
+  }
+  // 其他商品：上限為現貨數量
+  else if(key.startsWith('ot')){
+    const id = parseInt(key.slice(2));
+    const bean = store.other.find(b=>b.id===id);
+    if(bean) max = bean.qty;
+  }
+
+  const next = Math.min(max, Math.max(1, current + d));
+  el.textContent = next;
+  if(next >= max && d > 0) showToast(`最多可購買 ${max} 個`);
 }
 function preorderGreen(id){
   const qty = parseInt(document.getElementById('gb-qty-'+id).value)||1;
