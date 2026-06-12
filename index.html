@@ -797,7 +797,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
     <button class="nav-link" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
     <button class="nav-link" onclick="smoothScrollTo('#greensale-section')">生豆販售</button>
     <button class="nav-link" onclick="smoothScrollTo('#other-section')">其他商品</button>
-    <button class="nav-link" onclick="smoothScrollTo('#blog-section')">品牌日誌</button>
     <button class="nav-link" onclick="smoothScrollTo('#about-section')">關於我們</button>
   </nav>
   <div class="topbar-actions">
@@ -862,27 +861,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   </div>
   <div class="product-grid" id="otherGrid"></div>
 </section>
-
-<!-- ── BLOG ── -->
-<section class="section" id="blog-section" style="background:var(--warm-white);">
-  <div class="section-header">
-    <div class="section-eyebrow">品牌日誌 · Journal</div>
-    <h2 class="section-title">來自<em>烘豆師</em>的話</h2>
-    <p class="section-desc">豆子開箱、沖煮技巧、產地故事，記錄每一批豆子背後的故事。</p>
-  </div>
-  <div id="blogGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px;"></div>
-</section>
-
-<!-- ── BLOG POST MODAL ── -->
-<div class="modal-overlay" id="blogModal" onclick="closeIfOverlay(event,'blogModal')" style="align-items:center;justify-content:center;">
-  <div class="modal" style="width:min(680px,96vw);max-height:88vh;overflow-y:auto;">
-    <div class="modal-header">
-      <span class="modal-title" id="blogModalTitle" style="font-size:1.2rem;line-height:1.4;max-width:90%;"></span>
-      <button class="btn-close" onclick="closeModal('blogModal')">✕</button>
-    </div>
-    <div id="blogModalContent" style="padding:0 32px 32px;"></div>
-  </div>
-</div>
 
 <!-- ── ABOUT ── -->
 <section class="section" id="about-section" style="text-align:center;max-width:680px;margin:0 auto;padding:80px 40px;">
@@ -1517,7 +1495,6 @@ async function loadPublicData() {
   renderGreenGrid();
   renderGreenSaleGrid();
   renderOtherGrid();
-  loadBlog();
 }
 
 // ── Load admin data (after admin login) ──
@@ -1646,28 +1623,7 @@ function renderCart(){
 }
 
 function cartQty(i, d){
-  const item = cart[i];
-  let max = 99;
-
-  if(item.type === 'roasted'){
-    const bean = store.roasted.find(b=>b.id===item.id);
-    if(bean) max = bean.qty;
-  } else if(item.type === 'greensale'){
-    const bean = store.greenSale.find(b=>b.id===item.id);
-    if(bean) max = bean.qty;
-  } else if(item.type === 'other'){
-    const bean = store.other.find(b=>b.id===item.id);
-    if(bean) max = bean.qty;
-  } else if(item.type === 'preorder'){
-    max = 10;
-  }
-
-  const next = Math.min(max, Math.max(1, item.qty + d));
-  if(next === item.qty && d > 0){
-    showToast(`已達購買上限 ${max} 個`);
-    return;
-  }
-  cart[i].qty = next;
+  cart[i].qty = Math.max(1, cart[i].qty + d);
   renderCart();
 }
 function cartRemove(i){ cart.splice(i,1); renderCart(); }
@@ -2572,70 +2528,6 @@ async function handleImgUploadFor(input, prefix) {
   } catch {
     txt.textContent='📷 點此上傳照片'; label.style.opacity='1';
     showToast('網路錯誤，上傳失敗');
-  }
-}
-
-// ════════════════════════════════════════
-// BLOG
-// ════════════════════════════════════════
-async function loadBlog(){
-  const grid = document.getElementById('blogGrid');
-  if(!grid) return;
-  grid.innerHTML = '<p style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.8rem;">載入中…</p>';
-  try {
-    const r = await apiGet('/api/blog');
-    if(r.ok && r.data.length){
-      grid.innerHTML = r.data.map(post => `
-        <div onclick="openBlogPost('${post.id}')" style="background:white;border:1px solid var(--border);border-radius:4px;overflow:hidden;cursor:pointer;transition:box-shadow 0.25s,transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 32px rgba(28,15,8,0.12)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
-          ${post.cover ? `<div style="width:100%;aspect-ratio:16/9;overflow:hidden;"><img src="${post.cover}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.style.display='none'"></div>` : `<div style="width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,var(--parchment),#e8dfc8);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--roast-light);font-style:italic;">G</div>`}
-          <div style="padding:20px 22px 24px;">
-            ${post.category ? `<div style="font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px;text-transform:uppercase;">${post.category}</div>` : ''}
-            <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--roast-deep);line-height:1.35;margin-bottom:8px;">${post.title}</div>
-            ${post.summary ? `<div style="font-size:0.82rem;color:var(--muted);line-height:1.7;font-weight:300;">${post.summary}</div>` : ''}
-            ${post.published ? `<div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:12px;">${post.published}</div>` : ''}
-          </div>
-        </div>`).join('');
-    } else {
-      grid.innerHTML = '<p style="color:var(--muted);font-size:0.88rem;">目前尚無文章，敬請期待。</p>';
-    }
-  } catch(e) {
-    grid.innerHTML = '<p style="color:var(--muted);font-size:0.88rem;">載入失敗，請稍後再試。</p>';
-  }
-}
-
-async function openBlogPost(id){
-  document.getElementById('blogModalTitle').textContent = '載入中…';
-  document.getElementById('blogModalContent').innerHTML = '<div style="padding:40px 0;text-align:center;color:var(--muted);">載入中…</div>';
-  openModal('blogModal');
-  try {
-    const r = await apiGet(`/api/blog/${id}`);
-    if(!r.ok){ document.getElementById('blogModalContent').innerHTML = '<p style="color:var(--muted);">載入失敗</p>'; return; }
-    const post = r.data;
-    document.getElementById('blogModalTitle').textContent = post.title;
-
-    // Render blocks
-    const blocksHtml = (post.blocks || []).map(b => {
-      if(b.type === 'paragraph') return `<p style="font-size:0.95rem;line-height:1.9;color:var(--espresso);margin-bottom:16px;font-weight:300;">${b.text}</p>`;
-      if(b.type === 'heading_1') return `<h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--roast-deep);margin:28px 0 12px;">${b.text}</h2>`;
-      if(b.type === 'heading_2') return `<h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--roast-deep);margin:24px 0 10px;">${b.text}</h3>`;
-      if(b.type === 'heading_3') return `<h4 style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--roast-deep);margin:20px 0 8px;">${b.text}</h4>`;
-      if(b.type === 'bulleted_list_item') return `<div style="display:flex;gap:10px;margin-bottom:8px;font-size:0.9rem;line-height:1.7;color:var(--espresso);"><span style="color:var(--gold);flex-shrink:0;">·</span><span>${b.text}</span></div>`;
-      if(b.type === 'numbered_list_item') return `<div style="font-size:0.9rem;line-height:1.7;color:var(--espresso);margin-bottom:8px;padding-left:20px;">${b.text}</div>`;
-      if(b.type === 'image') return `<div style="margin:20px 0;"><img src="${b.url}" style="width:100%;border-radius:3px;" alt="${b.caption}"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:6px;text-align:center;">${b.caption}</div></div>`;
-      if(b.type === 'divider') return `<hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">`;
-      if(b.type === 'quote') return `<blockquote style="border-left:3px solid var(--gold);padding:12px 20px;margin:20px 0;background:rgba(200,146,42,0.04);font-style:italic;color:var(--muted);font-size:0.92rem;line-height:1.8;">${b.text}</blockquote>`;
-      return b.text ? `<p style="font-size:0.9rem;line-height:1.8;color:var(--espresso);margin-bottom:12px;">${b.text}</p>` : '';
-    }).join('');
-
-    document.getElementById('blogModalContent').innerHTML = `
-      ${post.cover ? `<div style="margin:0 -32px 24px;"><img src="${post.cover}" style="width:100%;max-height:260px;object-fit:cover;"></div>` : ''}
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
-        ${post.category ? `<span style="font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--gold);text-transform:uppercase;">${post.category}</span>` : ''}
-        ${post.published ? `<span style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);">${post.published}</span>` : ''}
-      </div>
-      ${blocksHtml || '<p style="color:var(--muted);font-size:0.88rem;">（文章內容空白）</p>'}`;
-  } catch(e) {
-    document.getElementById('blogModalContent').innerHTML = '<p style="color:var(--muted);">載入失敗，請稍後再試。</p>';
   }
 }
 
