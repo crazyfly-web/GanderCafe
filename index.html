@@ -797,7 +797,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
     <button class="nav-link" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
     <button class="nav-link" onclick="smoothScrollTo('#greensale-section')">生豆販售</button>
     <button class="nav-link" onclick="smoothScrollTo('#other-section')">其他商品</button>
-    <button class="nav-link" onclick="smoothScrollTo('#blog-section')">品牌日誌</button>
     <button class="nav-link" onclick="smoothScrollTo('#about-section')">關於我們</button>
   </nav>
   <div class="topbar-actions">
@@ -827,7 +826,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <section class="section" id="roasted-section">
   <div class="section-header">
     <div class="section-eyebrow">現貨 · In Stock</div>
-    <h2 class="section-title">精選<strong style="font-style:normal;font-weight:600;">熟豆</strong></h2>
+    <h2 class="section-title">精選<em>熟豆</em></h2>
     <p class="section-desc">以下品項皆為本週新鮮烘焙，現貨有限，售完為止。</p>
   </div>
   <div class="product-grid" id="roastedGrid"></div>
@@ -837,7 +836,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <section class="preorder-section" id="preorder-section">
   <div class="section-header">
     <div class="section-eyebrow">接單烘焙 · Made to Order</div>
-    <h2 class="section-title" style="color:var(--cream)">預購<strong style="font-style:normal;font-weight:600;color:var(--gold-pale);">烘焙</strong></h2>
+    <h2 class="section-title" style="color:var(--cream)">預購<em style="color:var(--gold-pale)">烘焙</em></h2>
     <p class="section-desc" style="color:rgba(247,242,232,0.6)">指定生豆接單烘焙，下單後 3–5 個工作天出貨，每包 240g 半磅裝。</p>
   </div>
   <div class="green-bean-grid" id="greenBeanGrid"></div>
@@ -847,7 +846,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <section class="section" id="greensale-section">
   <div class="section-header">
     <div class="section-eyebrow">生豆販售 · Green Bean Shop</div>
-    <h2 class="section-title">生豆<strong style="font-style:normal;font-weight:600;">直購</strong></h2>
+    <h2 class="section-title">生豆<em>直購</em></h2>
     <p class="section-desc">精選批次生豆，1kg 包裝，適合自家烘焙愛好者。</p>
   </div>
   <div class="product-grid" id="greenSaleGrid"></div>
@@ -857,32 +856,11 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <section class="section" id="other-section" style="background:var(--parchment);">
   <div class="section-header">
     <div class="section-eyebrow">其他商品 · Accessories</div>
-    <h2 class="section-title">器材<strong style="font-style:normal;font-weight:600;">選物</strong></h2>
+    <h2 class="section-title">器材<em>選物</em></h2>
     <p class="section-desc">濾紙、手沖器具與咖啡相關配件。</p>
   </div>
   <div class="product-grid" id="otherGrid"></div>
 </section>
-
-<!-- ── BLOG ── -->
-<section class="section" id="blog-section" style="background:var(--warm-white);">
-  <div class="section-header">
-    <div class="section-eyebrow">品牌日誌 · Journal</div>
-    <h2 class="section-title">來自<strong style="font-style:normal;font-weight:600;">烘豆師</strong>的話</h2>
-    <p class="section-desc">豆子開箱、沖煮技巧、產地故事，記錄每一批豆子背後的故事。</p>
-  </div>
-  <div id="blogGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px;"></div>
-</section>
-
-<!-- ── BLOG POST MODAL ── -->
-<div class="modal-overlay" id="blogModal" onclick="closeIfOverlay(event,'blogModal')" style="align-items:center;justify-content:center;">
-  <div class="modal" style="width:min(680px,96vw);max-height:88vh;overflow-y:auto;">
-    <div class="modal-header">
-      <span class="modal-title" id="blogModalTitle" style="font-size:1.2rem;line-height:1.4;max-width:90%;"></span>
-      <button class="btn-close" onclick="closeModal('blogModal')">✕</button>
-    </div>
-    <div id="blogModalContent" style="padding:0 32px 32px;"></div>
-  </div>
-</div>
 
 <!-- ── ABOUT ── -->
 <section class="section" id="about-section" style="text-align:center;max-width:680px;margin:0 auto;padding:80px 40px;">
@@ -938,9 +916,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="cart-summary-row"><span>運費</span><span id="shippingDisplay">NT$0</span></div>
       <div class="cart-summary-row total"><span>合計</span><span id="totalDisplay">NT$0</span></div>
       <button class="btn-checkout" onclick="checkout()">前往結帳 — ECpay 綠界</button>
-      <div id="balanceCheckoutWrap" style="display:none;margin-top:10px;">
-        <button class="btn-checkout" style="background:var(--sage);" onclick="balanceCheckout()">以餘額結帳 — <span id="balanceDisplay"></span></button>
-      </div>
     </div>
   </aside>
 </div>
@@ -1223,7 +1198,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
-            <tr><th>姓名</th><th>Email</th><th>帳戶餘額</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
+            <tr><th>姓名</th><th>Email</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
           </thead>
           <tbody id="adminMemberTbl"></tbody>
         </table>
@@ -1424,53 +1399,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 </div>
 
 
-<!-- ── TOPUP MODAL ── -->
-<div class="modal-overlay" id="topupModal" onclick="closeIfOverlay(event,'topupModal')">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">帳戶加值</span>
-      <button class="btn-close" onclick="closeModal('topupModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="tu-member-id">
-      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:8px;">會員：<strong id="tu-member-name"></strong></p>
-      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">目前餘額：<strong id="tu-current-balance" style="color:var(--roast-deep);"></strong></p>
-      <div class="form-group">
-        <label class="form-label">加值金額 (NT$)</label>
-        <input type="number" class="form-input" id="tu-amount" min="1" step="1000" placeholder="10000"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">備註</label>
-        <input type="text" class="form-input" id="tu-note" placeholder="例：現金儲值 10000 元"/>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-modal-cancel" onclick="closeModal('topupModal')">取消</button>
-      <button class="btn-modal-save" onclick="saveTopup()">確認加值</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── BALANCE LOGS MODAL ── -->
-<div class="modal-overlay" id="balanceLogsModal" onclick="closeIfOverlay(event,'balanceLogsModal')">
-  <div class="modal" style="width:min(600px,96vw)">
-    <div class="modal-header">
-      <span class="modal-title" id="balanceLogsTitle">餘額歷程</span>
-      <button class="btn-close" onclick="closeModal('balanceLogsModal')">✕</button>
-    </div>
-    <div class="modal-body" style="padding-bottom:0;">
-      <div id="balanceLogsSummary" style="background:rgba(200,146,42,0.06);border:1px solid rgba(200,146,42,0.2);border-radius:3px;padding:12px 16px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:0.8rem;"></div>
-      <div style="overflow-x:auto;">
-        <table class="admin-table" style="font-size:0.82rem;">
-          <thead><tr><th>時間</th><th>類型</th><th>金額</th><th>備註</th></tr></thead>
-          <tbody id="balanceLogsTbl"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn-modal-cancel" onclick="closeModal('balanceLogsModal')">關閉</button></div>
-  </div>
-</div>
-
 <!-- ── ADJUST SPENT MODAL ── -->
 <div class="modal-overlay" id="adjustSpentModal" onclick="closeIfOverlay(event,'adjustSpentModal')">
   <div class="modal">
@@ -1567,7 +1495,6 @@ async function loadPublicData() {
   renderGreenGrid();
   renderGreenSaleGrid();
   renderOtherGrid();
-  loadBlog();
 }
 
 // ── Load admin data (after admin login) ──
@@ -1641,9 +1568,6 @@ function calcTotal(){
   // 免運費折扣碼：未滿千才生效（滿千本來就免運，不重複）
   if (appliedFreeship && sub < 1000) ship = 0;
 
-  // 儲值會員永遠免運
-  if (currentMember && (currentMember.balance || 0) > 0) ship = 0;
-
   return { sub, discPct, discAmt, ship, total: Math.max(0, sub - discAmt + ship) };
 }
 
@@ -1696,45 +1620,10 @@ function renderCart(){
     document.getElementById('discountAmtDisplay').textContent = '-NT$'+discAmt.toLocaleString()+` (${100-discPct}折)`;
   } else { discRow.style.display='none'; }
   updateCartCount();
-
-  // 顯示/隱藏餘額結帳按鈕
-  const wrap = document.getElementById('balanceCheckoutWrap');
-  const balDisp = document.getElementById('balanceDisplay');
-  if(wrap && currentMember && (currentMember.balance||0) > 0){
-    const {total} = calcTotal();
-    const bal = currentMember.balance || 0;
-    wrap.style.display = 'block';
-    balDisp.textContent = `餘額 NT$${bal.toLocaleString()}`;
-    wrap.querySelector('button').disabled = bal < total;
-    wrap.querySelector('button').style.opacity = bal < total ? '0.5' : '1';
-  } else if(wrap) {
-    wrap.style.display = 'none';
-  }
 }
 
 function cartQty(i, d){
-  const item = cart[i];
-  let max = 99;
-
-  if(item.type === 'roasted'){
-    const bean = store.roasted.find(b=>b.id===item.id);
-    if(bean) max = bean.qty;
-  } else if(item.type === 'greensale'){
-    const bean = store.greenSale.find(b=>b.id===item.id);
-    if(bean) max = bean.qty;
-  } else if(item.type === 'other'){
-    const bean = store.other.find(b=>b.id===item.id);
-    if(bean) max = bean.qty;
-  } else if(item.type === 'preorder'){
-    max = 10;
-  }
-
-  const next = Math.min(max, Math.max(1, item.qty + d));
-  if(next === item.qty && d > 0){
-    showToast(`已達購買上限 ${max} 個`);
-    return;
-  }
-  cart[i].qty = next;
+  cart[i].qty = Math.max(1, cart[i].qty + d);
   renderCart();
 }
 function cartRemove(i){ cart.splice(i,1); renderCart(); }
@@ -1911,14 +1800,6 @@ async function doLogin(){
     if(r.ok){
       setMemberToken(r.token);
       currentMember = r.member;
-      // 重新取得最新餘額
-      try {
-        const me = await fetch(API + '/api/members/me', {
-          headers: { 'Authorization': 'Bearer ' + r.token }
-        });
-        const meData = await me.json();
-        if(meData.ok) currentMember = meData.member;
-      } catch(e){}
       updateMemberBtn(); closeModal('memberModal');
       showToast(`歡迎回來，${r.member.name}！`);
       renderCart();
@@ -2174,41 +2055,480 @@ function renderAdminGreenTbl(){
     </tr>`).join('');
 }
 function renderAdminMemberTbl(){
-  const tbl = document.getElementById('adminMemberTbl');
-  if(!tbl) return;
-  if(!store.members.length){
-    tbl.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">尚無會員</td></tr>';
-    return;
-  }
-  tbl.innerHTML = store.members.map(function(m){
+  document.getElementById('adminMemberTbl').innerHTML = store.members.map(m=>{
     const d = m.spent>=30000?15:m.spent>=20000?10:m.spent>=10000?5:0;
-    const bal = m.balance || 0;
-    const discLabel = d>0 ? (100-d)+'折' : '一般';
-    const discColor = d>0 ? 'var(--sage)' : 'var(--muted)';
-    const balColor  = bal>0 ? 'var(--sage)' : 'var(--muted)';
-    return '<tr>'
-      + '<td>'+m.name+'</td>'
-      + '<td style="font-size:0.8rem;color:var(--muted)">'+m.email+'</td>'
-      + '<td>'
-        + '<span style="font-weight:500;color:'+balColor+'">NT$'+bal.toLocaleString()+'</span>'
-        + '<button class="btn-tbl" style="margin-left:6px;" onclick="openTopupModal('+m.id+',''+m.name+'','+bal+')">加值</button>'
-        + '<button class="btn-tbl" style="margin-left:4px;" onclick="openBalanceLogs('+m.id+',''+m.name+'')">歷程</button>'
-      + '</td>'
-      + '<td>'
-        + '<span id="spent-val-'+m.id+'">NT$'+(m.spent||0).toLocaleString()+'</span>'
-        + '<button class="btn-tbl" style="margin-left:6px;" onclick="openAdjustSpent('+m.id+',''+m.name+'','+(m.spent||0)+')">調整</button>'
-      + '</td>'
-      + '<td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:'+discColor+'">'+discLabel+'</td>'
-      + '<td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">'+(m.voucher_used||'—')+'</td>'
-      + '<td><button class="btn-tbl danger" onclick="deleteMember('+m.id+')">移除</button></td>'
-      + '</tr>';
+    return `<tr>
+      <td>${m.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${m.email}</td>
+      <td>
+        <span id="spent-val-${m.id}">NT$${(m.spent||0).toLocaleString()}</span>
+        <button class="btn-tbl" style="margin-left:8px;" onclick="openAdjustSpent(${m.id},'${m.name}',${m.spent||0})">調整</button>
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${d>0?'var(--sage)':'var(--muted)'}">
+        ${d>0?`${100-d}折`:'一般'}
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">${m.voucher_used||'—'}</td>
+      <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
+    </tr>`;
   }).join('');
 }
 
+// 調整累計消費 Modal
+function openAdjustSpent(id, name, current){
+  document.getElementById('as-member-name').textContent = name;
+  document.getElementById('as-spent').value = current;
+  document.getElementById('as-member-id').value = id;
+  document.getElementById('adjustSpentModal').classList.add('open');
+}
+async function saveAdjustSpent(){
+  const id    = parseInt(document.getElementById('as-member-id').value);
+  const spent = parseInt(document.getElementById('as-spent').value) || 0;
+  try {
+    const r = await apiPut(`/api/members/${id}/spent`, { spent });
+    if(r.ok){
+      const m = store.members.find(m=>m.id===id);
+      if(m) m.spent = spent;
+      renderAdminMemberTbl();
+      closeModal('adjustSpentModal');
+      showToast('累計消費已更新');
+    } else { showToast(r.error||'更新失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+function renderAdminCouponTbl(){
+  const typeLabel = { percent:'百分比', fixed:'固定金額', freeship:'免運費' };
+  document.getElementById('adminCouponTbl').innerHTML = store.coupons.map(c=>{
+    const type = c.type || 'percent';
+    const val  = type==='percent' ? `${c.pct||c.discount_value}% off`
+               : type==='fixed'   ? `折 NT$${c.discount_value}`
+               : '免運費';
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace">${c.code}</td>
+      <td style="font-size:0.78rem;color:var(--muted)">${typeLabel[type]||type}</td>
+      <td>${val}</td>
+      <td>${c.used||c.used_count||0} 次</td>
+      <td><button class="btn-tbl danger" onclick="deleteCoupon('${c.code}')">刪除</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// Image upload (pm prefix uses universal handler)
+function handleImgUpload(input){ handleImgUploadFor(input,'pm'); }
+
+// Product modal
+function openProductModal(id){
+  editingProductId = id||null;
+  const b = id ? store.roasted.find(b=>b.id===id) : null;
+  document.getElementById('productModalTitle').textContent = b?'編輯熟豆':'新增熟豆';
+  document.getElementById('pm-name').value  = b?b.name:'';
+  document.getElementById('pm-roast').value = b?b.roast:'light';
+  document.getElementById('pm-origin').value= b?b.origin:'';
+  document.getElementById('pm-flavor').value= b?b.flavor:'';
+  document.getElementById('pm-price').value = b?b.price:'';
+  document.getElementById('pm-qty').value   = b?b.qty:'';
+  document.getElementById('pm-img').value   = b?(b.img||b.img_url||''):'';
+  // Reset image preview
+  const preview = document.getElementById('pm-img-preview');
+  const previewEl = document.getElementById('pm-img-preview-el');
+  const imgVal = b?(b.img||b.img_url||''):'';
+  if(imgVal){ previewEl.src=imgVal; preview.style.display='block'; }
+  else { preview.style.display='none'; previewEl.src=''; }
+  document.getElementById('pm-upload-text').textContent = imgVal ? '✓ 已有照片，點此更換' : '📷 點此上傳照片';
+  document.getElementById('pm-avail').value = b?b.avail:'yes';
+  document.getElementById('productModal').classList.add('open');
+}
+async function saveProduct(){
+  const d = {
+    name:  document.getElementById('pm-name').value.trim(),
+    roast: document.getElementById('pm-roast').value,
+    origin:document.getElementById('pm-origin').value.trim(),
+    flavor:document.getElementById('pm-flavor').value.trim(),
+    price: parseInt(document.getElementById('pm-price').value)||0,
+    qty:   parseInt(document.getElementById('pm-qty').value)||0,
+    img_url:document.getElementById('pm-img').value.trim(),
+    avail: document.getElementById('pm-avail').value,
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingProductId
+      ? await apiPut(`/api/roasted/${editingProductId}`, d)
+      : await apiPost('/api/roasted', d, true);
+    if(r.ok){
+      // Refresh from API
+      const fresh = await apiGet('/api/roasted');
+      if(fresh.ok) store.roasted = fresh.data.map(b=>({...b,img:b.img_url}));
+      closeModal('productModal');
+      renderRoastedGrid(); renderAdminRoastedTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteRoasted(id){
+  if(!confirm('確定刪除這個品項？')) return;
+  await apiDel(`/api/roasted/${id}`);
+  store.roasted = store.roasted.filter(b=>b.id!==id);
+  renderRoastedGrid(); renderAdminRoastedTbl();
+}
+
+// Green bean modal
+function openGreenModal(id){
+  editingGreenId=id||null;
+  const b = id ? store.green.find(b=>b.id===id) : null;
+  document.getElementById('greenModalTitle').textContent = b?'編輯生豆':'新增生豆';
+  document.getElementById('gm-name').value  = b?b.name:'';
+  document.getElementById('gm-origin').value= b?b.origin:'';
+  document.getElementById('gm-stock').value = b?b.stock:'';
+  document.getElementById('gm-flavor').value= b?b.flavor:'';
+  document.getElementById('gm-price').value = b?b.price:'';
+  document.getElementById('greenModal').classList.add('open');
+}
+async function saveGreenBean(){
+  const d = {
+    name:    document.getElementById('gm-name').value.trim(),
+    origin:  document.getElementById('gm-origin').value.trim(),
+    stock_kg:parseFloat(document.getElementById('gm-stock').value)||0,
+    flavor:  document.getElementById('gm-flavor').value.trim(),
+    price:   parseInt(document.getElementById('gm-price').value)||0,
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingGreenId
+      ? await apiPut(`/api/green/${editingGreenId}`, d)
+      : await apiPost('/api/green', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/green');
+      if(fresh.ok) store.green = fresh.data.map(b=>({...b,stock:b.stock_kg}));
+      closeModal('greenModal');
+      renderGreenGrid(); renderAdminGreenTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteGreen(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/green/${id}`);
+  store.green = store.green.filter(b=>b.id!==id);
+  renderGreenGrid(); renderAdminGreenTbl();
+}
+
+// Member management
+async function deleteMember(id){
+  if(!confirm('確定移除此會員？')) return;
+  await apiDel(`/api/members/${id}`);
+  store.members = store.members.filter(m=>m.id!==id);
+  renderAdminMemberTbl();
+}
+
+// Voucher / Coupon
+function openIssueVoucher(){
+  document.getElementById('iv-code').value='';
+  document.getElementById('issueVoucherModal').classList.add('open');
+}
+async function issueVoucher(){
+  let code = document.getElementById('iv-code').value.trim().toUpperCase();
+  try {
+    const r = await apiPost('/api/vouchers', { code }, true);
+    if(r.ok){
+      closeModal('issueVoucherModal');
+      showToast(`儲值碼已產生：${r.code}`);
+      const fresh = await apiGet('/api/vouchers', true);
+      if(fresh.ok) store.vouchers = fresh.data;
+    } else { showToast(r.error||'建立失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+function toggleCouponValueField(){
+  const type  = document.getElementById('cp-type').value;
+  const group = document.getElementById('cp-value-group');
+  const label = document.getElementById('cp-value-label');
+  const hint  = document.getElementById('cp-value-hint');
+  const input = document.getElementById('cp-value');
+  if(type === 'freeship'){
+    group.style.display = 'none';
+  } else {
+    group.style.display = 'block';
+    if(type === 'percent'){
+      label.textContent = '折扣百分比 (%)';
+      input.placeholder = '10';
+      hint.textContent  = '輸入 10 = 打9折；輸入 5 = 打95折';
+    } else {
+      label.textContent = '折抵金額 (NT$)';
+      input.placeholder = '100';
+      hint.textContent  = '輸入 100 = 折抵 NT$100';
+    }
+  }
+}
+function openAddCoupon(){
+  document.getElementById('cp-code').value  = '';
+  document.getElementById('cp-value').value = '';
+  document.getElementById('cp-type').value  = 'percent';
+  document.getElementById('cp-value-group').style.display = 'block';
+  toggleCouponValueField();
+  document.getElementById('couponModal').classList.add('open');
+}
+async function saveCoupon(){
+  const code  = document.getElementById('cp-code').value.trim().toUpperCase();
+  const type  = document.getElementById('cp-type').value;
+  const value = parseInt(document.getElementById('cp-value').value)||0;
+  if(!code){ showToast('請填寫折扣碼'); return; }
+  if(type !== 'freeship' && !value){ showToast('請填寫折扣數值'); return; }
+  try {
+    const r = await apiPost('/api/coupons', {
+      code,
+      type,
+      discount_pct:   type==='percent'  ? value : 0,
+      discount_value: value,
+    }, true);
+    if(r.ok){
+      store.coupons.push({ code, type, pct: type==='percent'?value:0, discount_value:value, used:0 });
+      closeModal('couponModal');
+      renderAdminCouponTbl();
+      showToast(`折扣碼 ${code} 已建立`);
+    } else { showToast(r.error||'建立失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
 async function deleteCoupon(code){
-  await apiDel('/api/coupons/'+encodeURIComponent(code));
+  await apiDel(`/api/coupons/${encodeURIComponent(code)}`);
   store.coupons = store.coupons.filter(c=>c.code!==code);
   renderAdminCouponTbl();
+}
+
+// ════════════════════════════════════════
+// GREEN SALE GRID
+// ════════════════════════════════════════
+function renderGreenSaleGrid(){
+  const grid = document.getElementById('greenSaleGrid');
+  if(!grid) return;
+  if(!store.greenSale.length){ grid.innerHTML='<p style="color:var(--muted)">目前無生豆販售品項。</p>'; return; }
+  grid.innerHTML = store.greenSale.map(b=>{
+    const avail = b.avail==='yes' && b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img_url?`<img src="${b.img_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">${avail?'現貨':b.qty===0?'售完':'暫停'}</div>
+      </div>
+      <div class="product-body">
+        <div class="product-roast rml"><span class="roast-dot"></span>生豆 · ${b.process}</div>
+        <div class="product-name">${b.name}</div>
+        <div class="product-flavor">${b.flavor}</div>
+        <div class="product-footer">
+          <div class="product-spec">1kg / 包<br>現貨：${b.qty} kg</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}<span>/kg</span></div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('gs${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-gs${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('gs${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('greensale',${b.id},parseInt(document.getElementById('qty-gs${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// OTHER PRODUCTS GRID
+// ════════════════════════════════════════
+function renderOtherGrid(){
+  const grid = document.getElementById('otherGrid');
+  if(!grid) return;
+  if(!store.other.length){ grid.innerHTML='<p style="color:var(--muted)">目前無其他商品。</p>'; return; }
+  grid.innerHTML = store.other.map(b=>{
+    const avail = b.avail==='yes' && b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img_url?`<img src="${b.img_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">${avail?'現貨':b.qty===0?'售完':'暫停'}</div>
+      </div>
+      <div class="product-body">
+        <div class="product-name">${b.name}</div>
+        <div class="product-footer">
+          <div class="product-spec">數量：${b.qty}</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}</div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('ot${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-ot${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('ot${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('other',${b.id},parseInt(document.getElementById('qty-ot${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// ADMIN: GREEN SALE
+// ════════════════════════════════════════
+let editingGreenSaleId = null;
+function renderAdminGreenSaleTbl(){
+  const tbl = document.getElementById('adminGreenSaleTbl');
+  if(!tbl) return;
+  tbl.innerHTML = store.greenSale.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${b.process}</td>
+      <td>NT$${b.price}</td>
+      <td>${b.qty} kg</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openGreenSaleModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteGreenSale(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function openGreenSaleModal(id){
+  editingGreenSaleId = id||null;
+  const b = id ? store.greenSale.find(b=>b.id===id) : null;
+  document.getElementById('greenSaleModalTitle').textContent = b?'編輯生豆販售':'新增生豆販售';
+  document.getElementById('gs-name').value    = b?b.name:'';
+  document.getElementById('gs-process').value = b?b.process:'';
+  document.getElementById('gs-flavor').value  = b?b.flavor:'';
+  document.getElementById('gs-price').value   = b?b.price:'';
+  document.getElementById('gs-qty').value     = b?b.qty:'';
+  document.getElementById('gs-avail').value   = b?b.avail:'yes';
+  document.getElementById('gs-img').value     = b?b.img_url:'';
+  const preview = document.getElementById('gs-img-preview');
+  const previewEl = document.getElementById('gs-img-preview-el');
+  if(b?.img_url){ previewEl.src=b.img_url; preview.style.display='block'; }
+  else { preview.style.display='none'; }
+  document.getElementById('gs-upload-text').textContent = b?.img_url?'✓ 已有照片，點此更換':'📷 點此上傳照片';
+  openModal('greenSaleModal');
+}
+async function saveGreenSale(){
+  const d = {
+    name:    document.getElementById('gs-name').value.trim(),
+    process: document.getElementById('gs-process').value.trim(),
+    flavor:  document.getElementById('gs-flavor').value.trim(),
+    price:   parseInt(document.getElementById('gs-price').value)||0,
+    qty:     parseInt(document.getElementById('gs-qty').value)||0,
+    avail:   document.getElementById('gs-avail').value,
+    img_url: document.getElementById('gs-img').value.trim(),
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingGreenSaleId
+      ? await apiPut(`/api/green-sale/${editingGreenSaleId}`, d)
+      : await apiPost('/api/green-sale', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/green-sale');
+      if(fresh.ok) store.greenSale = fresh.data;
+      closeModal('greenSaleModal');
+      renderGreenSaleGrid(); renderAdminGreenSaleTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteGreenSale(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/green-sale/${id}`);
+  store.greenSale = store.greenSale.filter(b=>b.id!==id);
+  renderGreenSaleGrid(); renderAdminGreenSaleTbl();
+}
+
+// ════════════════════════════════════════
+// ADMIN: OTHER PRODUCTS
+// ════════════════════════════════════════
+let editingOtherId = null;
+function renderAdminOtherTbl(){
+  const tbl = document.getElementById('adminOtherTbl');
+  if(!tbl) return;
+  tbl.innerHTML = store.other.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td>NT$${b.price}</td>
+      <td>${b.qty}</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openOtherModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteOther(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function openOtherModal(id){
+  editingOtherId = id||null;
+  const b = id ? store.other.find(b=>b.id===id) : null;
+  document.getElementById('otherModalTitle').textContent = b?'編輯商品':'新增其他商品';
+  document.getElementById('ot-name').value  = b?b.name:'';
+  document.getElementById('ot-price').value = b?b.price:'';
+  document.getElementById('ot-qty').value   = b?b.qty:'';
+  document.getElementById('ot-avail').value = b?b.avail:'yes';
+  document.getElementById('ot-img').value   = b?b.img_url:'';
+  const preview = document.getElementById('ot-img-preview');
+  const previewEl = document.getElementById('ot-img-preview-el');
+  if(b?.img_url){ previewEl.src=b.img_url; preview.style.display='block'; }
+  else { preview.style.display='none'; }
+  document.getElementById('ot-upload-text').textContent = b?.img_url?'✓ 已有照片，點此更換':'📷 點此上傳照片';
+  openModal('otherModal');
+}
+async function saveOther(){
+  const d = {
+    name:    document.getElementById('ot-name').value.trim(),
+    price:   parseInt(document.getElementById('ot-price').value)||0,
+    qty:     parseInt(document.getElementById('ot-qty').value)||0,
+    avail:   document.getElementById('ot-avail').value,
+    img_url: document.getElementById('ot-img').value.trim(),
+  };
+  if(!d.name){showToast('請填寫商品名稱');return;}
+  try {
+    const r = editingOtherId
+      ? await apiPut(`/api/other/${editingOtherId}`, d)
+      : await apiPost('/api/other', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/other');
+      if(fresh.ok) store.other = fresh.data;
+      closeModal('otherModal');
+      renderOtherGrid(); renderAdminOtherTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteOther(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/other/${id}`);
+  store.other = store.other.filter(b=>b.id!==id);
+  renderOtherGrid(); renderAdminOtherTbl();
+}
+
+// ════════════════════════════════════════
+// UNIVERSAL IMAGE UPLOAD (for any modal)
+// ════════════════════════════════════════
+async function handleImgUploadFor(input, prefix) {
+  const file = input.files[0];
+  if (!file) return;
+  const label = document.getElementById(`${prefix}-upload-label`);
+  const txt   = document.getElementById(`${prefix}-upload-text`);
+  txt.textContent = '上傳中…'; label.style.opacity='0.6';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(API + '/api/images/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getAdminToken() },
+      body: fd,
+    });
+    const r = await res.json();
+    if(r.ok){
+      const imgUrl = API + r.url;
+      document.getElementById(`${prefix}-img`).value = imgUrl;
+      const preview = document.getElementById(`${prefix}-img-preview`);
+      document.getElementById(`${prefix}-img-preview-el`).src = imgUrl;
+      preview.style.display = 'block';
+      txt.textContent = '✓ 已上傳，點此更換';
+      label.style.opacity='1'; label.style.borderColor='var(--sage)';
+      showToast('照片上傳成功！');
+    } else {
+      txt.textContent='📷 點此上傳照片'; label.style.opacity='1';
+      showToast(r.error||'上傳失敗');
+    }
+  } catch {
+    txt.textContent='📷 點此上傳照片'; label.style.opacity='1';
+    showToast('網路錯誤，上傳失敗');
+  }
 }
 
 // ════════════════════════════════════════
@@ -2232,25 +2552,27 @@ document.getElementById('cartOverlay').addEventListener('click',e=>{
 });
 
 // ════════════════════════════════════════
-// INIT
+// INIT — 嘗試從 API 載入；失敗時顯示提示
 // ════════════════════════════════════════
 async function init(){
   renderCart();
   try {
     await loadPublicData();
+    // 若有 member token，嘗試恢復登入狀態
     if(getMemberToken()){
-      const r = await fetch(API + '/api/members/me', {
-        headers: { 'Authorization': 'Bearer ' + getMemberToken() }
-      });
-      const data = await r.json();
-      if(data.ok){ currentMember=data.member; updateMemberBtn(); renderCart(); }
+      const r = await apiGet('/api/auth/me');
+      if(r.ok){ currentMember=r.member; updateMemberBtn(); renderCart(); }
       else { clearMemberToken(); }
     }
   } catch(e) {
+    // API 未部署時顯示提示（Phase 1 相容）
     document.getElementById('roastedGrid').innerHTML =
-      '<div style="grid-column:1/-1;padding:40px;background:rgba(200,146,42,0.08);border:1px solid rgba(200,146,42,0.3);border-radius:4px;text-align:center;">'
-      +'<p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gold);margin-bottom:8px;">⚠ API 尚未連線</p>'
-      +'<p style="font-size:0.82rem;color:var(--muted);">請確認 Workers 已部署並更新 API 網址。</p></div>';
+      `<div style="grid-column:1/-1;padding:40px;background:rgba(200,146,42,0.08);border:1px solid rgba(200,146,42,0.3);border-radius:4px;text-align:center;">
+        <p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gold);margin-bottom:8px;">⚠ API 尚未連線</p>
+        <p style="font-size:0.82rem;color:var(--muted);">請依照部署說明將 Workers 上線後，更新 API 網址即可正常使用。</p>
+      </div>`;
+    document.getElementById('greenBeanGrid').innerHTML =
+      `<p style="color:rgba(247,242,232,0.4);font-family:'DM Mono',monospace;font-size:0.78rem;">⚠ 等待 API 連線…</p>`;
   }
 }
 init();
