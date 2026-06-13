@@ -2174,26 +2174,86 @@ function renderAdminGreenTbl(){
     </tr>`).join('');
 }
 function renderAdminMemberTbl(){
-  document.getElementById('adminMemberTbl').innerHTML = store.members.map(m=>{
+  const tbl = document.getElementById('adminMemberTbl');
+  if(!tbl) return;
+  if(!store.members.length){
+    tbl.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">尚無會員</td></tr>';
+    return;
+  }
+  tbl.innerHTML = store.members.map(function(m){
     const d = m.spent>=30000?15:m.spent>=20000?10:m.spent>=10000?5:0;
     const bal = m.balance || 0;
-    return `<tr>
-      <td>${m.name}</td>
-      <td style="font-size:0.8rem;color:var(--muted)">${m.email}</td>
-      <td>
-        <span style="font-weight:500;color:${bal>0?'var(--sage)':'var(--muted)'}">NT$${bal.toLocaleString()}</span>
-        <button class="btn-tbl" style="margin-left:6px;" onclick="openTopupModal(${m.id},'${m.name}',${bal})">加值</button>
-        <button class="btn-tbl" style="margin-left:4px;" onclick="openBalanceLogs(${m.id},'${m.name}')">歷程</button>
-      </td>
-      <td>
-        <span id="spent-val-${m.id}">NT$${(m.spent||0).toLocaleString()}</span>
-        <button class="btn-tbl" style="margin-left:6px;" onclick="openAdjustSpent(${m.id},'${m.name}',${m.spent||0})">調整</button>
-      </td>
-      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${d>0?'var(--sage)':'var(--muted)'}">
-        ${d>0?`${100-d}折`:'一般'}
-      </td>
-      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">${m.voucher_used||'—'}</td>
-      <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
-    </tr>`;
+    const discLabel = d>0 ? (100-d)+'折' : '一般';
+    const discColor = d>0 ? 'var(--sage)' : 'var(--muted)';
+    const balColor  = bal>0 ? 'var(--sage)' : 'var(--muted)';
+    return '<tr>'
+      + '<td>'+m.name+'</td>'
+      + '<td style="font-size:0.8rem;color:var(--muted)">'+m.email+'</td>'
+      + '<td>'
+        + '<span style="font-weight:500;color:'+balColor+'">NT$'+bal.toLocaleString()+'</span>'
+        + '<button class="btn-tbl" style="margin-left:6px;" onclick="openTopupModal('+m.id+',''+m.name+'','+bal+')">加值</button>'
+        + '<button class="btn-tbl" style="margin-left:4px;" onclick="openBalanceLogs('+m.id+',''+m.name+'')">歷程</button>'
+      + '</td>'
+      + '<td>'
+        + '<span id="spent-val-'+m.id+'">NT$'+(m.spent||0).toLocaleString()+'</span>'
+        + '<button class="btn-tbl" style="margin-left:6px;" onclick="openAdjustSpent('+m.id+',''+m.name+'','+(m.spent||0)+')">調整</button>'
+      + '</td>'
+      + '<td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:'+discColor+'">'+discLabel+'</td>'
+      + '<td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">'+(m.voucher_used||'—')+'</td>'
+      + '<td><button class="btn-tbl danger" onclick="deleteMember('+m.id+')">移除</button></td>'
+      + '</tr>';
   }).join('');
 }
+
+async function deleteCoupon(code){
+  await apiDel('/api/coupons/'+encodeURIComponent(code));
+  store.coupons = store.coupons.filter(c=>c.code!==code);
+  renderAdminCouponTbl();
+}
+
+// ════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function closeIfOverlay(e, id){ if(e.target===document.getElementById(id)) closeModal(id); }
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+}
+function smoothScrollTo(selector){ document.querySelector(selector)?.scrollIntoView({behavior:'smooth'}); }
+
+document.getElementById('cartOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('cartOverlay')) closeCart();
+});
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+async function init(){
+  renderCart();
+  try {
+    await loadPublicData();
+    if(getMemberToken()){
+      const r = await fetch(API + '/api/members/me', {
+        headers: { 'Authorization': 'Bearer ' + getMemberToken() }
+      });
+      const data = await r.json();
+      if(data.ok){ currentMember=data.member; updateMemberBtn(); renderCart(); }
+      else { clearMemberToken(); }
+    }
+  } catch(e) {
+    document.getElementById('roastedGrid').innerHTML =
+      '<div style="grid-column:1/-1;padding:40px;background:rgba(200,146,42,0.08);border:1px solid rgba(200,146,42,0.3);border-radius:4px;text-align:center;">'
+      +'<p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gold);margin-bottom:8px;">⚠ API 尚未連線</p>'
+      +'<p style="font-size:0.82rem;color:var(--muted);">請確認 Workers 已部署並更新 API 網址。</p></div>';
+  }
+}
+init();
+</script>
+</body>
+</html>
