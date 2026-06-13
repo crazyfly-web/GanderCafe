@@ -1220,7 +1220,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
-            <tr><th>姓名</th><th>Email</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
+            <tr><th>姓名</th><th>Email</th><th>帳戶餘額</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
           </thead>
           <tbody id="adminMemberTbl"></tbody>
         </table>
@@ -1421,6 +1421,53 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 </div>
 
 
+<!-- ── TOPUP MODAL ── -->
+<div class="modal-overlay" id="topupModal" onclick="closeIfOverlay(event,'topupModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">帳戶加值</span>
+      <button class="btn-close" onclick="closeModal('topupModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tu-member-id">
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:8px;">會員：<strong id="tu-member-name"></strong></p>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">目前餘額：<strong id="tu-current-balance" style="color:var(--roast-deep);"></strong></p>
+      <div class="form-group">
+        <label class="form-label">加值金額 (NT$)</label>
+        <input type="number" class="form-input" id="tu-amount" min="1" step="1000" placeholder="10000"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">備註</label>
+        <input type="text" class="form-input" id="tu-note" placeholder="例：現金儲值 10000 元"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('topupModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveTopup()">確認加值</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BALANCE LOGS MODAL ── -->
+<div class="modal-overlay" id="balanceLogsModal" onclick="closeIfOverlay(event,'balanceLogsModal')">
+  <div class="modal" style="width:min(600px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="balanceLogsTitle">餘額歷程</span>
+      <button class="btn-close" onclick="closeModal('balanceLogsModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding-bottom:0;">
+      <div id="balanceLogsSummary" style="background:rgba(200,146,42,0.06);border:1px solid rgba(200,146,42,0.2);border-radius:3px;padding:12px 16px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:0.8rem;"></div>
+      <div style="overflow-x:auto;">
+        <table class="admin-table" style="font-size:0.82rem;">
+          <thead><tr><th>時間</th><th>類型</th><th>金額</th><th>備註</th></tr></thead>
+          <tbody id="balanceLogsTbl"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-modal-cancel" onclick="closeModal('balanceLogsModal')">關閉</button></div>
+  </div>
+</div>
+
 <!-- ── ADJUST SPENT MODAL ── -->
 <div class="modal-overlay" id="adjustSpentModal" onclick="closeIfOverlay(event,'adjustSpentModal')">
   <div class="modal">
@@ -1591,6 +1638,9 @@ function calcTotal(){
   // 免運費折扣碼：未滿千才生效（滿千本來就免運，不重複）
   if (appliedFreeship && sub < 1000) ship = 0;
 
+  // 儲值會員永遠免運
+  if (currentMember && (currentMember.balance || 0) > 0) ship = 0;
+
   return { sub, discPct, discAmt, ship, total: Math.max(0, sub - discAmt + ship) };
 }
 
@@ -1643,6 +1693,20 @@ function renderCart(){
     document.getElementById('discountAmtDisplay').textContent = '-NT$'+discAmt.toLocaleString()+` (${100-discPct}折)`;
   } else { discRow.style.display='none'; }
   updateCartCount();
+
+  // 顯示/隱藏餘額結帳按鈕
+  const wrap = document.getElementById('balanceCheckoutWrap');
+  const balDisp = document.getElementById('balanceDisplay');
+  if(wrap && currentMember && (currentMember.balance||0) > 0){
+    const {total} = calcTotal();
+    const bal = currentMember.balance || 0;
+    wrap.style.display = 'block';
+    balDisp.textContent = `餘額 NT$${bal.toLocaleString()}`;
+    wrap.querySelector('button').disabled = bal < total;
+    wrap.querySelector('button').style.opacity = bal < total ? '0.5' : '1';
+  } else if(wrap) {
+    wrap.style.display = 'none';
+  }
 }
 
 function cartQty(i, d){
@@ -1844,6 +1908,14 @@ async function doLogin(){
     if(r.ok){
       setMemberToken(r.token);
       currentMember = r.member;
+      // 重新取得最新餘額
+      try {
+        const me = await fetch(API + '/api/members/me', {
+          headers: { 'Authorization': 'Bearer ' + r.token }
+        });
+        const meData = await me.json();
+        if(meData.ok) currentMember = meData.member;
+      } catch(e){}
       updateMemberBtn(); closeModal('memberModal');
       showToast(`歡迎回來，${r.member.name}！`);
       renderCart();
@@ -2115,6 +2187,59 @@ function renderAdminMemberTbl(){
       <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
     </tr>`;
   }).join('');
+}
+
+// 加值 Modal
+function openTopupModal(id, name, balance){
+  document.getElementById('tu-member-id').value = id;
+  document.getElementById('tu-member-name').textContent = name;
+  document.getElementById('tu-current-balance').textContent = 'NT$' + balance.toLocaleString();
+  document.getElementById('tu-amount').value = '';
+  document.getElementById('tu-note').value = '';
+  openModal('topupModal');
+}
+async function saveTopup(){
+  const id     = parseInt(document.getElementById('tu-member-id').value);
+  const amount = parseInt(document.getElementById('tu-amount').value) || 0;
+  const note   = document.getElementById('tu-note').value.trim();
+  if(!amount || amount <= 0){ showToast('請填寫加值金額'); return; }
+  try {
+    const r = await apiPost('/api/balance/topup', { member_id: id, amount, note }, true);
+    if(r.ok){
+      const m = store.members.find(m=>m.id===id);
+      if(m) m.balance = r.balance;
+      closeModal('topupModal');
+      renderAdminMemberTbl();
+      showToast(`加值成功！新餘額 NT$${r.balance.toLocaleString()}`);
+    } else { showToast(r.error||'加值失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+
+// 餘額歷程
+async function openBalanceLogs(id, name){
+  document.getElementById('balanceLogsTitle').textContent = `${name} — 餘額歷程`;
+  document.getElementById('balanceLogsSummary').textContent = '載入中…';
+  document.getElementById('balanceLogsTbl').innerHTML = '';
+  openModal('balanceLogsModal');
+  try {
+    const r = await apiGet(`/api/balance/logs/${id}`, true);
+    if(r.ok){
+      document.getElementById('balanceLogsSummary').innerHTML =
+        `目前餘額：<strong style="color:var(--roast-deep)">NT$${(r.member.balance||0).toLocaleString()}</strong>　累計消費：NT$${(r.member.spent||0).toLocaleString()}`;
+      const typeLabel = { topup:'儲值', purchase:'消費', refund:'退款' };
+      document.getElementById('balanceLogsTbl').innerHTML = r.logs.length
+        ? r.logs.map(l=>`
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);">${l.created_at.slice(0,16)}</td>
+            <td><span style="color:${l.amount>0?'var(--sage)':'var(--roast-mid)'};font-size:0.78rem;">${typeLabel[l.type]||l.type}</span></td>
+            <td style="font-family:'DM Mono',monospace;font-weight:500;color:${l.amount>0?'var(--sage)':'var(--roast-mid)'};">
+              ${l.amount>0?'+':''}NT$${Math.abs(l.amount).toLocaleString()}
+            </td>
+            <td style="font-size:0.8rem;color:var(--muted);">${l.note||'—'}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">尚無記錄</td></tr>';
+    } else { document.getElementById('balanceLogsSummary').textContent = '載入失敗'; }
+  } catch { document.getElementById('balanceLogsSummary').textContent = '網路錯誤'; }
 }
 
 // 調整累計消費 Modal
@@ -2658,6 +2783,62 @@ async function openBlogPost(id){
       (blocksHtml || "<p style='color:var(--muted);font-size:0.88rem;'>（文章內容空白）</p>");
   } catch(e) {
     document.getElementById("blogModalContent").innerHTML = "<p style='color:var(--muted);'>載入失敗，請稍後再試。</p>";
+  }
+}
+
+// ════════════════════════════════════════
+// BALANCE CHECKOUT
+// ════════════════════════════════════════
+async function balanceCheckout(){
+  if(!cart.length){ showToast('購物車是空的'); return; }
+  if(!currentMember){ showToast('請先登入會員'); return; }
+
+  const {sub, discAmt, total} = calcTotal();
+  const balance = currentMember.balance || 0;
+
+  if(balance < total){
+    showToast(`餘額不足（餘額 NT$${balance.toLocaleString()}，需要 NT$${total.toLocaleString()}）`);
+    return;
+  }
+
+  if(!confirm(`確認以帳戶餘額結帳？
+合計：NT$${total.toLocaleString()}（含折扣，免運費）
+結帳後餘額：NT$${(balance-total).toLocaleString()}`)) return;
+
+  const btn = document.querySelector('#balanceCheckoutWrap button');
+  btn.textContent = '處理中…'; btn.disabled = true;
+
+  try {
+    const r = await fetch(API + '/api/balance/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + getMemberToken(),
+      },
+      body: JSON.stringify({
+        items: cart,
+        subtotal: sub,
+        discount_amt: discAmt,
+        shipping_fee: 0,
+        total,
+        shipping_type: selectedShipping,
+        member_id: currentMember.id,
+      }),
+    });
+    const data = await r.json();
+    if(data.ok){
+      currentMember.balance = data.new_balance;
+      updateMemberBtn();
+      cart = []; renderCart(); closeCart();
+      showToast(`結帳成功！訂單 #${data.order_id}，剩餘餘額 NT$${data.new_balance.toLocaleString()}`);
+    } else {
+      showToast(data.error || '結帳失敗');
+    }
+  } catch(e) {
+    showToast('網路錯誤，請稍後再試');
+  } finally {
+    if(btn){ btn.disabled = false; }
+    renderCart();
   }
 }
 
