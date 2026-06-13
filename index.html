@@ -938,6 +938,9 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="cart-summary-row"><span>運費</span><span id="shippingDisplay">NT$0</span></div>
       <div class="cart-summary-row total"><span>合計</span><span id="totalDisplay">NT$0</span></div>
       <button class="btn-checkout" onclick="checkout()">前往結帳 — ECpay 綠界</button>
+      <div id="balanceCheckoutWrap" style="display:none;margin-top:10px;">
+        <button class="btn-checkout" style="background:var(--sage);" onclick="balanceCheckout()">以餘額結帳 — <span id="balanceDisplay"></span></button>
+      </div>
     </div>
   </aside>
 </div>
