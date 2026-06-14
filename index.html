@@ -797,7 +797,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
     <button class="nav-link" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
     <button class="nav-link" onclick="smoothScrollTo('#greensale-section')">生豆販售</button>
     <button class="nav-link" onclick="smoothScrollTo('#other-section')">其他商品</button>
-    <button class="nav-link" onclick="smoothScrollTo('#blog-section')">品牌日誌</button>
     <button class="nav-link" onclick="smoothScrollTo('#about-section')">關於我們</button>
   </nav>
   <div class="topbar-actions">
@@ -863,27 +862,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   <div class="product-grid" id="otherGrid"></div>
 </section>
 
-<!-- ── BLOG ── -->
-<section class="section" id="blog-section" style="background:var(--warm-white);">
-  <div class="section-header">
-    <div class="section-eyebrow">品牌日誌 · Journal</div>
-    <h2 class="section-title">來自<strong style="font-style:normal;font-weight:600;">烘豆師</strong>的話</h2>
-    <p class="section-desc">豆子開箱、沖煮技巧、產地故事，記錄每一批豆子背後的故事。</p>
-  </div>
-  <div id="blogGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px;"></div>
-</section>
-
-<!-- ── BLOG POST MODAL ── -->
-<div class="modal-overlay" id="blogModal" onclick="closeIfOverlay(event,'blogModal')">
-  <div class="modal" style="width:min(680px,96vw);max-height:88vh;overflow-y:auto;">
-    <div class="modal-header">
-      <span class="modal-title" id="blogModalTitle" style="font-size:1.1rem;line-height:1.4;max-width:90%;"></span>
-      <button class="btn-close" onclick="closeModal('blogModal')">✕</button>
-    </div>
-    <div id="blogModalContent" style="padding:0 32px 32px;"></div>
-  </div>
-</div>
-
 <!-- ── ABOUT ── -->
 <section class="section" id="about-section" style="text-align:center;max-width:680px;margin:0 auto;padding:80px 40px;">
   <div class="section-eyebrow">About</div>
@@ -938,7 +916,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="cart-summary-row"><span>運費</span><span id="shippingDisplay">NT$0</span></div>
       <div class="cart-summary-row total"><span>合計</span><span id="totalDisplay">NT$0</span></div>
       <button class="btn-checkout" onclick="checkout()">前往結帳 — ECpay 綠界</button>
-      <div id="balanceCheckoutWrap" style="display:none;margin-top:10px;"><button class="btn-checkout" style="background:var(--sage);" onclick="balanceCheckout()">以餘額結帳 — <span id="balanceDisplay"></span></button></div>
     </div>
   </aside>
 </div>
@@ -1221,7 +1198,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
-            <tr><th>姓名</th><th>Email</th><th>帳戶餘額</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
+            <tr><th>姓名</th><th>Email</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
           </thead>
           <tbody id="adminMemberTbl"></tbody>
         </table>
@@ -1360,54 +1337,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <button class="btn-modal-cancel" onclick="closeModal('otherModal')">取消</button>
       <button class="btn-modal-save" onclick="saveOther()">儲存</button>
     </div>
-  </div>
-</div>
-
-
-<!-- ── TOPUP MODAL ── -->
-<div class="modal-overlay" id="topupModal" onclick="closeIfOverlay(event,'topupModal')">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">帳戶加值</span>
-      <button class="btn-close" onclick="closeModal('topupModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="tu-member-id">
-      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:8px;">會員：<strong id="tu-member-name"></strong></p>
-      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">目前餘額：<strong id="tu-current-balance" style="color:var(--roast-deep);"></strong></p>
-      <div class="form-group">
-        <label class="form-label">加值金額 (NT$)</label>
-        <input type="number" class="form-input" id="tu-amount" min="1" step="1000" placeholder="10000"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">備註</label>
-        <input type="text" class="form-input" id="tu-note" placeholder="例：現金儲值 10000 元"/>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-modal-cancel" onclick="closeModal('topupModal')">取消</button>
-      <button class="btn-modal-save" onclick="saveTopup()">確認加值</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── BALANCE LOGS MODAL ── -->
-<div class="modal-overlay" id="balanceLogsModal" onclick="closeIfOverlay(event,'balanceLogsModal')">
-  <div class="modal" style="width:min(600px,96vw)">
-    <div class="modal-header">
-      <span class="modal-title" id="balanceLogsTitle">餘額歷程</span>
-      <button class="btn-close" onclick="closeModal('balanceLogsModal')">✕</button>
-    </div>
-    <div class="modal-body" style="padding-bottom:0;">
-      <div id="balanceLogsSummary" style="background:rgba(200,146,42,0.06);border:1px solid rgba(200,146,42,0.2);border-radius:3px;padding:12px 16px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:0.8rem;"></div>
-      <div style="overflow-x:auto;">
-        <table class="admin-table" style="font-size:0.82rem;">
-          <thead><tr><th>時間</th><th>類型</th><th>金額</th><th>備註</th></tr></thead>
-          <tbody id="balanceLogsTbl"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn-modal-cancel" onclick="closeModal('balanceLogsModal')">關閉</button></div>
   </div>
 </div>
 
@@ -1566,7 +1495,6 @@ async function loadPublicData() {
   renderGreenGrid();
   renderGreenSaleGrid();
   renderOtherGrid();
-  loadBlog();
 }
 
 // ── Load admin data (after admin login) ──
@@ -1639,7 +1567,6 @@ function calcTotal(){
 
   // 免運費折扣碼：未滿千才生效（滿千本來就免運，不重複）
   if (appliedFreeship && sub < 1000) ship = 0;
-  if (currentMember && (currentMember.balance||0) > 0) ship = 0;
 
   return { sub, discPct, discAmt, ship, total: Math.max(0, sub - discAmt + ship) };
 }
@@ -1693,16 +1620,6 @@ function renderCart(){
     document.getElementById('discountAmtDisplay').textContent = '-NT$'+discAmt.toLocaleString()+` (${100-discPct}折)`;
   } else { discRow.style.display='none'; }
   updateCartCount();
-  var bWrap = document.getElementById('balanceCheckoutWrap');
-  var bDisp = document.getElementById('balanceDisplay');
-  if(bWrap && currentMember && (currentMember.balance||0) > 0){
-    var balT = calcTotal(); var bal = currentMember.balance||0;
-    bWrap.style.display='block';
-    if(bDisp) bDisp.textContent='餘額 NT$'+bal.toLocaleString();
-    var bBtn = bWrap.querySelector('button');
-    bBtn.disabled = bal < balT.total;
-    bBtn.style.opacity = bal < balT.total ? '0.5' : '1';
-  } else if(bWrap){ bWrap.style.display='none'; }
 }
 
 function cartQty(i, d){
@@ -1883,11 +1800,6 @@ async function doLogin(){
     if(r.ok){
       setMemberToken(r.token);
       currentMember = r.member;
-      try {
-        var meRes = await fetch(API + '/api/members/me', {headers:{'Authorization':'Bearer '+r.token}});
-        var meData = await meRes.json();
-        if(meData.ok) currentMember = meData.member;
-      } catch(e){}
       updateMemberBtn(); closeModal('memberModal');
       showToast(`歡迎回來，${r.member.name}！`);
       renderCart();
@@ -2143,29 +2055,25 @@ function renderAdminGreenTbl(){
     </tr>`).join('');
 }
 function renderAdminMemberTbl(){
-  document.getElementById('adminMemberTbl').innerHTML = store.members.map(function(m){
-    var d = m.spent>=30000?15:m.spent>=20000?10:m.spent>=10000?5:0;
-    var bal = m.balance || 0;
-    var discLabel = d>0 ? (100-d)+'折' : '一般';
-    var discColor = d>0 ? 'var(--sage)' : 'var(--muted)';
-    var balColor = bal>0 ? 'var(--sage)' : 'var(--muted)';
-    return '<tr>'
-      +'<td>'+m.name+'</td>'
-      +'<td style="font-size:0.8rem;color:var(--muted)">'+m.email+'</td>'
-      +'<td>'
-        +'<span style="font-weight:500;color:'+balColor+'">NT$'+bal.toLocaleString()+'</span>'
-        +' <button class="btn-tbl" onclick="openTopupModal('+m.id+',this.dataset.n,'+bal+')" data-n="'+m.name+'">加值</button>'
-        +' <button class="btn-tbl" onclick="openBalanceLogs('+m.id+',this.dataset.n)" data-n="'+m.name+'">歷程</button>'
-      +'</td>'
-      +'<td><span id="spent-val-'+m.id+'">NT$'+(m.spent||0).toLocaleString()+'</span>'
-        +' <button class="btn-tbl" onclick="openAdjustSpent('+m.id+',this.dataset.n,'+(m.spent||0)+')" data-n="'+m.name+'">調整</button>'
-      +'</td>'
-      +'<td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:'+discColor+'">'+discLabel+'</td>'
-      +'<td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">'+(m.voucher_used||'—')+'</td>'
-      +'<td><button class="btn-tbl danger" onclick="deleteMember('+m.id+')">移除</button></td>'
-      +'</tr>';
+  document.getElementById('adminMemberTbl').innerHTML = store.members.map(m=>{
+    const d = m.spent>=30000?15:m.spent>=20000?10:m.spent>=10000?5:0;
+    return `<tr>
+      <td>${m.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${m.email}</td>
+      <td>
+        <span id="spent-val-${m.id}">NT$${(m.spent||0).toLocaleString()}</span>
+        <button class="btn-tbl" style="margin-left:8px;" onclick="openAdjustSpent(${m.id},'${m.name}',${m.spent||0})">調整</button>
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${d>0?'var(--sage)':'var(--muted)'}">
+        ${d>0?`${100-d}折`:'一般'}
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">${m.voucher_used||'—'}</td>
+      <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
+    </tr>`;
   }).join('');
 }
+
+// 調整累計消費 Modal
 function openAdjustSpent(id, name, current){
   document.getElementById('as-member-name').textContent = name;
   document.getElementById('as-spent').value = current;
@@ -2646,152 +2554,6 @@ document.getElementById('cartOverlay').addEventListener('click',e=>{
 // ════════════════════════════════════════
 // INIT — 嘗試從 API 載入；失敗時顯示提示
 // ════════════════════════════════════════
-// ════════════════════════════════════════
-// BALANCE SYSTEM
-// ════════════════════════════════════════
-function openTopupModal(id, name, balance){
-  document.getElementById('tu-member-id').value = id;
-  document.getElementById('tu-member-name').textContent = name;
-  document.getElementById('tu-current-balance').textContent = 'NT$' + (balance||0).toLocaleString();
-  document.getElementById('tu-amount').value = '';
-  document.getElementById('tu-note').value = '';
-  openModal('topupModal');
-}
-
-async function saveTopup(){
-  var id = parseInt(document.getElementById('tu-member-id').value);
-  var amount = parseInt(document.getElementById('tu-amount').value)||0;
-  var note = document.getElementById('tu-note').value.trim();
-  if(!amount || amount <= 0){ showToast('請填寫加值金額'); return; }
-  try {
-    var r = await apiPost('/api/balance/topup', {member_id:id, amount:amount, note:note}, true);
-    if(r.ok){
-      var m = store.members.find(function(m){ return m.id===id; });
-      if(m) m.balance = r.balance;
-      closeModal('topupModal');
-      renderAdminMemberTbl();
-      showToast('加值成功！新餘額 NT$'+r.balance.toLocaleString());
-    } else { showToast(r.error||'加值失敗'); }
-  } catch(e){ showToast('網路錯誤'); }
-}
-
-async function openBalanceLogs(id, name){
-  document.getElementById('balanceLogsTitle').textContent = name+' — 餘額歷程';
-  document.getElementById('balanceLogsSummary').textContent = '載入中…';
-  document.getElementById('balanceLogsTbl').innerHTML = '';
-  openModal('balanceLogsModal');
-  try {
-    var r = await apiGet('/api/balance/logs/'+id, true);
-    if(r.ok){
-      document.getElementById('balanceLogsSummary').innerHTML =
-        '目前餘額：<strong style="color:var(--roast-deep)">NT$'+(r.member.balance||0).toLocaleString()+'</strong>　累計消費：NT$'+(r.member.spent||0).toLocaleString();
-      var typeLabel = {topup:'儲值', purchase:'消費', refund:'退款'};
-      document.getElementById('balanceLogsTbl').innerHTML = r.logs.length
-        ? r.logs.map(function(l){
-            var color = l.amount>0 ? 'var(--sage)' : 'var(--roast-mid)';
-            var sign = l.amount>0 ? '+' : '';
-            return '<tr>'
-              +'<td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);">'+l.created_at.slice(0,16)+'</td>'
-              +'<td><span style="color:'+color+';font-size:0.78rem;">'+(typeLabel[l.type]||l.type)+'</span></td>'
-              +'<td style="font-family:'DM Mono',monospace;font-weight:500;color:'+color+';">'+sign+'NT$'+Math.abs(l.amount).toLocaleString()+'</td>'
-              +'<td style="font-size:0.8rem;color:var(--muted);">'+(l.note||'—')+'</td>'
-              +'</tr>';
-          }).join('')
-        : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">尚無記錄</td></tr>';
-    } else { document.getElementById('balanceLogsSummary').textContent = '載入失敗'; }
-  } catch(e){ document.getElementById('balanceLogsSummary').textContent = '網路錯誤'; }
-}
-
-async function balanceCheckout(){
-  if(!cart.length){ showToast('購物車是空的'); return; }
-  if(!currentMember){ showToast('請先登入會員'); return; }
-  var totals = calcTotal();
-  var balance = currentMember.balance || 0;
-  if(balance < totals.total){
-    showToast('餘額不足（餘額 NT$'+balance.toLocaleString()+'，需要 NT$'+totals.total.toLocaleString()+'）');
-    return;
-  }
-  if(!confirm('確認以帳戶餘額結帳？\n合計：NT$'+totals.total.toLocaleString()+'（免運費）\n結帳後餘額：NT$'+(balance-totals.total).toLocaleString())) return;
-  var btn = document.querySelector('#balanceCheckoutWrap button');
-  if(btn){ btn.textContent='處理中…'; btn.disabled=true; }
-  try {
-    var res = await fetch(API+'/api/balance/checkout', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+getMemberToken()},
-      body: JSON.stringify({
-        items:cart, subtotal:totals.sub, discount_amt:totals.discAmt,
-        shipping_fee:0, total:totals.total, shipping_type:selectedShipping, member_id:currentMember.id
-      })
-    });
-    var data = await res.json();
-    if(data.ok){
-      currentMember.balance = data.new_balance;
-      updateMemberBtn();
-      cart=[]; renderCart(); closeCart();
-      showToast('結帳成功！訂單 #'+data.order_id+'，剩餘餘額 NT$'+data.new_balance.toLocaleString());
-    } else { showToast(data.error||'結帳失敗'); }
-  } catch(e){ showToast('網路錯誤，請稍後再試'); }
-  finally {
-    var btn2 = document.querySelector('#balanceCheckoutWrap button');
-    if(btn2){ btn2.disabled=false; renderCart(); }
-  }
-}
-
-// ════════════════════════════════════════
-// BLOG
-// ════════════════════════════════════════
-async function loadBlog(){
-  var grid = document.getElementById('blogGrid');
-  if(!grid) return;
-  grid.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">載入中…</p>';
-  try {
-    var r = await apiGet('/api/blog');
-    if(r.ok && r.data.length){
-      grid.innerHTML = r.data.map(function(post){
-        var coverHtml = post.cover
-          ? '<div style="width:100%;aspect-ratio:16/9;overflow:hidden;"><img src="'+post.cover+'" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.style.display='none'"></div>'
-          : '<div style="width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,var(--parchment),#e8dfc8);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--roast-light);font-style:italic;">G</div>';
-        var catHtml = post.category ? '<div style="font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px;text-transform:uppercase;">'+post.category+'</div>' : '';
-        var summaryHtml = post.summary ? '<div style="font-size:0.82rem;color:var(--muted);line-height:1.7;font-weight:300;">'+post.summary+'</div>' : '';
-        var dateHtml = post.published ? '<div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:12px;">'+post.published+'</div>' : '';
-        return '<div onclick="openBlogPost(''+post.id+'')" style="background:white;border:1px solid var(--border);border-radius:4px;overflow:hidden;cursor:pointer;transition:box-shadow 0.25s,transform 0.2s;" onmouseover="this.style.boxShadow='0 8px 32px rgba(28,15,8,0.12)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">'
-          +coverHtml
-          +'<div style="padding:20px 22px 24px;">'+catHtml
-          +'<div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--roast-deep);line-height:1.35;margin-bottom:8px;">'+post.title+'</div>'
-          +summaryHtml+dateHtml+'</div></div>';
-      }).join('');
-    } else {
-      grid.innerHTML = '<p style="color:var(--muted);font-size:0.88rem;">目前尚無文章，敬請期待。</p>';
-    }
-  } catch(e){
-    grid.innerHTML = '<p style="color:var(--muted);font-size:0.88rem;">載入失敗，請稍後再試。</p>';
-  }
-}
-
-async function openBlogPost(id){
-  document.getElementById('blogModalTitle').textContent = '載入中…';
-  document.getElementById('blogModalContent').innerHTML = '<div style="padding:40px 0;text-align:center;color:var(--muted);">載入中…</div>';
-  openModal('blogModal');
-  try {
-    var r = await apiGet('/api/blog/'+id);
-    if(!r.ok){ document.getElementById('blogModalContent').innerHTML='<p style="color:var(--muted);">載入失敗</p>'; return; }
-    var post = r.data;
-    document.getElementById('blogModalTitle').textContent = post.title;
-    var blocksHtml = (post.blocks||[]).map(function(b){
-      if(b.type==='paragraph') return '<p style="font-size:0.95rem;line-height:1.9;color:var(--espresso);margin-bottom:16px;font-weight:300;">'+b.text+'</p>';
-      if(b.type==='heading_1') return '<h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--roast-deep);margin:28px 0 12px;">'+b.text+'</h2>';
-      if(b.type==='heading_2') return '<h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--roast-deep);margin:24px 0 10px;">'+b.text+'</h3>';
-      if(b.type==='image') return '<div style="margin:20px 0;"><img src="'+b.url+'" style="width:100%;border-radius:3px;"><div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:6px;text-align:center;">'+b.caption+'</div></div>';
-      if(b.type==='divider') return '<hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">';
-      if(b.type==='quote') return '<blockquote style="border-left:3px solid var(--gold);padding:12px 20px;margin:20px 0;background:rgba(200,146,42,0.04);font-style:italic;color:var(--muted);font-size:0.92rem;line-height:1.8;">'+b.text+'</blockquote>';
-      return b.text ? '<p style="font-size:0.9rem;line-height:1.8;color:var(--espresso);margin-bottom:12px;">'+b.text+'</p>' : '';
-    }).join('');
-    var coverHtml = post.cover ? '<div style="margin:0 -32px 24px;"><img src="'+post.cover+'" style="width:100%;max-height:260px;object-fit:cover;"></div>' : '';
-    document.getElementById('blogModalContent').innerHTML = coverHtml + blocksHtml;
-  } catch(e){ document.getElementById('blogModalContent').innerHTML='<p style="color:var(--muted);">載入失敗</p>'; }
-}
-
-
 async function init(){
   renderCart();
   try {
