@@ -770,56 +770,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   color:var(--muted);line-height:1.8;
 }
 .discount-tier-info strong{color:var(--gold);}
-.member-wallet-grid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-  margin-top:16px;
-}
-.member-wallet-card {
-  border:1px solid var(--border);
-  background:var(--warm-white);
-  border-radius:4px;
-  padding:12px;
-}
-.member-wallet-label {
-  font-family:'DM Mono',monospace;
-  font-size:0.66rem;
-  color:var(--muted);
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-}
-.member-wallet-value {
-  margin-top:6px;
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.45rem;
-  color:var(--roast-deep);
-}
-.member-ledger-list {
-  margin-top:12px;
-  border:1px solid var(--border);
-  border-radius:4px;
-  overflow:hidden;
-}
-.member-ledger-row {
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-  padding:10px 12px;
-  border-bottom:1px solid rgba(100,65,35,0.07);
-  font-size:0.78rem;
-}
-.member-ledger-row:last-child{border-bottom:none;}
-.member-ledger-main{line-height:1.5;}
-.member-ledger-note{color:var(--muted);font-size:0.72rem;}
-.member-ledger-amt {
-  font-family:'DM Mono',monospace;
-  white-space:nowrap;
-  color:var(--roast-deep);
-}
-.member-ledger-amt.credit{color:var(--sage);}
-.member-ledger-amt.debit{color:#a33b2b;}
 
 @media(max-width:768px){
   .topbar{padding:0 20px;}
@@ -965,8 +915,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="cart-summary-row" id="discountDisplay" style="display:none;"><span>折扣</span><span id="discountAmtDisplay" style="color:var(--sage)"></span></div>
       <div class="cart-summary-row"><span>運費</span><span id="shippingDisplay">NT$0</span></div>
       <div class="cart-summary-row total"><span>合計</span><span id="totalDisplay">NT$0</span></div>
-      <div class="discount-applied" id="paymentHint" style="display:none;"></div>
-      <button class="btn-checkout" id="checkoutBtn" onclick="checkout()">前往結帳 — ECpay 綠界</button>
+      <button class="btn-checkout" onclick="checkout()">前往結帳 — ECpay 綠界</button>
     </div>
   </aside>
 </div>
@@ -1249,7 +1198,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
-            <tr><th>姓名</th><th>Email</th><th>餘額</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
+            <tr><th>姓名</th><th>Email</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
           </thead>
           <tbody id="adminMemberTbl"></tbody>
         </table>
@@ -1481,50 +1430,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   </div>
 </div>
 
-<!-- ── ADJUST BALANCE MODAL ── -->
-<div class="modal-overlay" id="adjustBalanceModal" onclick="closeIfOverlay(event,'adjustBalanceModal')">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">調整會員餘額</span>
-      <button class="btn-close" onclick="closeModal('adjustBalanceModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="ab-member-id">
-      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:20px;">
-        會員：<strong id="ab-member-name"></strong>
-      </p>
-      <div class="form-group">
-        <label class="form-label">目前餘額 (NT$)</label>
-        <input type="number" class="form-input" id="ab-balance" min="0" step="100" placeholder="0"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">備註</label>
-        <input type="text" class="form-input" id="ab-note" placeholder="例：現金儲值 / 匯款儲值 / 店家調整"/>
-      </div>
-      <div class="discount-tier-info">
-        <p>更新餘額時，後端應同步新增一筆 <strong>儲值/調整</strong> 交易歷程，方便日後對帳。</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-modal-cancel" onclick="closeModal('adjustBalanceModal')">取消</button>
-      <button class="btn-modal-save" onclick="saveAdjustBalance()">更新餘額</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── MEMBER TRANSACTIONS MODAL ── -->
-<div class="modal-overlay" id="memberLedgerModal" onclick="closeIfOverlay(event,'memberLedgerModal')">
-  <div class="modal" style="width:min(640px,96vw)">
-    <div class="modal-header">
-      <span class="modal-title" id="memberLedgerTitle">會員交易歷程</span>
-      <button class="btn-close" onclick="closeModal('memberLedgerModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="memberLedgerContent"></div>
-    </div>
-  </div>
-</div>
-
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -1627,7 +1532,6 @@ function cartSubtotal(){
   return cart.reduce((s,i)=>s+i.price*i.qty, 0);
 }
 function calcShipping(sub){
-  if(currentMember) return 0;
   if(selectedShipping==='post'||selectedShipping==='cvs'){
     return sub>=1000 ? 0 : SHIPPING[selectedShipping].base;
   } else {
@@ -1658,25 +1562,13 @@ function calcTotal(){
   // 實際商品折扣：百分比 vs 固定金額，取較大者
   const discAmt  = Math.max(pctAmt, fixedAmt);
 
-  // 運費：儲值會員登入後一律免運，其餘先算正常運費
-  let ship = sub > 0 ? calcShipping(sub) : 0;
+  // 運費：先算正常運費
+  let ship = calcShipping(sub);
 
   // 免運費折扣碼：未滿千才生效（滿千本來就免運，不重複）
   if (appliedFreeship && sub < 1000) ship = 0;
 
   return { sub, discPct, discAmt, ship, total: Math.max(0, sub - discAmt + ship) };
-}
-
-function memberBalance(member = currentMember){
-  return Number(member?.balance ?? member?.wallet_balance ?? member?.credit ?? 0) || 0;
-}
-
-function memberLedger(member = currentMember){
-  return member?.transactions || member?.ledger || member?.wallet_transactions || [];
-}
-
-function formatMoney(n){
-  return 'NT$' + (Number(n) || 0).toLocaleString();
 }
 
 function updateCartCount(){
@@ -1715,33 +1607,17 @@ function renderCart(){
           <div class="shipping-opt-note">${v.note}</div>
         </div>
       </div>
-      <div class="shipping-opt-price">${currentMember?'儲值會員免運':(shippingFeeFor(k,cartSubtotal())===0?'免運':'NT$'+shippingFeeFor(k,cartSubtotal()))}</div>
+      <div class="shipping-opt-price">${calcShipping(cartSubtotal())===0&&selectedShipping===k?'免運':'NT$'+calcShipping(cartSubtotal())}</div>
     </div>`).join('');
   // Summary
   const {sub,discPct,discAmt,ship,total} = calcTotal();
   document.getElementById('subtotalDisplay').textContent = 'NT$'+sub.toLocaleString();
   document.getElementById('shippingDisplay').textContent = ship===0?'免運':'NT$'+ship;
   document.getElementById('totalDisplay').textContent = 'NT$'+total.toLocaleString();
-  const paymentHint = document.getElementById('paymentHint');
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  if(currentMember){
-    const bal = memberBalance();
-    paymentHint.style.display='block';
-    paymentHint.style.color = bal >= total ? 'var(--sage)' : '#c0392b';
-    paymentHint.textContent = bal >= total
-      ? `儲值會員免運，將以會員餘額扣款（可用 ${formatMoney(bal)}）`
-      : `儲值會員免運，但餘額不足（可用 ${formatMoney(bal)}，需 ${formatMoney(total)}）`;
-    checkoutBtn.textContent = '以會員餘額付款';
-  } else {
-    paymentHint.style.display='none';
-    checkoutBtn.textContent = '前往結帳 — ECpay 綠界';
-  }
   const discRow = document.getElementById('discountDisplay');
-  if(discAmt>0){
+  if(discPct>0){
     discRow.style.display='flex';
-    document.getElementById('discountAmtDisplay').textContent = discPct>0
-      ? '-NT$'+discAmt.toLocaleString()+` (${100-discPct}折)`
-      : '-NT$'+discAmt.toLocaleString();
+    document.getElementById('discountAmtDisplay').textContent = '-NT$'+discAmt.toLocaleString()+` (${100-discPct}折)`;
   } else { discRow.style.display='none'; }
   updateCartCount();
 }
@@ -1752,15 +1628,6 @@ function cartQty(i, d){
 }
 function cartRemove(i){ cart.splice(i,1); renderCart(); }
 function selectShipping(k){ selectedShipping=k; renderCart(); }
-
-function shippingFeeFor(type, sub){
-  if(type==='post'||type==='cvs'){
-    return sub>=1000 ? 0 : SHIPPING[type].base;
-  }
-  if(sub>=2000) return 0;
-  if(sub>=1000) return 50;
-  return 100;
-}
 
 function addToCart(type, id, qty){
   let item, spec;
@@ -1819,7 +1686,7 @@ async function applyDiscountCode(){
 }
 
 // ════════════════════════════════════════
-// CHECKOUT (ECpay for guests, member balance for stored-value members)
+// CHECKOUT (ECpay mock → Phase 3 real)
 // ════════════════════════════════════════
 async function checkout(){
   if(!cart.length){ showToast('購物車是空的'); return; }
@@ -1827,14 +1694,7 @@ async function checkout(){
   const btn = document.querySelector('.btn-checkout');
   btn.textContent = '處理中…'; btn.disabled = true;
 
-  const {sub, discPct, discAmt, ship, total} = calcTotal();
-  const useMemberBalance = !!currentMember;
-  const balanceBefore = memberBalance();
-  if(useMemberBalance && balanceBefore < total){
-    showToast('會員餘額不足，請先請店家儲值後再結帳');
-    btn.textContent = '以會員餘額付款'; btn.disabled = false;
-    return;
-  }
+  const {sub, discAmt, ship, total} = calcTotal();
 
   try {
     const res = await fetch(API + '/api/checkout', {
@@ -1851,11 +1711,6 @@ async function checkout(){
         total,
         shipping_type: selectedShipping,
         member_id: currentMember?.id || null,
-        payment_method: useMemberBalance ? 'member_balance' : 'ecpay',
-        skip_ecpay: useMemberBalance,
-        balance_before: useMemberBalance ? balanceBefore : null,
-        balance_after: useMemberBalance ? balanceBefore - total : null,
-        member_discount_pct: discPct,
       }),
     });
 
@@ -1863,26 +1718,12 @@ async function checkout(){
       let errMsg = '結帳失敗，請稍後再試';
       try { const errData = await res.json(); errMsg = errData.error || errMsg; } catch{}
       showToast(errMsg);
-      btn.textContent = useMemberBalance ? '以會員餘額付款' : '前往結帳 — ECpay 綠界'; btn.disabled = false;
+      btn.textContent = '前往結帳 — ECpay 綠界'; btn.disabled = false;
       return;
     }
 
-    if(useMemberBalance){
-      const data = await res.json();
-      const newBalance = data.member?.balance ?? data.balance_after ?? (balanceBefore - total);
-      currentMember = {
-        ...currentMember,
-        ...(data.member || {}),
-        balance: newBalance,
-        spent: data.member?.spent ?? ((currentMember.spent || 0) + total),
-        transactions: data.transactions || currentMember.transactions,
-      };
-      cart = []; renderCart(); closeCart(); updateMemberBtn();
-      showToast('訂單已成立，已從會員餘額扣款');
-      return;
-    }
-
-    // Guests receive ECpay auto-submit HTML from Workers.
+    // Workers 回傳 ECpay 自動提交表單 HTML
+    // 直接替換當前頁面內容並提交
     const html = await res.text();
     cart = []; renderCart(); closeCart();
     document.open();
@@ -1891,7 +1732,7 @@ async function checkout(){
   } catch(e) {
     showToast('網路錯誤，請稍後再試');
   } finally {
-    btn.textContent = currentMember ? '以會員餘額付款' : '前往結帳 — ECpay 綠界'; btn.disabled = false;
+    btn.textContent = '前往結帳 — ECpay 綠界'; btn.disabled = false;
   }
 }
 // ════════════════════════════════════════
@@ -1913,23 +1754,9 @@ function renderMemberContent(){
         <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-top:4px;">${currentMember.email}</div>
         ${disc>0?`<div class="member-badge gold" style="margin:12px auto 0;">★ ${tier}</div>`:''}
       </div>
-      <div class="member-wallet-grid">
-        <div class="member-wallet-card">
-          <div class="member-wallet-label">可用餘額</div>
-          <div class="member-wallet-value">${formatMoney(memberBalance())}</div>
-        </div>
-        <div class="member-wallet-card">
-          <div class="member-wallet-label">免運資格</div>
-          <div class="member-wallet-value" style="font-size:1.1rem;margin-top:10px;">儲值會員免運</div>
-        </div>
-      </div>
       <div class="discount-tier-info">
         <p>累計消費：<strong>NT$${(currentMember.spent||0).toLocaleString()}</strong><br>
         ${disc>0?`目前享有：<strong>${100-disc}折優惠</strong>`:'消費累計滿萬元即享折扣'}</p>
-      </div>
-      <div style="margin-top:18px;">
-        <div class="member-wallet-label">最近交易</div>
-        ${renderLedgerRows(memberLedger().slice(0,5))}
       </div>
       <div style="margin-top:20px;display:flex;gap:10px;">
         <button class="btn-outline" style="flex:1;font-size:0.75rem;" onclick="closeModal('memberModal')">關閉</button>
@@ -1990,25 +1817,6 @@ function updateMemberBtn(){
   if(currentMember){
     btn.innerHTML = `<div class="member-avatar">${currentMember.name[0]}</div> ${currentMember.name}`;
   } else { btn.textContent = '會員登入'; }
-}
-
-function renderLedgerRows(rows){
-  if(!rows || !rows.length){
-    return '<div class="member-ledger-list"><div class="member-ledger-row"><div class="member-ledger-note">尚無儲值或消費紀錄</div></div></div>';
-  }
-  return `<div class="member-ledger-list">${rows.map(tx=>{
-    const amount = Number(tx.amount ?? tx.delta ?? 0);
-    const kind = amount >= 0 ? 'credit' : 'debit';
-    const label = tx.type === 'purchase' ? '消費扣款' : tx.type === 'topup' ? '儲值入帳' : tx.type === 'adjust' ? '店家調整' : (tx.title || '餘額異動');
-    const date = tx.created_at || tx.date || '';
-    return `<div class="member-ledger-row">
-      <div class="member-ledger-main">
-        <div>${label}</div>
-        <div class="member-ledger-note">${date}${tx.note?` · ${tx.note}`:''}</div>
-      </div>
-      <div class="member-ledger-amt ${kind}">${amount >= 0 ? '+' : '-'}${formatMoney(Math.abs(amount))}</div>
-    </div>`;
-  }).join('')}</div>`;
 }
 function openRegister(){
   closeModal('memberModal');
@@ -2253,10 +2061,6 @@ function renderAdminMemberTbl(){
       <td>${m.name}</td>
       <td style="font-size:0.8rem;color:var(--muted)">${m.email}</td>
       <td>
-        <span id="balance-val-${m.id}">${formatMoney(memberBalance(m))}</span>
-        <button class="btn-tbl" style="margin-left:8px;" onclick="openAdjustBalance(${m.id},'${m.name}',${memberBalance(m)})">調整</button>
-      </td>
-      <td>
         <span id="spent-val-${m.id}">NT$${(m.spent||0).toLocaleString()}</span>
         <button class="btn-tbl" style="margin-left:8px;" onclick="openAdjustSpent(${m.id},'${m.name}',${m.spent||0})">調整</button>
       </td>
@@ -2264,10 +2068,7 @@ function renderAdminMemberTbl(){
         ${d>0?`${100-d}折`:'一般'}
       </td>
       <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">${m.voucher_used||'—'}</td>
-      <td><div class="tbl-actions">
-        <button class="btn-tbl" onclick="openMemberLedger(${m.id},'${m.name}')">歷程</button>
-        <button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button>
-      </div></td>
+      <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
     </tr>`;
   }).join('');
 }
@@ -2292,49 +2093,6 @@ async function saveAdjustSpent(){
       showToast('累計消費已更新');
     } else { showToast(r.error||'更新失敗'); }
   } catch { showToast('網路錯誤'); }
-}
-
-function openAdjustBalance(id, name, current){
-  document.getElementById('ab-member-name').textContent = name;
-  document.getElementById('ab-balance').value = current;
-  document.getElementById('ab-note').value = '';
-  document.getElementById('ab-member-id').value = id;
-  document.getElementById('adjustBalanceModal').classList.add('open');
-}
-
-async function saveAdjustBalance(){
-  const id = parseInt(document.getElementById('ab-member-id').value);
-  const balance = parseInt(document.getElementById('ab-balance').value) || 0;
-  const note = document.getElementById('ab-note').value.trim();
-  try {
-    const r = await apiPut(`/api/members/${id}/balance`, { balance, note });
-    if(r.ok){
-      const m = store.members.find(m=>m.id===id);
-      if(m){
-        m.balance = r.member?.balance ?? balance;
-        if(r.transactions) m.transactions = r.transactions;
-      }
-      if(currentMember?.id === id) currentMember = { ...currentMember, balance: r.member?.balance ?? balance, transactions: r.transactions || currentMember.transactions };
-      renderAdminMemberTbl(); renderCart();
-      closeModal('adjustBalanceModal');
-      showToast('會員餘額已更新');
-    } else { showToast(r.error||'更新失敗'); }
-  } catch { showToast('網路錯誤'); }
-}
-
-async function openMemberLedger(id, name){
-  document.getElementById('memberLedgerTitle').textContent = `${name} 的交易歷程`;
-  const content = document.getElementById('memberLedgerContent');
-  content.innerHTML = '<p style="font-size:0.82rem;color:var(--muted);">讀取中…</p>';
-  document.getElementById('memberLedgerModal').classList.add('open');
-  const member = store.members.find(m=>m.id===id);
-  try {
-    const r = await apiGet(`/api/members/${id}/transactions`, true);
-    const rows = r.ok ? (r.transactions || r.data || []) : memberLedger(member);
-    content.innerHTML = renderLedgerRows(rows);
-  } catch {
-    content.innerHTML = renderLedgerRows(memberLedger(member));
-  }
 }
 function renderAdminCouponTbl(){
   const typeLabel = { percent:'百分比', fixed:'固定金額', freeship:'免運費' };
