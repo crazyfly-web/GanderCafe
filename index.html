@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gander Cafe — 精品咖啡</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+TC:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F7F2E8;
+  --parchment: #EDE5D0;
+  --warm-white: #FDFAF4;
+  --espresso: #1C0F08;
+  --roast-deep: #2E1810;
+  --roast-mid: #6B3A22;
+  --roast-light: #A0633A;
+  --gold: #C8922A;
+  --gold-pale: #F0D898;
+  --sage: #5A6B4E;
+  --sage-light: #8FA37E;
+  --muted: #8C7B6A;
+  --border: rgba(100,65,35,0.15);
+  --border-strong: rgba(100,65,35,0.3);
+  --shadow-sm: 0 2px 12px rgba(28,15,8,0.08);
+  --shadow-md: 0 8px 40px rgba(28,15,8,0.14);
+  --shadow-lg: 0 20px 60px rgba(28,15,8,0.20);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body {
+  font-family:'Noto Serif TC',serif;
+  background:var(--cream);
+  color:var(--espresso);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(247,242,232,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  height:64px;
+}
+.topbar-brand {
+  display:flex;flex-direction:column;
+}
+.brand-en {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.55rem;font-weight:600;
+  letter-spacing:0.06em;
+  color:var(--roast-deep);
+  line-height:1;
+}
+.brand-en em{font-style:italic;color:var(--gold);}
+.brand-tagline {
+  font-family:'DM Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--muted);
+  margin-top:2px;
+}
+.topbar-nav {
+  display:flex;align-items:center;gap:32px;
+}
+.nav-link {
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--muted);
+  text-decoration:none;cursor:pointer;
+  transition:color 0.2s;border:none;background:none;
+}
+.nav-link:hover{color:var(--roast-deep);}
+.topbar-actions{display:flex;align-items:center;gap:16px;}
+
+/* Cart button */
+.btn-cart {
+  position:relative;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px;
+  background:var(--roast-deep);
+  color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;letter-spacing:0.1em;
+  transition:background 0.2s,transform 0.15s;
+}
+.btn-cart:hover{background:var(--roast-mid);transform:translateY(-1px);}
+.cart-count {
+  position:absolute;top:-6px;right:-6px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--gold);color:var(--roast-deep);
+  font-size:0.65rem;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+}
+
+/* Member button */
+.btn-member {
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;
+  border:1px solid var(--border-strong);
+  background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.1em;color:var(--muted);
+  transition:all 0.2s;
+}
+.btn-member:hover{border-color:var(--gold);color:var(--roast-deep);}
+.member-avatar {
+  width:22px;height:22px;border-radius:50%;
+  background:var(--gold);color:var(--roast-deep);
+  font-size:0.65rem;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Admin button */
+.btn-admin {
+  padding:6px 12px;
+  border:1px solid var(--border);
+  background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;letter-spacing:0.1em;color:var(--muted);
+  transition:all 0.2s;
+}
+.btn-admin:hover{border-color:var(--roast-mid);color:var(--roast-mid);}
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  padding:120px 40px 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before {
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(200,146,42,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(107,58,34,0.05) 0%, transparent 60%);
+}
+.hero-eyebrow {
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.28em;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:24px;
+}
+.hero-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3.5rem,8vw,7rem);
+  font-weight:300;line-height:0.95;
+  color:var(--roast-deep);
+  margin-bottom:28px;
+}
+.hero-title em{font-style:italic;color:var(--gold);}
+.hero-subtitle {
+  font-size:1rem;line-height:1.8;
+  color:var(--muted);max-width:480px;
+  font-weight:300;
+  margin-bottom:48px;
+}
+.hero-cta {
+  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+}
+.btn-primary {
+  padding:14px 36px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.8rem;letter-spacing:0.15em;
+  text-transform:uppercase;
+  transition:background 0.25s,transform 0.15s;
+}
+.btn-primary:hover{background:var(--roast-mid);transform:translateY(-2px);}
+.btn-outline {
+  padding:13px 36px;
+  background:none;color:var(--roast-deep);
+  border:1px solid var(--border-strong);border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.8rem;letter-spacing:0.15em;
+  text-transform:uppercase;
+  transition:all 0.25s;
+}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── SECTION ── */
+.section{padding:100px 80px;}
+.section-header{margin-bottom:60px;}
+.section-eyebrow {
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:12px;
+}
+.section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:300;color:var(--roast-deep);
+  line-height:1.15;
+}
+.section-title em{font-style:italic;}
+.section-desc {
+  margin-top:12px;font-size:0.9rem;
+  color:var(--muted);line-height:1.8;
+  max-width:520px;font-weight:300;
+}
+
+/* ── PRODUCT GRID ── */
+.product-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:32px;
+}
+.product-card {
+  background:var(--warm-white);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  transition:box-shadow 0.3s,transform 0.25s;
+  position:relative;
+}
+.product-card:hover{
+  box-shadow:var(--shadow-md);
+  transform:translateY(-4px);
+}
+.product-img {
+  width:100%;aspect-ratio:4/3;
+  object-fit:cover;
+  background:var(--parchment);
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;color:var(--muted);
+  position:relative;overflow:hidden;
+}
+.product-img-placeholder {
+  width:100%;aspect-ratio:4/3;
+  background:linear-gradient(135deg,var(--parchment) 0%,#e8dfc8 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:3.5rem;color:var(--roast-light);
+  font-style:italic;
+}
+.avail-tag {
+  position:absolute;top:12px;left:12px;
+  padding:4px 10px;border-radius:2px;
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.1em;
+}
+.avail-tag.yes{background:rgba(90,107,78,0.9);color:#e8f0e0;}
+.avail-tag.no {background:rgba(28,15,8,0.7);color:rgba(247,242,232,0.7);}
+.avail-tag.preorder{background:rgba(200,146,42,0.9);color:#2E1810;}
+.product-body{padding:20px 22px 24px;}
+.product-roast {
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.12em;
+  margin-bottom:8px;
+}
+.roast-dot {
+  display:inline-block;
+  width:7px;height:7px;border-radius:50%;
+  margin-right:6px;vertical-align:middle;
+}
+.rl  .roast-dot{background:#C8922A;}
+.rml .roast-dot{background:#A0633A;}
+.rm  .roast-dot{background:#7A4020;}
+.rd  .roast-dot{background:#3A1C10;}
+.rl {color:#A0633A;} .rml{color:#8B5030;} .rm{color:#6B3A22;} .rd{color:#3A1C10;}
+.product-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-weight:600;
+  color:var(--roast-deep);line-height:1.3;
+  margin-bottom:6px;
+}
+.product-origin {
+  font-size:0.78rem;color:var(--muted);
+  font-family:'DM Mono',monospace;
+  margin-bottom:10px;
+}
+.product-flavor {
+  font-size:0.82rem;color:var(--muted);
+  line-height:1.7;font-weight:300;
+  margin-bottom:16px;
+  border-left:2px solid var(--gold-pale);
+  padding-left:10px;
+}
+.product-footer {
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:16px;padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.product-spec {
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;color:var(--muted);
+  line-height:1.5;
+}
+.product-price {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:600;
+  color:var(--roast-deep);
+}
+.product-price span{
+  font-size:0.75rem;font-family:'DM Mono',monospace;
+  color:var(--muted);margin-left:2px;
+}
+.qty-control {
+  display:flex;align-items:center;gap:8px;margin-top:12px;
+}
+.qty-btn {
+  width:28px;height:28px;border-radius:2px;
+  border:1px solid var(--border-strong);
+  background:none;cursor:pointer;
+  font-size:1rem;color:var(--roast-mid);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.qty-btn:hover{background:var(--roast-deep);color:var(--cream);border-color:var(--roast-deep);}
+.qty-num {
+  font-family:'DM Mono',monospace;
+  font-size:0.85rem;min-width:28px;text-align:center;
+}
+.btn-add-cart {
+  width:100%;margin-top:14px;
+  padding:10px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;letter-spacing:0.12em;
+  transition:background 0.2s;
+}
+.btn-add-cart:hover{background:var(--roast-mid);}
+.btn-add-cart:disabled{background:var(--muted);cursor:not-allowed;opacity:0.6;}
+
+/* ── PREORDER SECTION ── */
+.preorder-section{
+  background:var(--roast-deep);
+  color:var(--cream);
+  padding:80px;
+}
+.preorder-section .section-eyebrow{color:var(--gold-pale);}
+.preorder-section .section-title{color:var(--cream);}
+.preorder-section .section-desc{color:rgba(247,242,232,0.6);}
+.green-bean-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:24px;margin-top:48px;
+}
+.green-bean-card {
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:4px;padding:24px;
+}
+.green-bean-card:hover{background:rgba(255,255,255,0.08);}
+.gb-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:600;color:var(--cream);
+  margin-bottom:4px;
+}
+.gb-stock {
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;letter-spacing:0.1em;
+  color:var(--sage-light);margin-bottom:10px;
+}
+.gb-flavor {
+  font-size:0.82rem;color:rgba(247,242,232,0.6);
+  line-height:1.7;font-weight:300;
+  border-left:2px solid rgba(200,146,42,0.4);
+  padding-left:10px;margin-bottom:16px;
+}
+.gb-order {
+  display:flex;align-items:center;gap:10px;
+}
+.gb-select {
+  flex:1;
+  padding:8px 10px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:2px;
+  color:var(--cream);
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;
+}
+.gb-select option{background:#2E1810;color:var(--cream);}
+.btn-preorder {
+  padding:8px 16px;
+  background:var(--gold);color:var(--roast-deep);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.08em;
+  white-space:nowrap;
+  transition:opacity 0.2s;
+}
+.btn-preorder:hover{opacity:0.85;}
+
+/* ── DIVIDER ── */
+.divider {
+  width:60px;height:1px;
+  background:var(--gold);
+  margin:24px auto;
+}
+
+/* ── OVERLAY PANELS ── */
+.overlay {
+  display:none;position:fixed;inset:0;z-index:400;
+  background:rgba(28,15,8,0.5);
+  backdrop-filter:blur(4px);
+  align-items:flex-start;justify-content:flex-end;
+}
+.overlay.open{display:flex;}
+
+/* Cart Panel */
+.cart-panel {
+  width:min(480px,100vw);
+  height:100vh;
+  height:100dvh;
+  background:var(--warm-white);
+  box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  animation:slideIn 0.35s cubic-bezier(.25,.8,.25,1);
+}
+@keyframes slideIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+.panel-header {
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.panel-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:400;color:var(--roast-deep);
+}
+.btn-close {
+  width:32px;height:32px;border:1px solid var(--border);
+  border-radius:2px;background:none;cursor:pointer;
+  font-size:1.1rem;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.btn-close:hover{border-color:var(--roast-deep);color:var(--roast-deep);}
+.cart-body{flex:1;overflow-y:auto;padding:16px 20px;-webkit-overflow-scrolling:touch;}
+.cart-empty {
+  text-align:center;padding:60px 20px;
+  color:var(--muted);font-size:0.9rem;
+}
+.cart-item {
+  display:flex;gap:12px;align-items:flex-start;
+  padding:16px 0;
+  border-bottom:1px solid var(--border);
+}
+.cart-item:last-child{border-bottom:none;}
+.cart-item-img {
+  width:56px;height:56px;border-radius:2px;
+  background:var(--parchment);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;color:var(--roast-light);font-style:italic;
+}
+.cart-item-info{flex:1;min-width:0;overflow:hidden;}
+.cart-item-name {
+  font-size:0.9rem;font-weight:500;
+  color:var(--roast-deep);margin-bottom:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cart-item-spec {
+  font-family:'DM Mono',monospace;
+  font-size:0.68rem;color:var(--muted);margin-bottom:8px;
+}
+.cart-item-controls {
+  display:flex;align-items:center;gap:8px;
+}
+.cart-item-price {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:600;
+  color:var(--roast-deep);
+  align-self:center;margin-left:auto;white-space:nowrap;
+}
+.btn-remove {
+  width:22px;height:22px;border:none;background:none;
+  cursor:pointer;color:var(--muted);
+  font-size:0.9rem;transition:color 0.15s;
+}
+.btn-remove:hover{color:#c0392b;}
+
+/* Discount row */
+.discount-row {
+  padding:16px 28px;
+  border-top:1px solid var(--border);
+  background:rgba(200,146,42,0.05);
+  flex-shrink:0;
+}
+.discount-row label {
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.1em;
+  color:var(--muted);display:block;margin-bottom:8px;
+}
+.discount-input-row {
+  display:flex;gap:8px;
+}
+.discount-input {
+  flex:1;padding:8px 12px;
+  border:1px solid var(--border-strong);border-radius:2px;
+  background:white;
+  font-family:'DM Mono',monospace;font-size:0.8rem;
+  color:var(--espresso);
+}
+.btn-apply-code {
+  padding:8px 14px;
+  background:var(--roast-mid);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.72rem;
+  letter-spacing:0.08em;
+}
+.discount-applied {
+  font-family:'DM Mono',monospace;
+  font-size:0.72rem;color:var(--sage);
+  margin-top:8px;display:none;
+}
+
+/* Cart footer */
+.cart-footer{padding:20px 28px;border-top:1px solid var(--border);flex-shrink:0;}
+.cart-summary-row {
+  display:flex;justify-content:space-between;
+  font-size:0.85rem;color:var(--muted);
+  margin-bottom:6px;
+}
+.cart-summary-row.total {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;color:var(--roast-deep);
+  font-weight:600;margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.cart-summary-row.discount-line{color:var(--sage);}
+
+/* Shipping selector */
+.shipping-select-section{margin:10px 0;}
+.shipping-select-section label {
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.1em;
+  color:var(--muted);display:block;margin-bottom:8px;
+}
+.shipping-options{display:flex;flex-direction:column;gap:6px;}
+.shipping-opt {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 10px;
+  border:1px solid var(--border);border-radius:2px;cursor:pointer;
+  transition:border-color 0.15s;
+}
+.shipping-opt:hover{border-color:var(--roast-mid);}
+.shipping-opt.selected{border-color:var(--gold);background:rgba(200,146,42,0.04);}
+.shipping-opt-left{display:flex;align-items:center;gap:8px;}
+.shipping-opt input[type=radio]{accent-color:var(--gold);}
+.shipping-opt-name {
+  font-size:0.82rem;color:var(--roast-deep);
+}
+.shipping-opt-note {
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;color:var(--muted);margin-top:2px;
+}
+.shipping-opt-price {
+  font-family:'DM Mono',monospace;
+  font-size:0.78rem;color:var(--roast-mid);
+}
+.btn-checkout {
+  width:100%;margin-top:16px;
+  padding:14px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;
+  font-size:0.82rem;letter-spacing:0.15em;
+  transition:background 0.2s;
+}
+.btn-checkout:hover{background:var(--roast-mid);}
+
+/* ── MODAL: centered ── */
+.modal-overlay {
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(28,15,8,0.55);
+  backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex;}
+.modal {
+  background:var(--warm-white);
+  border-radius:4px;
+  box-shadow:var(--shadow-lg);
+  width:min(480px,96vw);
+  max-height:90vh;
+  overflow-y:auto;
+  animation:modalIn 0.3s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(0.93) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-header {
+  padding:28px 32px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;color:var(--roast-deep);font-weight:400;
+}
+.modal-body{padding:24px 32px;}
+.modal-footer{padding:16px 32px 28px;display:flex;gap:10px;justify-content:flex-end;}
+
+/* Form elements */
+.form-group{margin-bottom:18px;}
+.form-label {
+  display:block;
+  font-family:'DM Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--muted);
+  margin-bottom:7px;
+}
+.form-input, .form-select, .form-textarea {
+  width:100%;padding:10px 14px;
+  border:1px solid var(--border-strong);border-radius:2px;
+  background:white;
+  font-family:'Noto Serif TC',serif;
+  font-size:0.9rem;color:var(--espresso);
+  transition:border-color 0.2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  outline:none;border-color:var(--gold);
+}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn-modal-cancel {
+  padding:9px 20px;border:1px solid var(--border-strong);
+  background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  color:var(--muted);transition:all 0.2s;
+}
+.btn-modal-cancel:hover{border-color:var(--espresso);color:var(--espresso);}
+.btn-modal-save {
+  padding:9px 24px;
+  background:var(--roast-deep);color:var(--cream);
+  border:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  transition:background 0.2s;
+}
+.btn-modal-save:hover{background:var(--roast-mid);}
+
+/* ── ADMIN PANEL ── */
+.admin-overlay {
+  display:none;position:fixed;inset:0;z-index:300;
+  background:var(--cream);overflow-y:auto;
+  animation:fadeIn 0.25s ease;
+}
+.admin-overlay.open{display:block;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.admin-topbar {
+  background:var(--roast-deep);color:var(--cream);
+  padding:16px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+}
+.admin-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-weight:400;
+}
+.admin-title small {
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.12em;
+  color:rgba(247,242,232,0.5);margin-left:12px;
+}
+.admin-body{padding:48px;}
+.admin-tabs{display:flex;gap:0;margin-bottom:40px;border-bottom:1px solid var(--border);}
+.admin-tab {
+  padding:12px 28px;border:none;background:none;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.78rem;
+  letter-spacing:0.1em;color:var(--muted);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:all 0.2s;
+}
+.admin-tab.active{color:var(--roast-mid);border-bottom-color:var(--gold);}
+.admin-section{display:none;}
+.admin-section.active{display:block;}
+.admin-section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.admin-section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-weight:400;color:var(--roast-deep);
+}
+
+/* Admin Table */
+.admin-table-wrap{
+  border:1px solid var(--border);border-radius:4px;overflow:hidden;
+}
+.admin-table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+.admin-table th {
+  background:var(--parchment);padding:12px 16px;text-align:left;
+  font-family:'DM Mono',monospace;font-size:0.68rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);font-weight:400;
+  border-bottom:1px solid var(--border);
+}
+.admin-table td {
+  padding:12px 16px;
+  border-bottom:1px solid rgba(100,65,35,0.07);
+  color:var(--espresso);vertical-align:middle;
+}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:rgba(200,146,42,0.03);}
+.tbl-actions{display:flex;gap:6px;}
+.btn-tbl {
+  padding:4px 10px;
+  border:1px solid var(--border);background:none;border-radius:2px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.06em;color:var(--muted);
+  transition:all 0.15s;
+}
+.btn-tbl:hover{border-color:var(--gold);color:var(--roast-mid);}
+.btn-tbl.danger:hover{border-color:#c0392b;color:#c0392b;}
+
+/* ── TOAST ── */
+.toast {
+  position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--roast-deep);color:var(--cream);
+  padding:14px 32px;border-radius:3px;
+  font-family:'DM Mono',monospace;font-size:0.82rem;
+  letter-spacing:0.06em;z-index:600;
+  opacity:0;transition:opacity 0.3s,transform 0.3s;
+  pointer-events:none;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(28,15,8,0.3);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── FOOTER ── */
+footer {
+  background:var(--roast-deep);color:rgba(247,242,232,0.55);
+  padding:60px 80px 40px;
+  text-align:center;
+}
+footer .brand-en{color:var(--cream);font-size:1.8rem;margin-bottom:8px;}
+footer p{font-size:0.8rem;line-height:1.9;font-family:'DM Mono',monospace;font-size:0.72rem;}
+footer a{color:var(--gold-pale);text-decoration:none;}
+
+/* ── MEMBER LOGIN MODAL EXTRAS ── */
+.login-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid var(--border);}
+.login-tab {
+  flex:1;padding:10px;border:none;background:none;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.08em;
+  color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:all 0.2s;
+}
+.login-tab.active{color:var(--roast-mid);border-bottom-color:var(--gold);}
+.login-panel{display:none;}
+.login-panel.active{display:block;}
+.member-badge {
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:20px;
+  font-family:'DM Mono',monospace;font-size:0.68rem;
+  margin-bottom:16px;
+}
+.member-badge.gold{background:#f7e8c0;color:#8B6010;}
+.member-badge.premium{background:#e8d5c0;color:#6B3F20;}
+.discount-tier-info {
+  background:rgba(200,146,42,0.08);
+  border:1px solid rgba(200,146,42,0.25);
+  border-radius:2px;padding:12px 16px;margin-top:14px;
+}
+.discount-tier-info p {
+  font-family:'DM Mono',monospace;font-size:0.72rem;
+  color:var(--muted);line-height:1.8;
+}
+.discount-tier-info strong{color:var(--gold);}
+
+@media(max-width:768px){
+  .topbar{padding:0 20px;}
+  .hero{padding:100px 24px 60px;}
+  .section{padding:60px 24px;}
+  .preorder-section{padding:60px 24px;}
+  .admin-body{padding:24px 20px;}
+  .admin-topbar{padding:16px 20px;}
+  .product-grid{grid-template-columns:1fr;}
+  footer{padding:40px 24px 32px;}
+  .topbar-nav{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-en">Gander <em>Cafe</em></div>
+    <div class="brand-tagline">Specialty Coffee Roaster · 花蓮</div>
+  </div>
+  <nav class="topbar-nav">
+    <button class="nav-link" onclick="smoothScrollTo('#roasted-section')">熟豆選購</button>
+    <button class="nav-link" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
+    <button class="nav-link" onclick="smoothScrollTo('#greensale-section')">生豆販售</button>
+    <button class="nav-link" onclick="smoothScrollTo('#other-section')">其他商品</button>
+    <button class="nav-link" onclick="smoothScrollTo('#about-section')">關於我們</button>
+  </nav>
+  <div class="topbar-actions">
+    <button class="btn-admin" onclick="openAdmin()">店家後台</button>
+    <button class="btn-member" onclick="openMemberModal()" id="memberBtn">
+      <span id="memberLabel">會員登入</span>
+    </button>
+    <button class="btn-cart" onclick="openCart()">
+      🛒 購物車
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">Specialty Coffee · Single Origin · Hand Roasted</div>
+  <h1 class="hero-title">從產地到<br><em>你的杯中</em></h1>
+  <p class="hero-subtitle">每一批生豆都來自與農民長期合作的莊園，<br>以精確的烘焙曲線釋放最純粹的風味。</p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="smoothScrollTo('#roasted-section')">選購熟豆</button>
+    <button class="btn-outline" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
+  </div>
+</section>
+
+<!-- ── ROASTED BEANS ── -->
+<section class="section" id="roasted-section">
+  <div class="section-header">
+    <div class="section-eyebrow">現貨 · In Stock</div>
+    <h2 class="section-title">精選<em>熟豆</em></h2>
+    <p class="section-desc">以下品項皆為本週新鮮烘焙，現貨有限，售完為止。</p>
+  </div>
+  <div class="product-grid" id="roastedGrid"></div>
+</section>
+
+<!-- ── PREORDER ── -->
+<section class="preorder-section" id="preorder-section">
+  <div class="section-header">
+    <div class="section-eyebrow">接單烘焙 · Made to Order</div>
+    <h2 class="section-title" style="color:var(--cream)">預購<em style="color:var(--gold-pale)">烘焙</em></h2>
+    <p class="section-desc" style="color:rgba(247,242,232,0.6)">指定生豆接單烘焙，下單後 3–5 個工作天出貨，每包 240g 半磅裝。</p>
+  </div>
+  <div class="green-bean-grid" id="greenBeanGrid"></div>
+</section>
+
+<!-- ── GREEN SALE ── -->
+<section class="section" id="greensale-section">
+  <div class="section-header">
+    <div class="section-eyebrow">生豆販售 · Green Bean Shop</div>
+    <h2 class="section-title">生豆<em>直購</em></h2>
+    <p class="section-desc">精選批次生豆，1kg 包裝，適合自家烘焙愛好者。</p>
+  </div>
+  <div class="product-grid" id="greenSaleGrid"></div>
+</section>
+
+<!-- ── OTHER PRODUCTS ── -->
+<section class="section" id="other-section" style="background:var(--parchment);">
+  <div class="section-header">
+    <div class="section-eyebrow">其他商品 · Accessories</div>
+    <h2 class="section-title">器材<em>選物</em></h2>
+    <p class="section-desc">濾紙、手沖器具與咖啡相關配件。</p>
+  </div>
+  <div class="product-grid" id="otherGrid"></div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="section" id="about-section" style="text-align:center;max-width:680px;margin:0 auto;padding:80px 40px;">
+  <div class="section-eyebrow">About</div>
+  <h2 class="section-title">關於 <em>Gander Cafe</em></h2>
+  <div class="divider"></div>
+  <p style="font-size:0.95rem;line-height:2;color:var(--muted);font-weight:300;margin-top:20px;">
+    Gander Cafe 是位於花蓮的精品咖啡烘焙品牌，<br>
+    專注於挑選具產地溯源的批次生豆，<br>
+    以小批量手工烘焙保留最豐富的風味層次。
+  </p>
+  <p style="margin-top:28px;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;color:var(--gold);">
+    ECpay 綠界安全付款 · 全台超商 / 郵局 / 黑貓宅配
+  </p>
+</section>
+
+<footer>
+  <div class="brand-en" style="font-family:'Cormorant Garamond',serif;">Gander <em style="color:var(--gold-pale)">Cafe</em></div>
+  <p style="margin-top:16px;">花蓮 · 精品咖啡烘焙</p>
+  <p style="margin-top:8px;font-size:0.65rem;opacity:0.5;">© 2025 Gander Cafe · All rights reserved</p>
+</footer>
+
+<!-- ── CART PANEL ── -->
+<div class="overlay" id="cartOverlay" onclick="closeIfOverlay(event,'cartOverlay')">
+  <aside class="cart-panel">
+    <div class="panel-header">
+      <span class="panel-title">購物車</span>
+      <button class="btn-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-body" id="cartBody">
+      <div class="cart-empty">還沒有商品喔 ☕</div>
+    </div>
+
+    <!-- Discount code -->
+    <div class="discount-row">
+      <label>折扣碼 / 優惠代碼</label>
+      <div class="discount-input-row">
+        <input class="discount-input" id="discountInput" placeholder="輸入折扣碼" />
+        <button class="btn-apply-code" onclick="applyDiscountCode()">套用</button>
+      </div>
+      <div class="discount-applied" id="discountMsg"></div>
+    </div>
+
+    <div class="cart-footer">
+      <!-- Shipping -->
+      <div class="shipping-select-section">
+        <label>運送方式</label>
+        <div class="shipping-options" id="shippingOptions"></div>
+      </div>
+      <!-- Summary -->
+      <div class="cart-summary-row"><span>商品小計</span><span id="subtotalDisplay">NT$0</span></div>
+      <div class="cart-summary-row" id="discountDisplay" style="display:none;"><span>折扣</span><span id="discountAmtDisplay" style="color:var(--sage)"></span></div>
+      <div class="cart-summary-row"><span>運費</span><span id="shippingDisplay">NT$0</span></div>
+      <div class="cart-summary-row total"><span>合計</span><span id="totalDisplay">NT$0</span></div>
+      <button class="btn-checkout" onclick="checkout()">前往結帳 — ECpay 綠界</button>
+    </div>
+  </aside>
+</div>
+
+<!-- ── MEMBER LOGIN MODAL ── -->
+<div class="modal-overlay" id="memberModal" onclick="closeIfOverlay(event,'memberModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="memberModalTitle">會員中心</span>
+      <button class="btn-close" onclick="closeModal('memberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="memberContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN LOGIN MODAL ── -->
+<div class="modal-overlay" id="adminLoginModal" onclick="closeIfOverlay(event,'adminLoginModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">店家後台登入</span>
+      <button class="btn-close" onclick="closeModal('adminLoginModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">密碼</label>
+        <input type="password" class="form-input" id="adminPwInput" placeholder="輸入管理員密碼" />
+      </div>
+      <p style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;">提示：<strong>c******9</strong></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('adminLoginModal')">取消</button>
+      <button class="btn-modal-save" onclick="doAdminLogin()">登入後台</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PRODUCT EDIT MODAL ── -->
+<div class="modal-overlay" id="productModal" onclick="closeIfOverlay(event,'productModal')">
+  <div class="modal" style="width:min(560px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="productModalTitle">新增熟豆</span>
+      <button class="btn-close" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">豆名</label>
+        <input type="text" class="form-input" id="pm-name" placeholder="例：耶加雪菲 日曬" />
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">烘焙度</label>
+          <select class="form-select" id="pm-roast">
+            <option value="light">淺焙</option>
+            <option value="medium-light">淺中焙</option>
+            <option value="medium">中焙</option>
+            <option value="dark">深焙</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">產地 / 品種</label>
+          <input type="text" class="form-input" id="pm-origin" placeholder="衣索比亞 · Heirloom" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">風味描述</label>
+        <textarea class="form-textarea" id="pm-flavor" placeholder="藍莓、茉莉花、柑橘酸質"></textarea>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">單包售價 (NT$)</label>
+          <input type="number" class="form-input" id="pm-price" placeholder="450" min="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">現貨數量 (包)</label>
+          <input type="number" class="form-input" id="pm-qty" placeholder="10" min="0" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">商品照片</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px dashed var(--border-strong);border-radius:2px;cursor:pointer;background:var(--parchment);font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);transition:all 0.2s;" id="pm-upload-label">
+            <span id="pm-upload-text">📷 點此上傳照片</span>
+            <input type="file" id="pm-img-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleImgUpload(this)">
+          </label>
+        </div>
+        <div id="pm-img-preview" style="display:none;margin-bottom:8px;">
+          <img id="pm-img-preview-el" style="width:100%;max-height:160px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+        </div>
+        <input type="text" class="form-input" id="pm-img" placeholder="或直接貼上照片網址 https://..." style="font-size:0.8rem;" />
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:4px;">支援 JPG、PNG、WebP，上限 5MB</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">可購買</label>
+        <select class="form-select" id="pm-avail">
+          <option value="yes">是 — 公開販售</option>
+          <option value="no">否 — 暫停供應</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('productModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveProduct()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GREEN BEAN EDIT MODAL ── -->
+<div class="modal-overlay" id="greenModal" onclick="closeIfOverlay(event,'greenModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="greenModalTitle">新增生豆</span>
+      <button class="btn-close" onclick="closeModal('greenModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">豆名</label>
+        <input type="text" class="form-input" id="gm-name" placeholder="衣索比亞 耶加雪菲 G1" />
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">產地 / 處理法</label>
+          <input type="text" class="form-input" id="gm-origin" placeholder="衣索比亞 · 日曬" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">庫存 (kg)</label>
+          <input type="number" class="form-input" id="gm-stock" placeholder="5.0" min="0" step="0.1" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">豆商提供風味描述</label>
+        <textarea class="form-textarea" id="gm-flavor" placeholder="黑糖、藍莓、熱帶水果…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">預購單包售價 (NT$，240g)</label>
+        <input type="number" class="form-input" id="gm-price" placeholder="380" min="0" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('greenModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveGreenBean()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MEMBER VOUCHER MODAL ── -->
+<div class="modal-overlay" id="voucherModal" onclick="closeIfOverlay(event,'voucherModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">建立儲值帳號</span>
+      <button class="btn-close" onclick="closeModal('voucherModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">姓名</label>
+        <input type="text" class="form-input" id="vc-name" placeholder="王小明" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="vc-email" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">設定密碼</label>
+        <input type="password" class="form-input" id="vc-pw" placeholder="至少 6 字元" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">儲值碼（由店家提供）</label>
+        <input type="text" class="form-input" id="vc-code" placeholder="GANDER-XXXX" />
+      </div>
+      <div class="discount-tier-info">
+        <p>
+          輸入店家提供的儲值碼後，系統自動綁定您的消費折扣：<br>
+          <strong>累計消費滿萬元</strong>享 <strong>95 折</strong><br>
+          <strong>累計消費滿兩萬元</strong>享 <strong>9 折</strong><br>
+          <strong>累計消費滿三萬元</strong>享 <strong>85 折</strong>
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('voucherModal')">取消</button>
+      <button class="btn-modal-save" onclick="registerWithVoucher()">建立帳號</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN PANEL ── -->
+<div class="admin-overlay" id="adminPanel">
+  <div class="admin-topbar">
+    <div class="admin-title">Gander Cafe 後台管理 <small>ADMIN DASHBOARD</small></div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(247,242,232,0.5);">管理員已登入</span>
+      <button class="btn-modal-cancel" onclick="closeAdmin()" style="border-color:rgba(255,255,255,0.2);color:rgba(247,242,232,0.7);">離開後台</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('roasted')">熟豆管理</button>
+      <button class="admin-tab" onclick="switchAdminTab('green')">預購生豆</button>
+      <button class="admin-tab" onclick="switchAdminTab('greensale')">生豆販售</button>
+      <button class="admin-tab" onclick="switchAdminTab('other')">其他商品</button>
+      <button class="admin-tab" onclick="switchAdminTab('members')">會員管理</button>
+    </div>
+
+    <!-- Roasted tab -->
+    <div class="admin-section active" id="admin-roasted">
+      <div class="admin-section-header">
+        <span class="admin-section-title">熟豆品項管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openProductModal()">＋ 新增熟豆</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>豆名</th><th>烘焙度</th><th>產地</th>
+              <th>售價</th><th>現貨(包)</th><th>狀態</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="adminRoastedTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Green tab -->
+    <div class="admin-section" id="admin-green">
+      <div class="admin-section-header">
+        <span class="admin-section-title">生豆庫存管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openGreenModal()">＋ 新增生豆</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>豆名</th><th>產地/處理法</th><th>庫存(kg)</th><th>預購價</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="adminGreenTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Green Sale tab -->
+    <div class="admin-section" id="admin-greensale">
+      <div class="admin-section-header">
+        <span class="admin-section-title">生豆販售管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openGreenSaleModal()">＋ 新增生豆</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>豆名</th><th>處理法</th><th>售價(1kg)</th><th>數量</th><th>狀態</th><th>操作</th></tr>
+          </thead>
+          <tbody id="adminGreenSaleTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Other Products tab -->
+    <div class="admin-section" id="admin-other">
+      <div class="admin-section-header">
+        <span class="admin-section-title">其他商品管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openOtherModal()">＋ 新增商品</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>名稱</th><th>售價</th><th>數量</th><th>狀態</th><th>操作</th></tr>
+          </thead>
+          <tbody id="adminOtherTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Members tab -->
+    <div class="admin-section" id="admin-members">
+      <div class="admin-section-header">
+        <span class="admin-section-title">會員管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="openIssueVoucher()">＋ 發行儲值碼</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>姓名</th><th>Email</th><th>累計消費</th><th>折扣等級</th><th>儲值碼</th><th>操作</th></tr>
+          </thead>
+          <tbody id="adminMemberTbl"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div class="admin-section-title" style="font-size:1.1rem;">已發行儲值碼</div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>儲值碼</th><th>狀態</th><th>使用者</th><th>操作</th></tr></thead>
+            <tbody id="adminVoucherTbl"></tbody>
+          </table>
+        </div>
+        <button class="btn-outline" style="margin-top:16px;font-size:0.75rem;padding:10px 20px;" onclick="openIssueVoucher()">＋ 發行新儲值碼</button>
+      </div>
+
+      <div style="margin-top:32px;">
+        <div class="admin-section-title" style="font-size:1.1rem;margin-bottom:16px;">現有折扣碼</div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>折扣碼</th><th>類型</th><th>折扣內容</th><th>使用次數</th><th>操作</th></tr></thead>
+            <tbody id="adminCouponTbl"></tbody>
+          </table>
+        </div>
+        <button class="btn-outline" style="margin-top:16px;font-size:0.75rem;padding:10px 20px;" onclick="openAddCoupon()">＋ 建立折扣碼</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GREEN SALE MODAL ── -->
+<div class="modal-overlay" id="greenSaleModal" onclick="closeIfOverlay(event,'greenSaleModal')">
+  <div class="modal" style="width:min(560px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="greenSaleModalTitle">新增生豆販售</span>
+      <button class="btn-close" onclick="closeModal('greenSaleModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">豆名</label>
+        <input type="text" class="form-input" id="gs-name" placeholder="衣索比亞 耶加雪菲 G1"/>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">處理法</label>
+          <input type="text" class="form-input" id="gs-process" placeholder="日曬 / 水洗 / 蜜處理"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">售價 (NT$/1kg)</label>
+          <input type="number" class="form-input" id="gs-price" placeholder="800" min="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">豆商提供風味描述</label>
+        <textarea class="form-textarea" id="gs-flavor" placeholder="藍莓、茉莉花、柑橘…"></textarea>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">數量 (kg)</label>
+          <input type="number" class="form-input" id="gs-qty" placeholder="5" min="0"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">可購買</label>
+          <select class="form-select" id="gs-avail">
+            <option value="yes">是 — 公開販售</option>
+            <option value="no">否 — 暫停供應</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">商品照片</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px dashed var(--border-strong);border-radius:2px;cursor:pointer;background:var(--parchment);font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);" id="gs-upload-label">
+            <span id="gs-upload-text">📷 點此上傳照片</span>
+            <input type="file" id="gs-img-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleImgUploadFor(this,'gs')">
+          </label>
+        </div>
+        <div id="gs-img-preview" style="display:none;margin-bottom:8px;">
+          <img id="gs-img-preview-el" style="width:100%;max-height:140px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+        </div>
+        <input type="text" class="form-input" id="gs-img" placeholder="或貼上照片網址 https://..." style="font-size:0.8rem;"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('greenSaleModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveGreenSale()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── OTHER PRODUCT MODAL ── -->
+<div class="modal-overlay" id="otherModal" onclick="closeIfOverlay(event,'otherModal')">
+  <div class="modal" style="width:min(520px,96vw)">
+    <div class="modal-header">
+      <span class="modal-title" id="otherModalTitle">新增其他商品</span>
+      <button class="btn-close" onclick="closeModal('otherModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">商品名稱</label>
+        <input type="text" class="form-input" id="ot-name" placeholder="Hario V60 濾紙 01 漂白 100入"/>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">售價 (NT$)</label>
+          <input type="number" class="form-input" id="ot-price" placeholder="200" min="0"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">數量</label>
+          <input type="number" class="form-input" id="ot-qty" placeholder="10" min="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">可購買</label>
+        <select class="form-select" id="ot-avail">
+          <option value="yes">是 — 公開販售</option>
+          <option value="no">否 — 暫停供應</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">商品照片</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px dashed var(--border-strong);border-radius:2px;cursor:pointer;background:var(--parchment);font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);" id="ot-upload-label">
+            <span id="ot-upload-text">📷 點此上傳照片</span>
+            <input type="file" id="ot-img-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleImgUploadFor(this,'ot')">
+          </label>
+        </div>
+        <div id="ot-img-preview" style="display:none;margin-bottom:8px;">
+          <img id="ot-img-preview-el" style="width:100%;max-height:140px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+        </div>
+        <input type="text" class="form-input" id="ot-img" placeholder="或貼上照片網址 https://..." style="font-size:0.8rem;"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('otherModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveOther()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Issue Voucher Modal -->
+<div class="modal-overlay" id="issueVoucherModal" onclick="closeIfOverlay(event,'issueVoucherModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">發行儲值碼</span>
+      <button class="btn-close" onclick="closeModal('issueVoucherModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">儲值碼（留空自動產生）</label>
+        <input type="text" class="form-input" id="iv-code" placeholder="GANDER-XXXX" />
+      </div>
+      <div class="discount-tier-info">
+        <p>儲值碼讓指定消費者建立帳號後，系統依其累計消費自動套用折扣。</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('issueVoucherModal')">取消</button>
+      <button class="btn-modal-save" onclick="issueVoucher()">產生儲值碼</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Coupon Modal -->
+<div class="modal-overlay" id="couponModal" onclick="closeIfOverlay(event,'couponModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">建立折扣碼</span>
+      <button class="btn-close" onclick="closeModal('couponModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">折扣碼</label>
+        <input type="text" class="form-input" id="cp-code" placeholder="SUMMER10" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">折扣類型</label>
+        <select class="form-select" id="cp-type" onchange="toggleCouponValueField()">
+          <option value="percent">百分比折扣（例：9折、95折）</option>
+          <option value="fixed">固定金額折扣（例：折 NT$100）</option>
+          <option value="freeship">免運費</option>
+        </select>
+      </div>
+      <div class="form-group" id="cp-value-group">
+        <label class="form-label" id="cp-value-label">折扣數值</label>
+        <input type="number" class="form-input" id="cp-value" placeholder="10" min="1" />
+        <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:4px;" id="cp-value-hint">
+          百分比：輸入 10 = 打9折；輸入 5 = 打95折
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('couponModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveCoupon()">建立</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── ADJUST SPENT MODAL ── -->
+<div class="modal-overlay" id="adjustSpentModal" onclick="closeIfOverlay(event,'adjustSpentModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">調整累計消費</span>
+      <button class="btn-close" onclick="closeModal('adjustSpentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="as-member-id">
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:20px;">
+        會員：<strong id="as-member-name"></strong>
+      </p>
+      <div class="form-group">
+        <label class="form-label">累計消費金額 (NT$)</label>
+        <input type="number" class="form-input" id="as-spent" min="0" step="1000" placeholder="0"/>
+      </div>
+      <div class="discount-tier-info">
+        <p>
+          滿 <strong>10,000</strong> → 95折 &nbsp;|&nbsp;
+          滿 <strong>20,000</strong> → 9折 &nbsp;|&nbsp;
+          滿 <strong>30,000</strong> → 85折
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('adjustSpentModal')">取消</button>
+      <button class="btn-modal-save" onclick="saveAdjustSpent()">更新</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════
+// API CONFIG
+// 部署 Workers 後，將下方 URL 換成你的 Workers 網址
+// 例：https://gander-cafe-api.YOUR-SUBDOMAIN.workers.dev
+// ════════════════════════════════════════
+const API = 'https://gander-cafe-api.crazyfly.workers.dev';
+
+// In-memory cache (讀自 API，不再用 localStorage)
+let store = { roasted: [], green: [], greenSale: [], other: [], members: [], vouchers: [], coupons: [] };
+
+// Token storage (只存在 sessionStorage，關分頁即清除)
+function getAdminToken(){ return sessionStorage.getItem('gander_admin_tk') || ''; }
+function setAdminToken(t){ sessionStorage.setItem('gander_admin_tk', t); }
+function getMemberToken(){ return sessionStorage.getItem('gander_member_tk') || ''; }
+function setMemberToken(t){ sessionStorage.setItem('gander_member_tk', t); }
+function clearMemberToken(){ sessionStorage.removeItem('gander_member_tk'); }
+
+// ── Core fetch helpers ─────────────────
+async function apiFetch(path, opts = {}) {
+  const token = opts.admin ? getAdminToken() : getMemberToken();
+  const res = await fetch(API + path, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+    },
+    ...opts,
+  });
+  return res.json();
+}
+
+async function apiGet(path, admin = false) {
+  return apiFetch(path, { method: 'GET', admin });
+}
+async function apiPost(path, body, admin = false) {
+  return apiFetch(path, { method: 'POST', body: JSON.stringify(body), admin });
+}
+async function apiPut(path, body) {
+  return apiFetch(path, { method: 'PUT', body: JSON.stringify(body), admin: true });
+}
+async function apiDel(path) {
+  return apiFetch(path, { method: 'DELETE', admin: true });
+}
+
+// ── Bootstrap: load public data on page open ──
+async function loadPublicData() {
+  const [r, g, gs, ot] = await Promise.all([
+    apiGet('/api/roasted'),
+    apiGet('/api/green'),
+    apiGet('/api/green-sale'),
+    apiGet('/api/other'),
+  ]);
+  if (r.ok)  store.roasted   = r.data;
+  if (g.ok)  store.green     = g.data;
+  if (gs.ok) store.greenSale = gs.data;
+  if (ot.ok) store.other     = ot.data;
+  store.roasted = store.roasted.map(b => ({ ...b, img: b.img_url }));
+  store.green   = store.green.map(b => ({ ...b, stock: b.stock_kg }));
+  renderRoastedGrid();
+  renderGreenGrid();
+  renderGreenSaleGrid();
+  renderOtherGrid();
+}
+
+// ── Load admin data (after admin login) ──
+async function loadAdminData() {
+  const [m, v, c] = await Promise.all([
+    apiGet('/api/members', true),
+    apiGet('/api/vouchers', true),
+    apiGet('/api/coupons'),
+  ]);
+  if (m.ok) store.members  = m.data;
+  if (v.ok) store.vouchers = v.data; // array of {code, used, used_by}
+  if (c.ok) store.coupons  = c.data.map(x => ({ code: x.code, pct: x.discount_pct, used: x.used_count }));
+  renderAdminAll();
+}
+
+// ════════════════════════════════════════
+// CART
+// ════════════════════════════════════════
+let cart = [];
+let currentMember    = null;
+let appliedDiscount  = 0;    // percentage off (e.g. 5 = 5% off)
+let appliedFixed     = 0;    // fixed amount off (e.g. 100 = NT$100 off)
+let appliedFreeship  = false; // free shipping coupon
+let selectedShipping = 'post';
+let editingProductId = null;
+let editingGreenId = null;
+
+const SHIPPING = {
+  post:    { name:'郵局寄送', note:'滿千免運，未滿 NT$80', base:80 },
+  cvs:     { name:'超商店到店', note:'滿千免運，未滿 NT$60', base:60 },
+  kerry:   { name:'黑貓宅配', note:'滿千NT$100，滿兩千NT$50，滿兩千免運(需購滿NT$2000)', base:100 },
+};
+
+function cartSubtotal(){
+  return cart.reduce((s,i)=>s+i.price*i.qty, 0);
+}
+function calcShipping(sub){
+  if(selectedShipping==='post'||selectedShipping==='cvs'){
+    return sub>=1000 ? 0 : SHIPPING[selectedShipping].base;
+  } else {
+    if(sub>=2000) return 0;
+    if(sub>=1000) return 50;
+    return 100;
+  }
+}
+function memberDiscount(){
+  if(!currentMember) return 0;
+  const s = currentMember.spent;
+  if(s>=30000) return 15;
+  if(s>=20000) return 10;
+  if(s>=10000) return 5;
+  return 0;
+}
+function calcTotal(){
+  const sub      = cartSubtotal();
+  const memDisc  = memberDiscount();
+  const discPct  = Math.max(appliedDiscount, memDisc);
+
+  // 百分比折扣（會員折扣 or 折扣碼百分比，取較大值）
+  const pctAmt   = Math.round(sub * discPct / 100);
+
+  // 固定金額折扣（不與百分比疊加，取較優惠者）
+  const fixedAmt = appliedFixed > 0 ? Math.min(appliedFixed, sub) : 0;
+
+  // 實際商品折扣：百分比 vs 固定金額，取較大者
+  const discAmt  = Math.max(pctAmt, fixedAmt);
+
+  // 運費：先算正常運費
+  let ship = calcShipping(sub);
+
+  // 免運費折扣碼：未滿千才生效（滿千本來就免運，不重複）
+  if (appliedFreeship && sub < 1000) ship = 0;
+
+  return { sub, discPct, discAmt, ship, total: Math.max(0, sub - discAmt + ship) };
+}
+
+function updateCartCount(){
+  const n = cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').textContent = n;
+}
+
+function renderCart(){
+  const body = document.getElementById('cartBody');
+  if(!cart.length){ body.innerHTML='<div class="cart-empty">還沒有商品喔 ☕</div>'; }
+  else {
+    body.innerHTML = cart.map((item,i)=>`
+      <div class="cart-item">
+        <div class="cart-item-img">${item.name[0]}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-spec">${item.spec}</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="cartQty(${i},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="cartQty(${i},1)">＋</button>
+            <button class="btn-remove" onclick="cartRemove(${i})" title="移除">✕</button>
+          </div>
+        </div>
+        <div class="cart-item-price">NT$${(item.price*item.qty).toLocaleString()}</div>
+      </div>`).join('');
+  }
+  // Shipping options
+  const so = document.getElementById('shippingOptions');
+  so.innerHTML = Object.entries(SHIPPING).map(([k,v])=>`
+    <div class="shipping-opt ${selectedShipping===k?'selected':''}" onclick="selectShipping('${k}')">
+      <div class="shipping-opt-left">
+        <input type="radio" name="shipping" ${selectedShipping===k?'checked':''} />
+        <div>
+          <div class="shipping-opt-name">${v.name}</div>
+          <div class="shipping-opt-note">${v.note}</div>
+        </div>
+      </div>
+      <div class="shipping-opt-price">${calcShipping(cartSubtotal())===0&&selectedShipping===k?'免運':'NT$'+calcShipping(cartSubtotal())}</div>
+    </div>`).join('');
+  // Summary
+  const {sub,discPct,discAmt,ship,total} = calcTotal();
+  document.getElementById('subtotalDisplay').textContent = 'NT$'+sub.toLocaleString();
+  document.getElementById('shippingDisplay').textContent = ship===0?'免運':'NT$'+ship;
+  document.getElementById('totalDisplay').textContent = 'NT$'+total.toLocaleString();
+  const discRow = document.getElementById('discountDisplay');
+  if(discPct>0){
+    discRow.style.display='flex';
+    document.getElementById('discountAmtDisplay').textContent = '-NT$'+discAmt.toLocaleString()+` (${100-discPct}折)`;
+  } else { discRow.style.display='none'; }
+  updateCartCount();
+}
+
+function cartQty(i, d){
+  cart[i].qty = Math.max(1, cart[i].qty + d);
+  renderCart();
+}
+function cartRemove(i){ cart.splice(i,1); renderCart(); }
+function selectShipping(k){ selectedShipping=k; renderCart(); }
+
+function addToCart(type, id, qty){
+  let item, spec;
+  if(type==='roasted'){ item=store.roasted.find(b=>b.id===id); spec=`半磅 240g · ${roastLabel(item?.roast)}`; }
+  else if(type==='preorder'){ item=store.green.find(b=>b.id===id); spec=`預購烘焙 · 240g×${qty}包`; }
+  else if(type==='greensale'){ item=store.greenSale.find(b=>b.id===id); spec=`生豆 1kg × ${qty}`; }
+  else if(type==='other'){ item=store.other.find(b=>b.id===id); spec=`數量 × ${qty}`; }
+  else { item=store.green.find(b=>b.id===id); spec=`預購烘焙 · 240g×${qty}包`; }
+  const existing = cart.find(c=>c.id===id&&c.type===type);
+  if(existing){ existing.qty+=qty; }
+  else { cart.push({id, name:item.name, type, qty, price:item.price, spec}); }
+  renderCart(); openCart();
+  showToast(`「${item.name}」已加入購物車`);
+}
+
+function openCart(){ document.getElementById('cartOverlay').classList.add('open'); }
+function closeCart(){ document.getElementById('cartOverlay').classList.remove('open'); }
+
+// ════════════════════════════════════════
+// DISCOUNT CODE
+// ════════════════════════════════════════
+async function applyDiscountCode(){
+  const code = document.getElementById('discountInput').value.trim().toUpperCase();
+  const msg  = document.getElementById('discountMsg');
+  msg.style.display='block'; msg.style.color='var(--muted)'; msg.textContent='驗證中…';
+  try {
+    const r = await apiPost('/api/coupons/apply', { code });
+    if(r.ok){
+      // Reset all discount types first
+      appliedDiscount = 0; appliedFixed = 0; appliedFreeship = false;
+      if(r.type === 'percent'){
+        appliedDiscount = r.discount_pct;
+        msg.style.color='var(--sage)';
+        msg.textContent = `✓ 折扣碼已套用：${r.discount_pct}% off`;
+      } else if(r.type === 'fixed'){
+        appliedFixed = r.discount_fixed;
+        msg.style.color='var(--sage)';
+        msg.textContent = `✓ 折扣碼已套用：折扣 NT$${r.discount_fixed}`;
+      } else if(r.type === 'freeship'){
+        appliedFreeship = true;
+        const sub = cartSubtotal();
+        if(sub >= 1000){
+          msg.style.color='var(--muted)';
+          msg.textContent = `✓ 免運費碼已套用（本訂單已滿千免運，自動生效）`;
+        } else {
+          msg.style.color='var(--sage)';
+          msg.textContent = `✓ 免運費碼已套用`;
+        }
+      }
+      renderCart();
+    } else {
+      msg.style.color='#c0392b';
+      msg.textContent = r.error || '折扣碼無效，請確認後重試';
+    }
+  } catch { msg.style.color='#c0392b'; msg.textContent='網路錯誤，請稍後再試'; }
+}
+
+// ════════════════════════════════════════
+// CHECKOUT (ECpay mock → Phase 3 real)
+// ════════════════════════════════════════
+async function checkout(){
+  if(!cart.length){ showToast('購物車是空的'); return; }
+
+  const btn = document.querySelector('.btn-checkout');
+  btn.textContent = '處理中…'; btn.disabled = true;
+
+  const {sub, discAmt, ship, total} = calcTotal();
+
+  try {
+    const res = await fetch(API + '/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(getMemberToken() ? { 'Authorization': 'Bearer ' + getMemberToken() } : {}),
+      },
+      body: JSON.stringify({
+        items: cart,
+        subtotal: sub,
+        discount_amt: discAmt,
+        shipping_fee: ship,
+        total,
+        shipping_type: selectedShipping,
+        member_id: currentMember?.id || null,
+      }),
+    });
+
+    if (!res.ok) {
+      let errMsg = '結帳失敗，請稍後再試';
+      try { const errData = await res.json(); errMsg = errData.error || errMsg; } catch{}
+      showToast(errMsg);
+      btn.textContent = '前往結帳 — ECpay 綠界'; btn.disabled = false;
+      return;
+    }
+
+    // Workers 回傳 ECpay 自動提交表單 HTML
+    // 直接替換當前頁面內容並提交
+    const html = await res.text();
+    cart = []; renderCart(); closeCart();
+    document.open();
+    document.write(html);
+    document.close();
+  } catch(e) {
+    showToast('網路錯誤，請稍後再試');
+  } finally {
+    btn.textContent = '前往結帳 — ECpay 綠界'; btn.disabled = false;
+  }
+}
+// ════════════════════════════════════════
+// MEMBER SYSTEM
+// ════════════════════════════════════════
+function openMemberModal(){
+  document.getElementById('memberModal').classList.add('open');
+  renderMemberContent();
+}
+function renderMemberContent(){
+  const el = document.getElementById('memberContent');
+  if(currentMember){
+    const disc = memberDiscount();
+    const tier = disc===15?'85折會員':disc===10?'9折會員':disc===5?'95折會員':'一般會員';
+    el.innerHTML = `
+      <div style="text-align:center;padding:8px 0 20px;">
+        <div class="member-avatar" style="width:56px;height:56px;font-size:1.2rem;margin:0 auto 12px;">${currentMember.name[0]}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--roast-deep);">${currentMember.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-top:4px;">${currentMember.email}</div>
+        ${disc>0?`<div class="member-badge gold" style="margin:12px auto 0;">★ ${tier}</div>`:''}
+      </div>
+      <div class="discount-tier-info">
+        <p>累計消費：<strong>NT$${(currentMember.spent||0).toLocaleString()}</strong><br>
+        ${disc>0?`目前享有：<strong>${100-disc}折優惠</strong>`:'消費累計滿萬元即享折扣'}</p>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;">
+        <button class="btn-outline" style="flex:1;font-size:0.75rem;" onclick="closeModal('memberModal')">關閉</button>
+        <button class="btn-modal-save" style="flex:1;" onclick="memberLogout()">登出</button>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div class="login-tabs">
+        <button class="login-tab active" onclick="switchLoginTab('login')">會員登入</button>
+        <button class="login-tab" onclick="switchLoginTab('register')">儲值碼建立帳號</button>
+      </div>
+      <div class="login-panel active" id="lp-login">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="li-email" placeholder="your@email.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">密碼</label>
+          <input type="password" class="form-input" id="li-pw" placeholder="密碼"/>
+        </div>
+        <button class="btn-modal-save" style="width:100%;margin-top:4px;" onclick="doLogin()">登入</button>
+      </div>
+      <div class="login-panel" id="lp-register">
+        <p style="font-size:0.82rem;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+          持有店家發行的儲值碼，可建立專屬帳號，享有累計消費折扣。
+        </p>
+        <button class="btn-outline" style="width:100%;" onclick="openRegister()">以儲值碼建立帳號</button>
+      </div>`;
+  }
+}
+function switchLoginTab(t){
+  document.querySelectorAll('.login-tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='register')));
+  document.getElementById('lp-login').classList.toggle('active',t==='login');
+  document.getElementById('lp-register').classList.toggle('active',t==='register');
+}
+async function doLogin(){
+  const email = document.getElementById('li-email').value.trim();
+  const pw = document.getElementById('li-pw').value;
+  try {
+    const r = await apiPost('/api/auth/login', { email, password: pw });
+    if(r.ok){
+      setMemberToken(r.token);
+      currentMember = r.member;
+      updateMemberBtn(); closeModal('memberModal');
+      showToast(`歡迎回來，${r.member.name}！`);
+      renderCart();
+    } else { showToast(r.error || '帳號或密碼錯誤'); }
+  } catch { showToast('網路錯誤'); }
+}
+function memberLogout(){
+  currentMember=null; appliedDiscount=0;
+  clearMemberToken();
+  updateMemberBtn(); closeModal('memberModal');
+  renderCart(); showToast('已登出');
+}
+function updateMemberBtn(){
+  const btn = document.getElementById('memberBtn');
+  if(currentMember){
+    btn.innerHTML = `<div class="member-avatar">${currentMember.name[0]}</div> ${currentMember.name}`;
+  } else { btn.textContent = '會員登入'; }
+}
+function openRegister(){
+  closeModal('memberModal');
+  document.getElementById('voucherModal').classList.add('open');
+}
+async function registerWithVoucher(){
+  const name  = document.getElementById('vc-name').value.trim();
+  const email = document.getElementById('vc-email').value.trim();
+  const pw    = document.getElementById('vc-pw').value;
+  const code  = document.getElementById('vc-code').value.trim().toUpperCase();
+  if(!name||!email||!pw){ showToast('請填寫所有欄位'); return; }
+  try {
+    const r = await apiPost('/api/auth/register', { name, email, password: pw, voucher_code: code });
+    if(r.ok){
+      setMemberToken(r.token);
+      currentMember = r.member;
+      updateMemberBtn();
+      closeModal('voucherModal');
+      showToast(`帳號建立成功，歡迎 ${name}！`);
+      renderCart();
+    } else { showToast(r.error || '註冊失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+
+// ════════════════════════════════════════
+// PRODUCT CARDS RENDER
+// ════════════════════════════════════════
+const roastMap = { light:['rl','淺焙'], 'medium-light':['rml','淺中焙'], medium:['rm','中焙'], dark:['rd','深焙'] };
+function roastLabel(r){ return roastMap[r]?roastMap[r][1]:r; }
+function roastClass(r){ return roastMap[r]?roastMap[r][0]:'rl'; }
+
+function renderRoastedGrid(){
+  const grid = document.getElementById('roastedGrid');
+  if(!store.roasted.length){ grid.innerHTML='<p style="color:var(--muted)">載入中…</p>'; return; }
+  grid.innerHTML = store.roasted.map(b=>{
+    const avail = b.avail==='yes'&&b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img?`<img src="${b.img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.innerHTML='☕'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">
+          ${avail?'現貨':b.qty===0?'售完':'暫停供應'}
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="product-roast ${roastClass(b.roast)}">
+          <span class="roast-dot"></span>${roastLabel(b.roast)}
+        </div>
+        <div class="product-name">${b.name}</div>
+        <div class="product-origin">${b.origin}</div>
+        <div class="product-flavor">${b.flavor}</div>
+        <div class="product-footer">
+          <div class="product-spec">半磅 240g / 包<br>現貨：${b.qty} 包</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}<span>/包</span></div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('r${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-r${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('r${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('roasted',${b.id},parseInt(document.getElementById('qty-r${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停供應'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderGreenGrid(){
+  const grid = document.getElementById('greenBeanGrid');
+  if(!store.green.length){ grid.innerHTML='<p style="color:rgba(247,242,232,0.5)">載入中…</p>'; return; }
+  grid.innerHTML = store.green.map(b=>`
+    <div class="green-bean-card">
+      <div class="gb-name">${b.name}</div>
+      <div class="gb-stock">庫存 ${b.stock} kg · ${b.origin}</div>
+      <div class="gb-flavor">${b.flavor}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(247,242,232,0.6);margin-bottom:12px;">
+        預購價 NT$${b.price.toLocaleString()} / 240g包
+      </div>
+      <div class="gb-order">
+        <select class="gb-select" id="gb-qty-${b.id}">
+          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}">${n} 包 (${n*240}g)</option>`).join('')}
+        </select>
+        <button class="btn-preorder" onclick="preorderGreen(${b.id})">預購</button>
+      </div>
+    </div>`).join('');
+}
+
+function adjustQty(key, d){
+  const el = document.getElementById('qty-'+key);
+  if(!el) return;
+  const current = parseInt(el.textContent);
+  let max = 99;
+
+  // 熟豆：上限為現貨數量
+  if(key.startsWith('r')){
+    const id = parseInt(key.slice(1));
+    const bean = store.roasted.find(b=>b.id===id);
+    if(bean) max = bean.qty;
+  }
+  // 生豆販售：上限為現貨數量
+  else if(key.startsWith('gs')){
+    const id = parseInt(key.slice(2));
+    const bean = store.greenSale.find(b=>b.id===id);
+    if(bean) max = bean.qty;
+  }
+  // 預購烘焙：上限 10 包
+  else if(key.startsWith('gb')){
+    max = 10;
+  }
+  // 其他商品：上限為現貨數量
+  else if(key.startsWith('ot')){
+    const id = parseInt(key.slice(2));
+    const bean = store.other.find(b=>b.id===id);
+    if(bean) max = bean.qty;
+  }
+
+  const next = Math.min(max, Math.max(1, current + d));
+  el.textContent = next;
+  if(next >= max && d > 0) showToast(`最多可購買 ${max} 個`);
+}
+function preorderGreen(id){
+  const qty = parseInt(document.getElementById('gb-qty-'+id).value)||1;
+  addToCart('preorder', id, qty);
+}
+
+// ════════════════════════════════════════
+// ADMIN
+// ════════════════════════════════════════
+let adminLoggedIn = false;
+function openAdmin(){
+  if(adminLoggedIn){ document.getElementById('adminPanel').classList.add('open'); renderAdminAll(); }
+  else { document.getElementById('adminLoginModal').classList.add('open'); }
+}
+function closeAdmin(){ document.getElementById('adminPanel').classList.remove('open'); }
+async function doAdminLogin(){
+  const pw = document.getElementById('adminPwInput').value;
+  try {
+    const r = await apiPost('/api/admin/login', { password: pw });
+    if(r.ok){
+      setAdminToken(r.token);
+      adminLoggedIn = true;
+      closeModal('adminLoginModal');
+      document.getElementById('adminPanel').classList.add('open');
+      await loadAdminData();
+    } else { showToast('密碼錯誤'); }
+  } catch { showToast('網路錯誤'); }
+}
+function switchAdminTab(t){
+  const tabs = ['roasted','green','greensale','other','members'];
+  document.querySelectorAll('.admin-tab').forEach((b,i)=>{
+    b.classList.toggle('active', tabs[i]===t);
+  });
+  document.querySelectorAll('.admin-section').forEach((s,i)=>{
+    s.classList.toggle('active', 'admin-'+tabs[i]==='admin-'+t);
+  });
+}
+function renderAdminAll(){ renderAdminRoastedTbl(); renderAdminGreenTbl(); renderAdminGreenSaleTbl(); renderAdminOtherTbl(); renderAdminMemberTbl(); renderAdminVoucherTbl(); renderAdminCouponTbl(); }
+
+function renderAdminVoucherTbl(){
+  const tbl = document.getElementById('adminVoucherTbl');
+  if(!tbl) return;
+  if(!store.vouchers.length){
+    tbl.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);font-size:0.82rem;padding:20px;">尚無已發行的儲值碼</td></tr>';
+    return;
+  }
+  tbl.innerHTML = store.vouchers.map(v=>{
+    const used   = v.used === 1;
+    const usedBy = v.used_by || '—';
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace;font-weight:500;">${v.code}</td>
+      <td>
+        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${used?'var(--muted)':'var(--sage)'};">
+          ${used?'已使用':'未使用'}
+        </span>
+      </td>
+      <td style="font-size:0.8rem;color:var(--muted)">${usedBy}</td>
+      <td>
+        <div class="tbl-actions">
+          <button class="btn-tbl" onclick="copyVoucherCode('${v.code}')" ${used?'disabled style="opacity:0.4"':''}>複製</button>
+          <button class="btn-tbl danger" onclick="deleteVoucher('${v.code}')">刪除</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function copyVoucherCode(code){
+  navigator.clipboard.writeText(code).then(()=>{
+    showToast(`已複製：${code}`);
+  }).catch(()=>{
+    // fallback
+    const el = document.createElement('textarea');
+    el.value = code; document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast(`已複製：${code}`);
+  });
+}
+
+async function deleteVoucher(code){
+  if(!confirm(`確定刪除儲值碼 ${code}？`)) return;
+  try {
+    const r = await apiDel(`/api/vouchers/${encodeURIComponent(code)}`);
+    if(r.ok){
+      store.vouchers = store.vouchers.filter(v=>v.code!==code);
+      renderAdminVoucherTbl();
+      showToast('已刪除');
+    }
+  } catch { showToast('網路錯誤'); }
+}
+function renderAdminRoastedTbl(){
+  document.getElementById('adminRoastedTbl').innerHTML = store.roasted.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td>${roastLabel(b.roast)}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${b.origin}</td>
+      <td>NT$${b.price}</td><td>${b.qty}</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openProductModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteRoasted(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function renderAdminGreenTbl(){
+  document.getElementById('adminGreenTbl').innerHTML = store.green.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${b.origin}</td>
+      <td>${b.stock} kg</td><td>NT$${b.price}</td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openGreenModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteGreen(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function renderAdminMemberTbl(){
+  document.getElementById('adminMemberTbl').innerHTML = store.members.map(m=>{
+    const d = m.spent>=30000?15:m.spent>=20000?10:m.spent>=10000?5:0;
+    return `<tr>
+      <td>${m.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${m.email}</td>
+      <td>
+        <span id="spent-val-${m.id}">NT$${(m.spent||0).toLocaleString()}</span>
+        <button class="btn-tbl" style="margin-left:8px;" onclick="openAdjustSpent(${m.id},'${m.name}',${m.spent||0})">調整</button>
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${d>0?'var(--sage)':'var(--muted)'}">
+        ${d>0?`${100-d}折`:'一般'}
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted)">${m.voucher_used||'—'}</td>
+      <td><button class="btn-tbl danger" onclick="deleteMember(${m.id})">移除</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// 調整累計消費 Modal
+function openAdjustSpent(id, name, current){
+  document.getElementById('as-member-name').textContent = name;
+  document.getElementById('as-spent').value = current;
+  document.getElementById('as-member-id').value = id;
+  document.getElementById('adjustSpentModal').classList.add('open');
+}
+async function saveAdjustSpent(){
+  const id    = parseInt(document.getElementById('as-member-id').value);
+  const spent = parseInt(document.getElementById('as-spent').value) || 0;
+  try {
+    const r = await apiPut(`/api/members/${id}/spent`, { spent });
+    if(r.ok){
+      const m = store.members.find(m=>m.id===id);
+      if(m) m.spent = spent;
+      renderAdminMemberTbl();
+      closeModal('adjustSpentModal');
+      showToast('累計消費已更新');
+    } else { showToast(r.error||'更新失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+function renderAdminCouponTbl(){
+  const typeLabel = { percent:'百分比', fixed:'固定金額', freeship:'免運費' };
+  document.getElementById('adminCouponTbl').innerHTML = store.coupons.map(c=>{
+    const type = c.type || 'percent';
+    const val  = type==='percent' ? `${c.pct||c.discount_value}% off`
+               : type==='fixed'   ? `折 NT$${c.discount_value}`
+               : '免運費';
+    return `<tr>
+      <td style="font-family:'DM Mono',monospace">${c.code}</td>
+      <td style="font-size:0.78rem;color:var(--muted)">${typeLabel[type]||type}</td>
+      <td>${val}</td>
+      <td>${c.used||c.used_count||0} 次</td>
+      <td><button class="btn-tbl danger" onclick="deleteCoupon('${c.code}')">刪除</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// Image upload (pm prefix uses universal handler)
+function handleImgUpload(input){ handleImgUploadFor(input,'pm'); }
+
+// Product modal
+function openProductModal(id){
+  editingProductId = id||null;
+  const b = id ? store.roasted.find(b=>b.id===id) : null;
+  document.getElementById('productModalTitle').textContent = b?'編輯熟豆':'新增熟豆';
+  document.getElementById('pm-name').value  = b?b.name:'';
+  document.getElementById('pm-roast').value = b?b.roast:'light';
+  document.getElementById('pm-origin').value= b?b.origin:'';
+  document.getElementById('pm-flavor').value= b?b.flavor:'';
+  document.getElementById('pm-price').value = b?b.price:'';
+  document.getElementById('pm-qty').value   = b?b.qty:'';
+  document.getElementById('pm-img').value   = b?(b.img||b.img_url||''):'';
+  // Reset image preview
+  const preview = document.getElementById('pm-img-preview');
+  const previewEl = document.getElementById('pm-img-preview-el');
+  const imgVal = b?(b.img||b.img_url||''):'';
+  if(imgVal){ previewEl.src=imgVal; preview.style.display='block'; }
+  else { preview.style.display='none'; previewEl.src=''; }
+  document.getElementById('pm-upload-text').textContent = imgVal ? '✓ 已有照片，點此更換' : '📷 點此上傳照片';
+  document.getElementById('pm-avail').value = b?b.avail:'yes';
+  document.getElementById('productModal').classList.add('open');
+}
+async function saveProduct(){
+  const d = {
+    name:  document.getElementById('pm-name').value.trim(),
+    roast: document.getElementById('pm-roast').value,
+    origin:document.getElementById('pm-origin').value.trim(),
+    flavor:document.getElementById('pm-flavor').value.trim(),
+    price: parseInt(document.getElementById('pm-price').value)||0,
+    qty:   parseInt(document.getElementById('pm-qty').value)||0,
+    img_url:document.getElementById('pm-img').value.trim(),
+    avail: document.getElementById('pm-avail').value,
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingProductId
+      ? await apiPut(`/api/roasted/${editingProductId}`, d)
+      : await apiPost('/api/roasted', d, true);
+    if(r.ok){
+      // Refresh from API
+      const fresh = await apiGet('/api/roasted');
+      if(fresh.ok) store.roasted = fresh.data.map(b=>({...b,img:b.img_url}));
+      closeModal('productModal');
+      renderRoastedGrid(); renderAdminRoastedTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteRoasted(id){
+  if(!confirm('確定刪除這個品項？')) return;
+  await apiDel(`/api/roasted/${id}`);
+  store.roasted = store.roasted.filter(b=>b.id!==id);
+  renderRoastedGrid(); renderAdminRoastedTbl();
+}
+
+// Green bean modal
+function openGreenModal(id){
+  editingGreenId=id||null;
+  const b = id ? store.green.find(b=>b.id===id) : null;
+  document.getElementById('greenModalTitle').textContent = b?'編輯生豆':'新增生豆';
+  document.getElementById('gm-name').value  = b?b.name:'';
+  document.getElementById('gm-origin').value= b?b.origin:'';
+  document.getElementById('gm-stock').value = b?b.stock:'';
+  document.getElementById('gm-flavor').value= b?b.flavor:'';
+  document.getElementById('gm-price').value = b?b.price:'';
+  document.getElementById('greenModal').classList.add('open');
+}
+async function saveGreenBean(){
+  const d = {
+    name:    document.getElementById('gm-name').value.trim(),
+    origin:  document.getElementById('gm-origin').value.trim(),
+    stock_kg:parseFloat(document.getElementById('gm-stock').value)||0,
+    flavor:  document.getElementById('gm-flavor').value.trim(),
+    price:   parseInt(document.getElementById('gm-price').value)||0,
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingGreenId
+      ? await apiPut(`/api/green/${editingGreenId}`, d)
+      : await apiPost('/api/green', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/green');
+      if(fresh.ok) store.green = fresh.data.map(b=>({...b,stock:b.stock_kg}));
+      closeModal('greenModal');
+      renderGreenGrid(); renderAdminGreenTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteGreen(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/green/${id}`);
+  store.green = store.green.filter(b=>b.id!==id);
+  renderGreenGrid(); renderAdminGreenTbl();
+}
+
+// Member management
+async function deleteMember(id){
+  if(!confirm('確定移除此會員？')) return;
+  await apiDel(`/api/members/${id}`);
+  store.members = store.members.filter(m=>m.id!==id);
+  renderAdminMemberTbl();
+}
+
+// Voucher / Coupon
+function openIssueVoucher(){
+  document.getElementById('iv-code').value='';
+  document.getElementById('issueVoucherModal').classList.add('open');
+}
+async function issueVoucher(){
+  let code = document.getElementById('iv-code').value.trim().toUpperCase();
+  try {
+    const r = await apiPost('/api/vouchers', { code }, true);
+    if(r.ok){
+      closeModal('issueVoucherModal');
+      showToast(`儲值碼已產生：${r.code}`);
+      const fresh = await apiGet('/api/vouchers', true);
+      if(fresh.ok) store.vouchers = fresh.data;
+    } else { showToast(r.error||'建立失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+function toggleCouponValueField(){
+  const type  = document.getElementById('cp-type').value;
+  const group = document.getElementById('cp-value-group');
+  const label = document.getElementById('cp-value-label');
+  const hint  = document.getElementById('cp-value-hint');
+  const input = document.getElementById('cp-value');
+  if(type === 'freeship'){
+    group.style.display = 'none';
+  } else {
+    group.style.display = 'block';
+    if(type === 'percent'){
+      label.textContent = '折扣百分比 (%)';
+      input.placeholder = '10';
+      hint.textContent  = '輸入 10 = 打9折；輸入 5 = 打95折';
+    } else {
+      label.textContent = '折抵金額 (NT$)';
+      input.placeholder = '100';
+      hint.textContent  = '輸入 100 = 折抵 NT$100';
+    }
+  }
+}
+function openAddCoupon(){
+  document.getElementById('cp-code').value  = '';
+  document.getElementById('cp-value').value = '';
+  document.getElementById('cp-type').value  = 'percent';
+  document.getElementById('cp-value-group').style.display = 'block';
+  toggleCouponValueField();
+  document.getElementById('couponModal').classList.add('open');
+}
+async function saveCoupon(){
+  const code  = document.getElementById('cp-code').value.trim().toUpperCase();
+  const type  = document.getElementById('cp-type').value;
+  const value = parseInt(document.getElementById('cp-value').value)||0;
+  if(!code){ showToast('請填寫折扣碼'); return; }
+  if(type !== 'freeship' && !value){ showToast('請填寫折扣數值'); return; }
+  try {
+    const r = await apiPost('/api/coupons', {
+      code,
+      type,
+      discount_pct:   type==='percent'  ? value : 0,
+      discount_value: value,
+    }, true);
+    if(r.ok){
+      store.coupons.push({ code, type, pct: type==='percent'?value:0, discount_value:value, used:0 });
+      closeModal('couponModal');
+      renderAdminCouponTbl();
+      showToast(`折扣碼 ${code} 已建立`);
+    } else { showToast(r.error||'建立失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteCoupon(code){
+  await apiDel(`/api/coupons/${encodeURIComponent(code)}`);
+  store.coupons = store.coupons.filter(c=>c.code!==code);
+  renderAdminCouponTbl();
+}
+
+// ════════════════════════════════════════
+// GREEN SALE GRID
+// ════════════════════════════════════════
+function renderGreenSaleGrid(){
+  const grid = document.getElementById('greenSaleGrid');
+  if(!grid) return;
+  if(!store.greenSale.length){ grid.innerHTML='<p style="color:var(--muted)">目前無生豆販售品項。</p>'; return; }
+  grid.innerHTML = store.greenSale.map(b=>{
+    const avail = b.avail==='yes' && b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img_url?`<img src="${b.img_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">${avail?'現貨':b.qty===0?'售完':'暫停'}</div>
+      </div>
+      <div class="product-body">
+        <div class="product-roast rml"><span class="roast-dot"></span>生豆 · ${b.process}</div>
+        <div class="product-name">${b.name}</div>
+        <div class="product-flavor">${b.flavor}</div>
+        <div class="product-footer">
+          <div class="product-spec">1kg / 包<br>現貨：${b.qty} kg</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}<span>/kg</span></div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('gs${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-gs${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('gs${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('greensale',${b.id},parseInt(document.getElementById('qty-gs${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// OTHER PRODUCTS GRID
+// ════════════════════════════════════════
+function renderOtherGrid(){
+  const grid = document.getElementById('otherGrid');
+  if(!grid) return;
+  if(!store.other.length){ grid.innerHTML='<p style="color:var(--muted)">目前無其他商品。</p>'; return; }
+  grid.innerHTML = store.other.map(b=>{
+    const avail = b.avail==='yes' && b.qty>0;
+    return `
+    <div class="product-card">
+      <div class="product-img-placeholder">
+        ${b.img_url?`<img src="${b.img_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`${b.name[0]}`}
+        <div class="avail-tag ${avail?'yes':'no'}">${avail?'現貨':b.qty===0?'售完':'暫停'}</div>
+      </div>
+      <div class="product-body">
+        <div class="product-name">${b.name}</div>
+        <div class="product-footer">
+          <div class="product-spec">數量：${b.qty}</div>
+          <div class="product-price">NT$${b.price.toLocaleString()}</div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty('ot${b.id}',-1)">−</button>
+          <span class="qty-num" id="qty-ot${b.id}">1</span>
+          <button class="qty-btn" onclick="adjustQty('ot${b.id}',1)">＋</button>
+        </div>
+        <button class="btn-add-cart" ${!avail?'disabled':''} onclick="addToCart('other',${b.id},parseInt(document.getElementById('qty-ot${b.id}').textContent))">
+          ${avail?'加入購物車':'已售完 / 暫停'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// ADMIN: GREEN SALE
+// ════════════════════════════════════════
+let editingGreenSaleId = null;
+function renderAdminGreenSaleTbl(){
+  const tbl = document.getElementById('adminGreenSaleTbl');
+  if(!tbl) return;
+  tbl.innerHTML = store.greenSale.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${b.process}</td>
+      <td>NT$${b.price}</td>
+      <td>${b.qty} kg</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openGreenSaleModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteGreenSale(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function openGreenSaleModal(id){
+  editingGreenSaleId = id||null;
+  const b = id ? store.greenSale.find(b=>b.id===id) : null;
+  document.getElementById('greenSaleModalTitle').textContent = b?'編輯生豆販售':'新增生豆販售';
+  document.getElementById('gs-name').value    = b?b.name:'';
+  document.getElementById('gs-process').value = b?b.process:'';
+  document.getElementById('gs-flavor').value  = b?b.flavor:'';
+  document.getElementById('gs-price').value   = b?b.price:'';
+  document.getElementById('gs-qty').value     = b?b.qty:'';
+  document.getElementById('gs-avail').value   = b?b.avail:'yes';
+  document.getElementById('gs-img').value     = b?b.img_url:'';
+  const preview = document.getElementById('gs-img-preview');
+  const previewEl = document.getElementById('gs-img-preview-el');
+  if(b?.img_url){ previewEl.src=b.img_url; preview.style.display='block'; }
+  else { preview.style.display='none'; }
+  document.getElementById('gs-upload-text').textContent = b?.img_url?'✓ 已有照片，點此更換':'📷 點此上傳照片';
+  openModal('greenSaleModal');
+}
+async function saveGreenSale(){
+  const d = {
+    name:    document.getElementById('gs-name').value.trim(),
+    process: document.getElementById('gs-process').value.trim(),
+    flavor:  document.getElementById('gs-flavor').value.trim(),
+    price:   parseInt(document.getElementById('gs-price').value)||0,
+    qty:     parseInt(document.getElementById('gs-qty').value)||0,
+    avail:   document.getElementById('gs-avail').value,
+    img_url: document.getElementById('gs-img').value.trim(),
+  };
+  if(!d.name){showToast('請填寫豆名');return;}
+  try {
+    const r = editingGreenSaleId
+      ? await apiPut(`/api/green-sale/${editingGreenSaleId}`, d)
+      : await apiPost('/api/green-sale', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/green-sale');
+      if(fresh.ok) store.greenSale = fresh.data;
+      closeModal('greenSaleModal');
+      renderGreenSaleGrid(); renderAdminGreenSaleTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteGreenSale(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/green-sale/${id}`);
+  store.greenSale = store.greenSale.filter(b=>b.id!==id);
+  renderGreenSaleGrid(); renderAdminGreenSaleTbl();
+}
+
+// ════════════════════════════════════════
+// ADMIN: OTHER PRODUCTS
+// ════════════════════════════════════════
+let editingOtherId = null;
+function renderAdminOtherTbl(){
+  const tbl = document.getElementById('adminOtherTbl');
+  if(!tbl) return;
+  tbl.innerHTML = store.other.map(b=>`
+    <tr>
+      <td>${b.name}</td>
+      <td>NT$${b.price}</td>
+      <td>${b.qty}</td>
+      <td><span style="color:${b.avail==='yes'?'var(--sage)':'var(--muted)'};font-family:'DM Mono',monospace;font-size:0.72rem;">${b.avail==='yes'?'販售中':'暫停'}</span></td>
+      <td><div class="tbl-actions">
+        <button class="btn-tbl" onclick="openOtherModal(${b.id})">編輯</button>
+        <button class="btn-tbl danger" onclick="deleteOther(${b.id})">刪除</button>
+      </div></td>
+    </tr>`).join('');
+}
+function openOtherModal(id){
+  editingOtherId = id||null;
+  const b = id ? store.other.find(b=>b.id===id) : null;
+  document.getElementById('otherModalTitle').textContent = b?'編輯商品':'新增其他商品';
+  document.getElementById('ot-name').value  = b?b.name:'';
+  document.getElementById('ot-price').value = b?b.price:'';
+  document.getElementById('ot-qty').value   = b?b.qty:'';
+  document.getElementById('ot-avail').value = b?b.avail:'yes';
+  document.getElementById('ot-img').value   = b?b.img_url:'';
+  const preview = document.getElementById('ot-img-preview');
+  const previewEl = document.getElementById('ot-img-preview-el');
+  if(b?.img_url){ previewEl.src=b.img_url; preview.style.display='block'; }
+  else { preview.style.display='none'; }
+  document.getElementById('ot-upload-text').textContent = b?.img_url?'✓ 已有照片，點此更換':'📷 點此上傳照片';
+  openModal('otherModal');
+}
+async function saveOther(){
+  const d = {
+    name:    document.getElementById('ot-name').value.trim(),
+    price:   parseInt(document.getElementById('ot-price').value)||0,
+    qty:     parseInt(document.getElementById('ot-qty').value)||0,
+    avail:   document.getElementById('ot-avail').value,
+    img_url: document.getElementById('ot-img').value.trim(),
+  };
+  if(!d.name){showToast('請填寫商品名稱');return;}
+  try {
+    const r = editingOtherId
+      ? await apiPut(`/api/other/${editingOtherId}`, d)
+      : await apiPost('/api/other', d, true);
+    if(r.ok){
+      const fresh = await apiGet('/api/other');
+      if(fresh.ok) store.other = fresh.data;
+      closeModal('otherModal');
+      renderOtherGrid(); renderAdminOtherTbl();
+      showToast('已儲存');
+    } else { showToast(r.error||'儲存失敗'); }
+  } catch { showToast('網路錯誤'); }
+}
+async function deleteOther(id){
+  if(!confirm('確定刪除？')) return;
+  await apiDel(`/api/other/${id}`);
+  store.other = store.other.filter(b=>b.id!==id);
+  renderOtherGrid(); renderAdminOtherTbl();
+}
+
+// ════════════════════════════════════════
+// UNIVERSAL IMAGE UPLOAD (for any modal)
+// ════════════════════════════════════════
+async function handleImgUploadFor(input, prefix) {
+  const file = input.files[0];
+  if (!file) return;
+  const label = document.getElementById(`${prefix}-upload-label`);
+  const txt   = document.getElementById(`${prefix}-upload-text`);
+  txt.textContent = '上傳中…'; label.style.opacity='0.6';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(API + '/api/images/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getAdminToken() },
+      body: fd,
+    });
+    const r = await res.json();
+    if(r.ok){
+      const imgUrl = API + r.url;
+      document.getElementById(`${prefix}-img`).value = imgUrl;
+      const preview = document.getElementById(`${prefix}-img-preview`);
+      document.getElementById(`${prefix}-img-preview-el`).src = imgUrl;
+      preview.style.display = 'block';
+      txt.textContent = '✓ 已上傳，點此更換';
+      label.style.opacity='1'; label.style.borderColor='var(--sage)';
+      showToast('照片上傳成功！');
+    } else {
+      txt.textContent='📷 點此上傳照片'; label.style.opacity='1';
+      showToast(r.error||'上傳失敗');
+    }
+  } catch {
+    txt.textContent='📷 點此上傳照片'; label.style.opacity='1';
+    showToast('網路錯誤，上傳失敗');
+  }
+}
+
+// ════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function closeIfOverlay(e, id){ if(e.target===document.getElementById(id)) closeModal(id); }
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+}
+function smoothScrollTo(selector){ document.querySelector(selector)?.scrollIntoView({behavior:'smooth'}); }
+
+document.getElementById('cartOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('cartOverlay')) closeCart();
+});
+
+// ════════════════════════════════════════
+// INIT — 嘗試從 API 載入；失敗時顯示提示
+// ════════════════════════════════════════
+async function init(){
+  renderCart();
+  try {
+    await loadPublicData();
+    // 若有 member token，嘗試恢復登入狀態
+    if(getMemberToken()){
+      const r = await apiGet('/api/auth/me');
+      if(r.ok){ currentMember=r.member; updateMemberBtn(); renderCart(); }
+      else { clearMemberToken(); }
+    }
+  } catch(e) {
+    // API 未部署時顯示提示（Phase 1 相容）
+    document.getElementById('roastedGrid').innerHTML =
+      `<div style="grid-column:1/-1;padding:40px;background:rgba(200,146,42,0.08);border:1px solid rgba(200,146,42,0.3);border-radius:4px;text-align:center;">
+        <p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gold);margin-bottom:8px;">⚠ API 尚未連線</p>
+        <p style="font-size:0.82rem;color:var(--muted);">請依照部署說明將 Workers 上線後，更新 API 網址即可正常使用。</p>
+      </div>`;
+    document.getElementById('greenBeanGrid').innerHTML =
+      `<p style="color:rgba(247,242,232,0.4);font-family:'DM Mono',monospace;font-size:0.78rem;">⚠ 等待 API 連線…</p>`;
+  }
+}
+init();
+</script>
+</body>
+</html>
