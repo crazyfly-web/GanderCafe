@@ -273,7 +273,7 @@ body {
   font-family:'Cormorant Garamond',serif;
   font-size:1.2rem;font-weight:600;
   color:var(--roast-deep);line-height:1.3;
-  margin-bottom:6px;
+  margin-bottom:4px;
 }
 .product-origin {
   font-size:0.78rem;color:var(--muted);
@@ -522,7 +522,7 @@ body {
 }
 
 /* Cart footer */
-.cart-footer{padding:20px 28px;border-top:1px solid var(--border);flex-shrink:0;}
+.cart-footer{padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;overflow-y:auto;max-height:55vh;}
 .cart-summary-row {
   display:flex;justify-content:space-between;
   font-size:0.85rem;color:var(--muted);
@@ -537,7 +537,7 @@ body {
 .cart-summary-row.discount-line{color:var(--sage);}
 
 /* Shipping selector */
-.shipping-select-section{margin:10px 0;}
+.shipping-select-section{margin:6px 0;}
 .shipping-select-section label {
   font-family:'DM Mono',monospace;
   font-size:0.7rem;letter-spacing:0.1em;
@@ -546,7 +546,7 @@ body {
 .shipping-options{display:flex;flex-direction:column;gap:6px;}
 .shipping-opt {
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 10px;
+  padding:6px 10px;
   border:1px solid var(--border);border-radius:2px;cursor:pointer;
   transition:border-color 0.15s;
 }
@@ -566,7 +566,7 @@ body {
   font-size:0.78rem;color:var(--roast-mid);
 }
 .btn-checkout {
-  width:100%;margin-top:16px;
+  width:100%;margin-top:10px;
   padding:14px;
   background:var(--roast-deep);color:var(--cream);
   border:none;border-radius:2px;cursor:pointer;
@@ -892,6 +892,21 @@ footer a{color:var(--gold-pale);text-decoration:none;}
     </div>
     <div class="cart-body" id="cartBody">
       <div class="cart-empty">還沒有商品喔 ☕</div>
+
+    <!-- 收件資訊 -->
+    <div id="receiverSection" style="margin-bottom:14px;border-top:1px solid var(--border);padding-top:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;color:var(--muted);margin-bottom:10px;">收件資訊</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <input type="text" id="rcv-name" class="discount-input" placeholder="收件人姓名" style="width:100%;"/>
+        <input type="text" id="rcv-phone" class="discount-input" placeholder="收件人電話" style="width:100%;"/>
+        <input type="text" id="rcv-address" class="discount-input" placeholder="地址 / 超商門市名稱與代號" style="width:100%;"/>
+      </div>
+      <div id="rcv-save-wrap" style="display:none;margin-top:8px;">
+        <label style="font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" id="rcv-save"> 儲存為常用收件資訊
+        </label>
+      </div>
+    </div>
     </div>
 
     <!-- Discount code -->
@@ -905,20 +920,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
     </div>
 
     <div class="cart-footer">
-      <!-- 收件資訊 -->
-      <div id="receiverSection" style="margin-bottom:14px;border-top:1px solid var(--border);padding-top:14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;color:var(--muted);margin-bottom:10px;">收件資訊</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <input type="text" id="rcv-name" class="discount-input" placeholder="收件人姓名" style="width:100%;"/>
-          <input type="text" id="rcv-phone" class="discount-input" placeholder="收件人電話" style="width:100%;"/>
-          <input type="text" id="rcv-address" class="discount-input" placeholder="地址 / 超商門市名稱與代號" style="width:100%;"/>
-        </div>
-        <div id="rcv-save-wrap" style="display:none;margin-top:8px;">
-          <label style="font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;">
-            <input type="checkbox" id="rcv-save"> 儲存為常用收件資訊
-          </label>
-        </div>
-      </div>
+
       <!-- Shipping -->
       <div class="shipping-select-section">
         <label>運送方式</label>
