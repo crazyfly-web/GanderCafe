@@ -1272,6 +1272,23 @@ footer a{color:var(--gold-pale);text-decoration:none;}
         <button class="btn-outline" style="margin-top:16px;font-size:0.75rem;padding:10px 20px;" onclick="openAddCoupon()">＋ 建立折扣碼</button>
       </div>
     </div>
+
+    <!-- Orders tab -->
+    <div class="admin-section" id="admin-orders">
+      <div class="admin-section-header">
+        <span class="admin-section-title">訂單管理</span>
+        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="loadAdminOrders()">重新整理</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>訂單編號</th><th>時間</th><th>會員</th><th>品項</th><th>金額</th><th>運送</th><th>狀態</th><th>操作</th></tr>
+          </thead>
+          <tbody id="adminOrdersTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1429,24 +1446,6 @@ footer a{color:var(--gold-pale);text-decoration:none;}
       </div>
     </div>
     <div class="modal-footer"><button class="btn-modal-cancel" onclick="closeModal('balanceLogsModal')">關閉</button></div>
-  </div>
-
-    <!-- Orders tab -->
-    <div class="admin-section" id="admin-orders">
-      <div class="admin-section-header">
-        <span class="admin-section-title">訂單管理</span>
-        <button class="btn-primary" style="font-size:0.75rem;padding:10px 20px;" onclick="loadAdminOrders()">重新整理</button>
-      </div>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr><th>訂單編號</th><th>時間</th><th>會員</th><th>品項</th><th>金額</th><th>運送</th><th>狀態</th><th>操作</th></tr>
-          </thead>
-          <tbody id="adminOrdersTbl"></tbody>
-        </table>
-      </div>
-    </div>
-
   </div>
 </div>
 
