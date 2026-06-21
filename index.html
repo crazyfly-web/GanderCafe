@@ -2165,6 +2165,7 @@ function switchAdminTab(t){
   document.querySelectorAll('.admin-section').forEach((s,i)=>{
     s.classList.toggle('active', 'admin-'+tabs[i]==='admin-'+t);
   });
+  if(t==='orders') loadAdminOrders();
 }
 function renderAdminAll(){ renderAdminRoastedTbl(); renderAdminGreenTbl(); renderAdminGreenSaleTbl(); renderAdminOtherTbl(); renderAdminMemberTbl(); renderAdminVoucherTbl(); renderAdminCouponTbl(); loadAdminOrders(); }
 
