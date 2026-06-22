@@ -876,12 +876,12 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 
 <!-- ── BLOG POST MODAL ── -->
 <div class="modal-overlay" id="blogModal" onclick="closeIfOverlay(event,'blogModal')">
-  <div class="modal" style="width:min(680px,96vw);max-height:88vh;overflow-y:auto;">
+  <div class="modal" style="width:min(1100px,80vw);max-width:96vw;height:80vh;max-height:80vh;overflow-y:auto;">
     <div class="modal-header">
       <span class="modal-title" id="blogModalTitle" style="font-size:1.1rem;line-height:1.4;max-width:90%;"></span>
       <button class="btn-close" onclick="closeModal('blogModal')">✕</button>
     </div>
-    <div id="blogModalContent" style="padding:0 32px 32px;"></div>
+    <div id="blogModalContent" style="padding:0 32px 32px;max-width:680px;margin:0 auto;"></div>
   </div>
 </div>
 
