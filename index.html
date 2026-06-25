@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gander Cafe — 精品咖啡</title>
+<title id="pageTitle">精品咖啡</title>  <!-- 由 applyBrandContent() 動態更新 -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+TC:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -790,8 +790,8 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <!-- ── TOPBAR ── -->
 <header class="topbar">
   <div class="topbar-brand">
-    <div class="brand-en">Gander <em>Cafe</em></div>
-    <div class="brand-tagline">Specialty Coffee Roaster · 花蓮</div>
+    <div class="brand-en" id="navBrandEn"></div>
+    <div class="brand-tagline" id="navBrandTagline"></div>
   </div>
   <nav class="topbar-nav">
     <button class="nav-link" onclick="smoothScrollTo('#roasted-section')">熟豆選購</button>
@@ -815,9 +815,9 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-eyebrow">Specialty Coffee · Single Origin · Hand Roasted</div>
-  <h1 class="hero-title">從產地到<br><em>你的杯中</em></h1>
-  <p class="hero-subtitle">每一批生豆都來自與農民長期合作的莊園，<br>以精確的烘焙曲線釋放最純粹的風味。</p>
+  <div class="hero-eyebrow" id="heroEyebrow"></div>
+  <h1 class="hero-title" id="heroTitle"></h1>
+  <p class="hero-subtitle" id="heroSubtitle"></p>
   <div class="hero-cta">
     <button class="btn-primary" onclick="smoothScrollTo('#roasted-section')">選購熟豆</button>
     <button class="btn-outline" onclick="smoothScrollTo('#preorder-section')">預購烘焙</button>
@@ -887,23 +887,17 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 
 <!-- ── ABOUT ── -->
 <section class="section" id="about-section" style="text-align:center;max-width:680px;margin:0 auto;padding:80px 40px;">
-  <div class="section-eyebrow">About</div>
-  <h2 class="section-title">關於 <strong style="font-style:normal;font-weight:600;">Gander Cafe</strong></h2>
+  <div class="section-eyebrow" id="aboutEyebrow"></div>
+  <h2 class="section-title">關於 <strong id="aboutTitle" style="font-style:normal;font-weight:600;"></strong></h2>
   <div class="divider"></div>
-  <p style="font-size:0.95rem;line-height:2;color:var(--muted);font-weight:300;margin-top:20px;">
-    Gander Cafe 是位於花蓮的精品咖啡烘焙品牌，<br>
-    專注於挑選具產地溯源的批次生豆，<br>
-    以小批量手工烘焙保留最豐富的風味層次。
-  </p>
-  <p style="margin-top:28px;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;color:var(--gold);">
-    ECpay 綠界安全付款 · 全台超商 / 郵局 / 黑貓宅配
-  </p>
+  <p id="aboutDesc" style="font-size:0.95rem;line-height:2;color:var(--muted);font-weight:300;margin-top:20px;"></p>
+  <p id="aboutPayment" style="margin-top:28px;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;color:var(--gold);"></p>
 </section>
 
 <footer>
-  <div class="brand-en" style="font-family:'Cormorant Garamond',serif;">Gander <em style="color:var(--gold-pale)">Cafe</em></div>
-  <p style="margin-top:16px;">花蓮 · 精品咖啡烘焙</p>
-  <p style="margin-top:8px;font-size:0.65rem;opacity:0.5;">© 2025 Gander Cafe · All rights reserved</p>
+  <div id="footerBrand" class="brand-en" style="font-family:'Cormorant Garamond',serif;"></div>
+  <p id="footerTagline" style="margin-top:16px;"></p>
+  <p id="footerCopyright" style="margin-top:8px;font-size:0.65rem;opacity:0.5;"></p>
 </footer>
 
 <!-- ── CART PANEL ── -->
@@ -989,7 +983,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
         <label class="form-label">密碼</label>
         <input type="password" class="form-input" id="adminPwInput" placeholder="輸入管理員密碼" />
       </div>
-      <p style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;">提示：<strong>c******9</strong></p>
+      
     </div>
     <div class="modal-footer">
       <button class="btn-modal-cancel" onclick="closeModal('adminLoginModal')">取消</button>
@@ -1149,7 +1143,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <!-- ── ADMIN PANEL ── -->
 <div class="admin-overlay" id="adminPanel">
   <div class="admin-topbar">
-    <div class="admin-title">Gander Cafe 後台管理 <small>ADMIN DASHBOARD</small></div>
+    <div class="admin-title" id="adminTitle"></div>
     <div style="display:flex;gap:12px;align-items:center;">
       <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:rgba(247,242,232,0.5);">管理員已登入</span>
       <button class="btn-modal-cancel" onclick="closeAdmin()" style="border-color:rgba(255,255,255,0.2);color:rgba(247,242,232,0.7);">離開後台</button>
@@ -1580,12 +1574,87 @@ footer a{color:var(--gold-pale);text-decoration:none;}
 <div class="toast" id="toast"></div>
 
 <script>
+// ════════════════════════════════════════════════════════
+// SITE CONFIG — 換品牌只需修改這個區塊
+// ════════════════════════════════════════════════════════
+const SITE_CONFIG = {
+  // 品牌基本資訊
+  brand:       'Gander Cafe',
+  brandEn:     'Gander Cafe',
+  tagline:     'SPECIALTY COFFEE ROASTER',
+  location:    '花蓮',
+  year:        '2025',
+
+  // API 網址（指向該品牌的 Workers）
+  api: 'https://gander-cafe-api.crazyfly.workers.dev',
+
+  // 寄件人資訊（出貨單用）
+  sender: {
+    name:   '黃彥智',
+    phone:  '0930-890-748',
+    studio: 'Gander Cafe 精品咖啡烘焙',
+  },
+
+  // Hero 文案
+  hero: {
+    eyebrow:  'Specialty Coffee · Single Origin · Hand Roasted',
+    titleL1:  '從產地到',
+    titleL2:  '你的杯中',
+    subtitle: '每一批生豆都來自與農民長期合作的莊園，<br>以精確的烘焙曲線釋放最純粹的風味。',
+  },
+
+  // 關於我們文案
+  about: {
+    eyebrow: 'About',
+    title:   'Gander Cafe',
+    desc:    'Gander Cafe 是位於花蓮的精品咖啡烘焙品牌，<br>專注於挑選具產地溯源的批次生豆，<br>以小批量手工烘焙保留最豐富的風味層次。',
+    payment: 'ECpay 綠界安全付款 · 全台超商 / 郵局 / 黑貓宅配',
+  },
+
+  // 門市自取地址說明
+  pickup: 'Gander Cafe 烘豆工作室',
+
+  // 色彩（覆寫 CSS 變數，留空則使用預設值）
+  colors: {
+    cream:      '#F7F2E8',
+    parchment:  '#EDE5D0',
+    warmWhite:  '#FDFAF4',
+    espresso:   '#1C0F08',
+    roastDeep:  '#2E1810',
+    roastMid:   '#6B3A22',
+    roastLight: '#A0633A',
+    gold:       '#C8922A',
+    goldPale:   '#F0D898',
+    sage:       '#5A6B4E',
+    sageLight:  '#8FA37E',
+    muted:      '#8C7B6A',
+  },
+};
+
+// 套用 SITE_CONFIG 到 CSS 變數
+(function applySiteConfig(){
+  const r = document.documentElement.style;
+  const c = SITE_CONFIG.colors;
+  if(c.cream)      r.setProperty('--cream',       c.cream);
+  if(c.parchment)  r.setProperty('--parchment',   c.parchment);
+  if(c.warmWhite)  r.setProperty('--warm-white',  c.warmWhite);
+  if(c.espresso)   r.setProperty('--espresso',    c.espresso);
+  if(c.roastDeep)  r.setProperty('--roast-deep',  c.roastDeep);
+  if(c.roastMid)   r.setProperty('--roast-mid',   c.roastMid);
+  if(c.roastLight) r.setProperty('--roast-light', c.roastLight);
+  if(c.gold)       r.setProperty('--gold',        c.gold);
+  if(c.goldPale)   r.setProperty('--gold-pale',   c.goldPale);
+  if(c.sage)       r.setProperty('--sage',        c.sage);
+  if(c.sageLight)  r.setProperty('--sage-light',  c.sageLight);
+  if(c.muted)      r.setProperty('--muted',       c.muted);
+})();
+
 // ════════════════════════════════════════
 // API CONFIG
 // 部署 Workers 後，將下方 URL 換成你的 Workers 網址
 // 例：https://gander-cafe-api.YOUR-SUBDOMAIN.workers.dev
 // ════════════════════════════════════════
-const API = 'https://gander-cafe-api.crazyfly.workers.dev';
+const API = SITE_CONFIG.api; // 從 SITE_CONFIG 讀取，換品牌只需改上方設定
 
 // In-memory cache (讀自 API，不再用 localStorage)
 let store = { roasted: [], green: [], greenSale: [], other: [], members: [], vouchers: [], coupons: [] };
@@ -1672,7 +1741,7 @@ const SHIPPING = {
   post:    { name:'郵局寄送', note:'滿千免運，未滿 NT$80', base:80 },
   cvs:     { name:'超商店到店', note:'滿千免運，未滿 NT$60', base:60 },
   kerry:   { name:'黑貓宅配', note:'滿千NT$100，滿兩千NT$50，滿兩千免運(需購滿NT$2000)', base:100 },
-  pickup:  { name:'門市自取', note:'Gander Cafe 烘豆工作室，免運費', base:0 },
+  pickup:  { name:'門市自取', get note(){ return SITE_CONFIG.pickup+'，免運費'; }, base:0 },
 };
 
 function cartSubtotal(){
@@ -2895,7 +2964,7 @@ function getReceiverInfo(){
   return {
     name:    (document.getElementById('rcv-name')?.value || '').trim(),
     phone:   (document.getElementById('rcv-phone')?.value || '').trim(),
-    address: isPickup ? '門市自取（Gander Cafe 烘豆工作室）' : (document.getElementById('rcv-address')?.value || '').trim(),
+    address: isPickup ? '門市自取（'+SITE_CONFIG.pickup+'）' : (document.getElementById('rcv-address')?.value || '').trim(),
   };
 }
 
@@ -2964,7 +3033,7 @@ async function openShipModal(orderId){
 
     document.getElementById('shipSlip').innerHTML =
       '<div style="border:2px solid #333;padding:12px;font-family:serif;font-size:11pt;line-height:1.8;">'
-      +'<div style="text-align:center;font-size:13pt;font-weight:bold;border-bottom:1px solid #333;padding-bottom:6px;margin-bottom:10px;">Gander Cafe 出貨單</div>'
+      +'<div style="text-align:center;font-size:13pt;font-weight:bold;border-bottom:1px solid #333;padding-bottom:6px;margin-bottom:10px;">'+SITE_CONFIG.brand+' 出貨單</div>'
       +'<table style="width:100%;font-size:10pt;">'
       +'<tr><td style="width:80px;color:#666;">訂單編號</td><td><strong>#'+o.id+'</strong></td></tr>'
       +'<tr><td style="color:#666;">出貨日期</td><td>'+now+'</td></tr>'
@@ -2976,8 +3045,8 @@ async function openShipModal(orderId){
       +'<div style="font-size:10pt;">'+(rcv.address||'（未填地址）')+'</div>'
       +'</div>'
       +'<div style="font-size:9pt;color:#666;margin-bottom:4px;">▸ 寄件人</div>'
-      +'<div style="font-size:10pt;"><strong>黃彥智</strong>　0930-890-748</div>'
-      +'<div style="font-size:9pt;">Gander Cafe 精品咖啡烘焙</div>'
+      +'<div style="font-size:10pt;"><strong>'+SITE_CONFIG.sender.name+'</strong>　'+SITE_CONFIG.sender.phone+'</div>'
+      +'<div style="font-size:9pt;">'+SITE_CONFIG.sender.studio+'</div>'
       +'<div style="border-top:1px dashed #999;margin:10px 0;padding-top:8px;font-size:9pt;">'
       +'<div style="color:#666;margin-bottom:4px;">▸ 品項</div>'
       +items.map(i => '<div>'+i.name+' × '+i.qty+'</div>').join('')
@@ -3053,7 +3122,51 @@ async function openBlogPost(id){
   }
 }
 
+
+// ════════════════════════════════════════
+// 套用品牌內容到 DOM（由 SITE_CONFIG 驅動）
+// ════════════════════════════════════════
+function applyBrandContent(){
+  const cfg = SITE_CONFIG;
+
+  // 頁面標題
+  document.title = cfg.brand + ' — 精品咖啡';
+
+  // 導覽列品牌
+  const navEn = document.getElementById('navBrandEn');
+  const navTL = document.getElementById('navBrandTagline');
+  if(navEn){
+    const parts = cfg.brandEn.split(' ');
+    navEn.innerHTML = parts.slice(0,-1).join(' ') + ' <em>' + parts[parts.length-1] + '</em>';
+  }
+  if(navTL) navTL.textContent = cfg.tagline + ' · ' + cfg.location;
+
+  // Hero 區
+  const el = (id) => document.getElementById(id);
+  if(el('heroEyebrow'))  el('heroEyebrow').textContent = cfg.hero.eyebrow;
+  if(el('heroTitle'))    el('heroTitle').innerHTML = cfg.hero.titleL1 + '<br><em>' + cfg.hero.titleL2 + '</em>';
+  if(el('heroSubtitle')) el('heroSubtitle').innerHTML = cfg.hero.subtitle;
+
+  // 關於我們
+  if(el('aboutEyebrow'))  el('aboutEyebrow').textContent = cfg.about.eyebrow;
+  if(el('aboutTitle'))    el('aboutTitle').textContent = cfg.about.title;
+  if(el('aboutDesc'))     el('aboutDesc').innerHTML = cfg.about.desc;
+  if(el('aboutPayment'))  el('aboutPayment').textContent = cfg.about.payment;
+
+  // Footer
+  if(el('footerBrand')){
+    const parts = cfg.brandEn.split(' ');
+    el('footerBrand').innerHTML = parts.slice(0,-1).join(' ') + ' <em style="color:var(--gold-pale)">' + parts[parts.length-1] + '</em>';
+  }
+  if(el('footerTagline'))   el('footerTagline').textContent = cfg.location + ' · 精品咖啡烘焙';
+  if(el('footerCopyright')) el('footerCopyright').textContent = '© ' + cfg.year + ' ' + cfg.brand + ' · All rights reserved';
+
+  // 後台管理標題
+  if(el('adminTitle')) el('adminTitle').innerHTML = cfg.brand + ' 後台管理 <small>ADMIN DASHBOARD</small>';
+}
+
 async function init(){
+  applyBrandContent(); // 套用品牌設定
   renderCart();
   try {
     await loadPublicData();
