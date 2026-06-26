@@ -918,6 +918,7 @@ footer a{color:var(--gold-pale);text-decoration:none;}
         <div id="receiverFieldsWrap" style="display:flex;flex-direction:column;gap:8px;">
           <input type="text" id="rcv-name" class="discount-input" placeholder="收件人姓名" style="width:100%;"/>
           <input type="text" id="rcv-phone" class="discount-input" placeholder="收件人電話" style="width:100%;"/>
+          <input type="email" id="rcv-email" class="discount-input" placeholder="通知用 Email（選填）" style="width:100%;"/>
           <input type="text" id="rcv-address" class="discount-input" placeholder="地址 / 超商門市名稱與代號" style="width:100%;"/>
         </div>
         <div id="rcv-save-wrap" style="display:none;margin-top:8px;">
@@ -1876,6 +1877,9 @@ function renderCart(){
       addrInput.placeholder='地址 / 超商門市名稱與代號';
     }
   }
+  // email 欄位自取時也顯示（用於寄出貨通知）
+  const emailInput = document.getElementById('rcv-email');
+  if(emailInput) emailInput.style.display='block';
   updateCartCount();
   // 儲值會員顯示餘額結帳按鈕
   const bWrap = document.getElementById('balanceCheckoutWrap');
@@ -2995,18 +2999,24 @@ function initReceiverSection(){
   if(currentMember && currentMember.receiver_name){
     const n = document.getElementById('rcv-name');
     const p = document.getElementById('rcv-phone');
+    const e = document.getElementById('rcv-email');
     const a = document.getElementById('rcv-address');
     if(n) n.value = currentMember.receiver_name || '';
     if(p) p.value = currentMember.receiver_phone || '';
+    if(e) e.value = ''; // Email 不預填，讓顧客自行決定是否接收通知
     if(a) a.value = currentMember.receiver_address || '';
   }
 }
 
 function getReceiverInfo(){
   const isPickup = selectedShipping === 'pickup';
+  // Email：優先用填寫的，若空白則用登入會員的 email
+  const rcvEmail = (document.getElementById('rcv-email')?.value || '').trim()
+                || (currentMember?.email || '');
   return {
     name:    (document.getElementById('rcv-name')?.value || '').trim(),
     phone:   (document.getElementById('rcv-phone')?.value || '').trim(),
+    email:   rcvEmail,
     address: isPickup ? '門市自取（'+SITE_CONFIG.pickup+'）' : (document.getElementById('rcv-address')?.value || '').trim(),
   };
 }
