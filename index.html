@@ -1508,6 +1508,23 @@ footer a{color:var(--gold-pale);text-decoration:none;}
   </div>
 </div>
 
+
+<!-- ── MEMBER ORDERS MODAL ── -->
+<div class="modal-overlay" id="memberOrdersModal" onclick="closeIfOverlay(event,'memberOrdersModal')">
+  <div class="modal" style="width:min(680px,96vw);max-height:85vh;overflow-y:auto;">
+    <div class="modal-header">
+      <span class="modal-title">我的訂單</span>
+      <button class="btn-close" onclick="closeModal('memberOrdersModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding-bottom:0;">
+      <div id="memberOrdersList" style="padding-bottom:20px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('memberOrdersModal')">關閉</button>
+    </div>
+  </div>
+</div>
+
 <!-- Issue Voucher Modal -->
 <div class="modal-overlay" id="issueVoucherModal" onclick="closeIfOverlay(event,'issueVoucherModal')">
   <div class="modal">
@@ -2044,9 +2061,10 @@ function renderMemberContent(){
         累計消費：<strong>NT$${(currentMember.spent||0).toLocaleString()}</strong><br>
         ${disc>0?`目前享有：<strong>${100-disc}折優惠 + 免運費</strong>`:'消費累計滿萬元即享折扣'}</p>
       </div>
-      <div style="margin-top:20px;display:flex;gap:10px;">
-        <button class="btn-outline" style="flex:1;font-size:0.75rem;" onclick="closeModal('memberModal')">關閉</button>
-        <button class="btn-modal-save" style="flex:1;" onclick="memberLogout()">登出</button>
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-outline" style="flex:1;font-size:0.75rem;min-width:80px;" onclick="openMemberOrders()">我的訂單</button>
+        <button class="btn-outline" style="flex:1;font-size:0.75rem;min-width:80px;" onclick="closeModal('memberModal')">關閉</button>
+        <button class="btn-modal-save" style="flex:1;min-width:80px;" onclick="memberLogout()">登出</button>
       </div>`;
   } else {
     el.innerHTML = `
@@ -3276,6 +3294,63 @@ function checkResetToken(){
     openModal('resetPwModal');
     // 清除網址列的 token（避免重複使用）
     window.history.replaceState({}, '', window.location.pathname);
+  }
+}
+
+
+// ════════════════════════════════════════
+// 會員訂單查詢
+// ════════════════════════════════════════
+async function openMemberOrders(){
+  const list = document.getElementById('memberOrdersList');
+  list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">載入中…</p>';
+  closeModal('memberModal');
+  openModal('memberOrdersModal');
+
+  try {
+    const res = await fetch(API + '/api/members/orders', {
+      headers: { 'Authorization': 'Bearer ' + getMemberToken() }
+    });
+    const r = await res.json();
+    if(!r.ok){ list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">載入失敗</p>'; return; }
+    if(!r.data.length){
+      list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px;">尚無訂單紀錄</p>';
+      return;
+    }
+
+    const statusLabel = { pending:'待付款', paid:'已付款', shipped:'已出貨', cancelled:'已取消' };
+    const statusColor = { pending:'var(--muted)', paid:'var(--sage)', shipped:'var(--gold)', cancelled:'var(--muted)' };
+    const shipLabel   = { post:'郵局寄送', cvs:'超商店到店', kerry:'黑貓宅配', balance:'餘額結帳', pickup:'門市自取' };
+
+    list.innerHTML = r.data.map(o => {
+      const items = (() => { try{ return JSON.parse(o.items_json||'[]'); }catch(e){ return []; } })();
+      const color = statusColor[o.status] || 'var(--muted)';
+      const label = statusLabel[o.status] || o.status;
+      return `<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:14px;overflow:hidden;">
+        <!-- 訂單標頭 -->
+        <div style="background:var(--parchment);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <span style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--roast-mid);">#${o.id}</span>
+            <span style="font-size:0.72rem;color:var(--muted);margin-left:10px;">${(o.created_at||'').slice(0,10)}</span>
+          </div>
+          <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:${color};font-weight:500;">${label}</span>
+        </div>
+        <!-- 品項 -->
+        <div style="padding:12px 16px;">
+          ${items.map(i => `
+            <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px;">
+              <span style="color:var(--espresso);">${i.name}</span>
+              <span style="color:var(--muted);">× ${i.qty}　NT$${(i.price*i.qty).toLocaleString()}</span>
+            </div>`).join('')}
+          <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.75rem;color:var(--muted);">${shipLabel[o.shipping_type]||o.shipping_type||'—'}</span>
+            <span style="font-family:'DM Mono',monospace;font-weight:600;color:var(--roast-deep);">NT$${(o.total||0).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">網路錯誤</p>';
   }
 }
 
